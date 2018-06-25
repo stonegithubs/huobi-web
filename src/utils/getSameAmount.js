@@ -3,7 +3,10 @@
  * 合并相同的价格统计次数并排序
  * @param {Array<Array<number>>} data
  */
-const getSameAmount = function (data) {
+const getSameAmount = function (data, {
+  minSumPrice = 100,
+  minPrice = 500,
+} = {}) {
   // data = data.slice(0, 400)
   let countTemp = {};
   for (let i = 0; i < data.length; i++) {
@@ -27,21 +30,33 @@ const getSameAmount = function (data) {
     // 总价
     let sumPrice = sum * price;
 
-    if ((count > 1 && sumPrice > 100) || (key * price > 5000)) {
+    if ((count > 1 && sumPrice > minSumPrice) || (key * price > minPrice)) {
       let data = {
         'count': count,
         'amount': Number(key).toFixed(2),
         sumCount: sum.toFixed(2),
-        sumPirce: (sumPrice | 0),
+        sumMoneny: sumPrice.toFixed(1),
       }
       if (count === 1) {
         data.price = countTemp[key].price
       }
       arr.push(data);
     }
+    // if ((count > 1 && sumPrice > 100) || (key * price > 2000)) {
+    //   let data = {
+    //     'count': count,
+    //     'amount': Number(key).toFixed(2),
+    //     sumCount: sum.toFixed(2),
+    //     sumMoneny: (sumPrice | 0),
+    //   }
+    //   if (count === 1) {
+    //     data.price = countTemp[key].price
+    //   }
+    //   arr.push(data);
+    // }
   }
   return arr.sort(function (a, b) {
-    return b.sumPirce - a.sumPirce
+    return b.sumMoneny - a.sumMoneny
   });
 }
 
