@@ -2,38 +2,43 @@
   <div>
     <div>
       <p>{{status}}</p>
-      <input type="text" ref="symbol" value="iost">
+      <input type="text" ref="symbol" value="btc">
       对
-      <input type="text" ref="symbol2" value="usdt">
+      <select name="" ref="symbol2" value="usdt">
+        <option value="usdt">usdt</option>
+        <option value="btc">btc</option>
+      </select>
       <button @click="subscribe">
           查挂单
       </button>
-      <div class="flex-row">
-        <div class="flex-1">
-          买单({{bidsList.length}})
-          <ul>
-            <li
-              v-for="(item, index) in bidsList"
-              :key="index"
-            >
-              <span>
-                {{item}}
-              </span>
-            </li>
-          </ul>
-        </div>
-        <div class="flex-1">
-          卖单({{asksList.length}})
-          <ul>
-            <li
-              v-for="(item, index) in asksList"
-              :key="index"
-            >
-              <span>
-                {{item}}
-              </span>
-            </li>
-          </ul>
+      <div class="tickList" ref="tickList">
+        <div class="flex-row " >
+          <div class="flex-1">
+            买单({{bidsList.length}})
+            <ul>
+              <li
+                v-for="(item, index) in bidsList"
+                :key="index"
+              >
+                <span>
+                  {{item}}
+                </span>
+              </li>
+            </ul>
+          </div>
+          <div class="flex-1">
+            卖单({{asksList.length}})
+            <ul>
+              <li
+                v-for="(item, index) in asksList"
+                :key="index"
+              >
+                <span>
+                  {{item}}
+                </span>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
       
@@ -44,6 +49,11 @@
 <script>
 
 import getSameAmount from '@/utils/getSameAmount';
+// 有多单时， 总和超过最小价，低于则不显示
+let minSumPrice = 500;
+// 1单时， 总和超过最小价，低于则不显示
+let minPrice = 2000;
+
 export default {
   name: "Home",
   data() {
@@ -54,6 +64,7 @@ export default {
     };
   },
   mounted() {
+    this.$refs.tickList.style.maxHeight = window.innerHeight - 50 + 'px';
     this.ws = new WebSocket("ws://localhost:3000/huobi");
     this.status = 'ws未连接';
     this.ws.onopen = () => {
@@ -73,11 +84,16 @@ export default {
       this.status = err;
     };
     this.ws.onmessage = (ev) => {
-      console.log(ev.data)
       var data = JSON.parse(ev.data);
       if (data.tick) {
-        this.bidsList = getSameAmount(data.tick.bids);
-        this.asksList = getSameAmount(data.tick.asks);
+        this.bidsList = getSameAmount(data.tick.bids, {
+          minSumPrice,
+          minPrice
+        });
+        this.asksList = getSameAmount(data.tick.asks, {
+          minSumPrice,
+          minPrice
+        });
       }
 
       switch(data.type) {
@@ -99,6 +115,23 @@ export default {
   methods: {
     subscribe() {
       let value = this.$refs.symbol.value + this.$refs.symbol2.value;
+
+      switch(this.$refs.symbol2.value) {
+        case 'btc':
+          // 有多单时， 总和超过最小价，低于则不显示
+          minSumPrice = 0.5;
+          // 1单时， 总和超过最小价，低于则不显示
+          minPrice = 0.4;
+          break;
+        case 'usdt': 
+          // 有多单时， 总和超过最小价，低于则不显示
+          minSumPrice = 500;
+          // 1单时， 总和超过最小价，低于则不显示
+          minPrice = 2000;
+      }
+      if (this.$refs.symbol2.value === 'btc') {
+       
+      }
       this.ws.send(JSON.stringify({
         type: `ws-huobi`,
         value: 'subscribe',
@@ -110,4 +143,10 @@ export default {
 </script>
 
 <style>
+.tickList {
+  padding: 0px 0;
+  overflow: auto;
+  align-content:flex-start;
+  align-items: flex-start;
+}
 </style>
