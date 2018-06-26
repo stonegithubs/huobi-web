@@ -125,7 +125,7 @@ export default {
           break;
         case 'usdt': 
           // 有多单时， 总和超过最小价，低于则不显示
-          minSumPrice = 500;
+          minSumPrice = 100;
           // 1单时， 总和超过最小价，低于则不显示
           minPrice = 2000;
       }
