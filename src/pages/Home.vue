@@ -14,7 +14,8 @@
       <div class="tickList" ref="tickList">
         <div class="flex-row " >
           <div class="flex-1">
-            买单({{bidsList.length}})
+            <span>买单({{bidsList.length}})</span>
+            <span>买1:{{bidsFirst}}</span>
             <ul>
               <li
                 v-for="(item, index) in bidsList"
@@ -27,7 +28,8 @@
             </ul>
           </div>
           <div class="flex-1">
-            卖单({{asksList.length}})
+            <span>卖单({{asksList.length}})</span>
+            <span>卖1:{{aksFirst}}</span>
             <ul>
               <li
                 v-for="(item, index) in asksList"
@@ -61,6 +63,8 @@ export default {
       status: 'ws未连接',
       bidsList: [], // 买单
       asksList: [], // 卖单
+      bidsFirst: [],
+      aksFirst: [],
     };
   },
   mounted() {
@@ -86,10 +90,12 @@ export default {
     this.ws.onmessage = (ev) => {
       var data = JSON.parse(ev.data);
       if (data.tick) {
+        this.bidsFirst = data.tick.bids[0],
         this.bidsList = getSameAmount(data.tick.bids, {
           minSumPrice,
           minPrice
         });
+        this.aksFirst = data.tick.asks[0],
         this.asksList = getSameAmount(data.tick.asks, {
           minSumPrice,
           minPrice
