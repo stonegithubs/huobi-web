@@ -16,7 +16,40 @@
           <div class="flex-1">
             <span>买单({{bidsList.length}})</span>
             <span>买1:{{bidsFirst}}</span>
-            <ul>
+            <table>
+              <thead>
+                <tr>
+                  <th>
+                    count
+                  </th>
+                  <th>
+                    amount
+                  </th>
+                  <th>
+                    sumCount
+                  </th>
+                  <th>
+                    sumMoneny
+                  </th>
+                  <th>
+                    price
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="(item, index) in bidsList"
+                  :key="index"
+                >
+                  <td>{{item.count}}</td>
+                  <td>{{item.amount}}</td>
+                  <td>{{item.sumCount}}</td>
+                  <td>{{item.sumMoneny}}</td>
+                  <td>{{item.price}}</td>
+                </tr>
+              </tbody>
+            </table>
+            <!-- <ul>
               <li
                 v-for="(item, index) in bidsList"
                 :key="index"
@@ -25,12 +58,45 @@
                   {{item}}
                 </span>
               </li>
-            </ul>
+            </ul> -->
           </div>
           <div class="flex-1">
             <span>卖单({{asksList.length}})</span>
             <span>卖1:{{aksFirst}}</span>
-            <ul>
+            <table>
+              <thead>
+                <tr>
+                  <th>
+                    count
+                  </th>
+                  <th>
+                    amount
+                  </th>
+                  <th>
+                    sumCount
+                  </th>
+                  <th>
+                    sumMoneny
+                  </th>
+                  <th>
+                    price
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="(item, index) in asksList"
+                  :key="index"
+                >
+                  <td>{{item.count}}</td>
+                  <td>{{item.amount}}</td>
+                  <td>{{item.sumCount}}</td>
+                  <td>{{item.sumMoneny}}</td>
+                  <td>{{item.price}}</td>
+                </tr>
+              </tbody>
+            </table>
+            <!-- <ul>
               <li
                 v-for="(item, index) in asksList"
                 :key="index"
@@ -39,7 +105,7 @@
                   {{item}}
                 </span>
               </li>
-            </ul>
+            </ul> -->
           </div>
         </div>
       </div>
@@ -133,7 +199,7 @@ export default {
           // 有多单时， 总和超过最小价，低于则不显示
           minSumPrice = 100;
           // 1单时， 总和超过最小价，低于则不显示
-          minPrice = 2000;
+          minPrice = 1000;
       }
       if (this.$refs.symbol2.value === 'btc') {
        
@@ -157,5 +223,16 @@ export default {
 }
 .tickList .flex-1{
   align-self: start;
+}
+.tickList table {
+  padding: 10px 20px;
+  width:auto;
+}
+.tickList table th{
+  text-align: left;
+  padding: 1px 6px;
+}
+.tickList table td{
+  padding: 1px 6px;
 }
 </style>
