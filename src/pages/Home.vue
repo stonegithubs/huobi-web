@@ -155,4 +155,7 @@ export default {
   align-content:flex-start;
   align-items: flex-start;
 }
+.tickList .flex-1{
+  align-self: start;
+}
 </style>

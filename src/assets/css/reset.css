@@ -19,6 +19,5 @@ html{
 	overflow:hidden;
 	-webkit-tap-highlight-color:transparent;
 	-webkit-touch-callout:none;
-	user-select:none;
 }
 body{height:100%; overflow:hidden;}
