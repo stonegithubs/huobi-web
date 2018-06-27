@@ -6,14 +6,15 @@
         style="width: 100px;"
         placeholder="请输入内容"
         v-model="symbol"
+        size="small"
         clearable>
       </el-input>
       对
-      <el-select v-model="symbol2" placeholder="请选择">
+      <el-select v-model="symbol2" placeholder="请选择" size="small">
         <el-option value="usdt">usdt</el-option>
         <el-option value="btc">btc</el-option>
       </el-select>
-      <el-button type="primary" :loading="subscribeLoading" @click="subscribe">查挂单</el-button>
+      <el-button type="primary" :loading="subscribeLoading" @click="subscribe" size="small">查挂单</el-button>
       <div class="tickList" ref="tickList">
         <div class="flex-row " >
           <div class="flex-1">
@@ -83,6 +84,7 @@ export default {
     };
     this.ws.onmessage = (ev) => {
       var data = JSON.parse(ev.data);
+      
       if (data.tick) {
         this.bidsFirst = data.tick.bids[0],
         this.bidsList = getSameAmount(data.tick.bids, {
@@ -95,13 +97,19 @@ export default {
           minPrice
         });
       }
-
-      switch(data.type) {
-        case 'WS_HUOBI':
+      if (data.type === 'WS_HUOBI') {
+        console.log(data.value)
         this.status = 'WS_HUOBI:' + data.value;
-        this.subscribeLoading = false;
+        switch(data.value) {
+          case 'error':
+          this.status = 'WS_HUOBI:' + data.error;
+          this.subscribeLoading = false;
+          break;
+          case 'ok':
+          this.status = 'WS_HUOBI:' + data.value;
+          this.subscribeLoading = false;
+        }
       }
-
     };
 
     
