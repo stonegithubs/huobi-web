@@ -38,7 +38,7 @@
 
 import getSameAmount from '@/utils/getSameAmount';
 import Table from '@/components/Table';
-
+import config from '@/config';
 // 有多单时， 总和超过最小价，低于则不显示
 let minSumPrice = 500;
 // 1单时， 总和超过最小价，低于则不显示
@@ -62,8 +62,11 @@ export default {
     };
   },
   mounted() {
+    fetch(config.host + '/api/v1/a').then((res) => {
+      console.log(res)
+    })
     this.$refs.tickList.style.maxHeight = window.innerHeight - 50 + 'px';
-    this.ws = new WebSocket("ws://localhost:3000/huobi");
+    this.ws = new WebSocket(`ws://${config.wsHost}/huobi`);
     this.status = 'ws未连接';
     this.ws.onopen = () => {
       // Web Socket 已连接上，使用 send() 方法发送数据
@@ -103,12 +106,11 @@ export default {
         switch(data.value) {
           case 'error':
           this.status = 'WS_HUOBI:' + data.error;
-          this.subscribeLoading = false;
           break;
           case 'ok':
-          this.status = 'WS_HUOBI:' + data.value;
-          this.subscribeLoading = false;
+          break;
         }
+        this.subscribeLoading = false;
       }
     };
 

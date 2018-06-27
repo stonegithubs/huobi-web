@@ -31,22 +31,29 @@
             <td>{{item.sumMoneny}}</td>
             <td>
                 <span>{{item.price}}</span>
-                <el-popover
-                    v-if="item.prices.length > 1" 
-                    placement="right"
-                    width="400"
-                    trigger="click"
+                <el-button
+                   size="small"
+                   @click="showAllPrices(item.prices)"
                 >
-                    <ul>
-                        <li v-for="p in item.prices" :key="p">{{p}}</li>
-                    </ul>
-                    <el-button slot="reference" size="small">查看全部</el-button>
-                </el-popover>
+                    查看全部
+                </el-button>
             </td>
         </tr>
         </tbody>
     </table>
-
+    <el-dialog
+        title="全部价格"
+        :visible.sync="dialogVisible"
+        width="30%"
+        >
+        <ul class="all-price-list">
+            <li v-for="p in itemPrices" :key="p">{{p}}</li>
+        </ul>
+        <span slot="footer" class="dialog-footer">
+            <el-button @click="dialogVisible = false" size="small">取 消</el-button>
+            <el-button type="primary" @click="dialogVisible = false" size="small">确 定</el-button>
+        </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -55,6 +62,8 @@ export default {
   name: "Table",
   data() {
     return {
+        itemPrices: [],
+        dialogVisible: false,
     };
   },
   props: {
@@ -68,6 +77,10 @@ export default {
   mounted() {
   },
   methods: {
+    showAllPrices (prices) {
+        this.dialogVisible = true;
+        this.itemPrices = prices;
+    }
   }
 };
 </script>
@@ -84,5 +97,9 @@ table th{
 }
 table td{
   padding: 1px 6px;
+}
+.all-price-list{
+    max-height: 400px;
+    overflow: auto;
 }
 </style>

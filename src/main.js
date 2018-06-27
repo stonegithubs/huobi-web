@@ -5,6 +5,7 @@ import App from './App'
 import router from './router'
 import {
   Button,
+  Dialog,
   Input,
   Select,
   Option,
@@ -15,6 +16,7 @@ import './assets/css/common.css'
 Vue.config.productionTip = false
 
 Vue.use(Button)
+Vue.use(Dialog)
 Vue.use(Input)
 Vue.use(Select)
 Vue.use(Option)
