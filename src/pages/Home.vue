@@ -2,110 +2,29 @@
   <div>
     <div>
       <p>{{status}}</p>
-      <input type="text" ref="symbol" value="btc">
+      <el-input
+        style="width: 100px;"
+        placeholder="请输入内容"
+        v-model="symbol"
+        clearable>
+      </el-input>
       对
-      <select name="" ref="symbol2" value="usdt">
-        <option value="usdt">usdt</option>
-        <option value="btc">btc</option>
-      </select>
-      <button @click="subscribe">
-          查挂单
-      </button>
+      <el-select v-model="symbol2" placeholder="请选择">
+        <el-option value="usdt">usdt</el-option>
+        <el-option value="btc">btc</el-option>
+      </el-select>
+      <el-button type="primary" :loading="subscribeLoading" @click="subscribe">查挂单</el-button>
       <div class="tickList" ref="tickList">
         <div class="flex-row " >
           <div class="flex-1">
             <span>买单({{bidsList.length}})</span>
             <span>买1:{{bidsFirst}}</span>
-            <table>
-              <thead>
-                <tr>
-                  <th>
-                    count
-                  </th>
-                  <th>
-                    amount
-                  </th>
-                  <th>
-                    sumCount
-                  </th>
-                  <th>
-                    sumMoneny
-                  </th>
-                  <th>
-                    price
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr
-                  v-for="(item, index) in bidsList"
-                  :key="index"
-                >
-                  <td>{{item.count}}</td>
-                  <td>{{item.amount}}</td>
-                  <td>{{item.sumCount}}</td>
-                  <td>{{item.sumMoneny}}</td>
-                  <td>{{item.price}}</td>
-                </tr>
-              </tbody>
-            </table>
-            <!-- <ul>
-              <li
-                v-for="(item, index) in bidsList"
-                :key="index"
-              >
-                <span>
-                  {{item}}
-                </span>
-              </li>
-            </ul> -->
+            <Table :data="bidsList"></Table>
           </div>
           <div class="flex-1">
             <span>卖单({{asksList.length}})</span>
             <span>卖1:{{aksFirst}}</span>
-            <table>
-              <thead>
-                <tr>
-                  <th>
-                    count
-                  </th>
-                  <th>
-                    amount
-                  </th>
-                  <th>
-                    sumCount
-                  </th>
-                  <th>
-                    sumMoneny
-                  </th>
-                  <th>
-                    price
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr
-                  v-for="(item, index) in asksList"
-                  :key="index"
-                >
-                  <td>{{item.count}}</td>
-                  <td>{{item.amount}}</td>
-                  <td>{{item.sumCount}}</td>
-                  <td>{{item.sumMoneny}}</td>
-                  <td>{{item.price}}</td>
-                </tr>
-              </tbody>
-            </table>
-            <!-- <ul>
-              <li
-                v-for="(item, index) in asksList"
-                :key="index"
-              >
-                <span>
-                  {{item}}
-                </span>
-              </li>
-            </ul> -->
+            <Table :data="asksList"></Table>
           </div>
         </div>
       </div>
@@ -117,6 +36,8 @@
 <script>
 
 import getSameAmount from '@/utils/getSameAmount';
+import Table from '@/components/Table';
+
 // 有多单时， 总和超过最小价，低于则不显示
 let minSumPrice = 500;
 // 1单时， 总和超过最小价，低于则不显示
@@ -124,13 +45,19 @@ let minPrice = 2000;
 
 export default {
   name: "Home",
+  components: {
+    Table,
+  },
   data() {
     return {
-      status: 'ws未连接',
-      bidsList: [], // 买单
-      asksList: [], // 卖单
-      bidsFirst: [],
       aksFirst: [],
+      asksList: [], // 卖单
+      bidsList: [], // 买单
+      bidsFirst: [],
+      symbol: 'btc',
+      symbol2: 'usdt',
+      status: 'ws未连接',
+      subscribeLoading: true,
     };
   },
   mounted() {
@@ -144,6 +71,7 @@ export default {
         "value": 'open',
       }));
       this.status = 'ws-server已连接';
+      this.subscribeLoading = false;
     };
     this.ws.onclose = () => {
       // 关闭 websocket
@@ -171,6 +99,7 @@ export default {
       switch(data.type) {
         case 'WS_HUOBI':
         this.status = 'WS_HUOBI:' + data.value;
+        this.subscribeLoading = false;
       }
 
     };
@@ -186,9 +115,9 @@ export default {
   },
   methods: {
     subscribe() {
-      let value = this.$refs.symbol.value + this.$refs.symbol2.value;
+      let value = this.symbol + this.symbol2;
 
-      switch(this.$refs.symbol2.value) {
+      switch(this.symbol2) {
         case 'btc':
           // 有多单时， 总和超过最小价，低于则不显示
           minSumPrice = 0.5;
@@ -201,9 +130,7 @@ export default {
           // 1单时， 总和超过最小价，低于则不显示
           minPrice = 1000;
       }
-      if (this.$refs.symbol2.value === 'btc') {
-       
-      }
+      this.subscribeLoading = true;
       this.ws.send(JSON.stringify({
         type: `ws-huobi`,
         value: 'subscribe',
@@ -224,15 +151,5 @@ export default {
 .tickList .flex-1{
   align-self: start;
 }
-.tickList table {
-  padding: 10px 20px;
-  width:auto;
-}
-.tickList table th{
-  text-align: left;
-  padding: 1px 6px;
-}
-.tickList table td{
-  padding: 1px 6px;
-}
+
 </style>

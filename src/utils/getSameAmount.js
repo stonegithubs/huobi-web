@@ -15,14 +15,21 @@ const getSameAmount = function (data, {
     if (countTemp[count] === undefined) {
       countTemp[count] = {};
       countTemp[count].count = 1;
-      countTemp[count].price = data[i][0];
+      countTemp[count].prices = [data[i][0]];
       continue;
     }
     countTemp[count].count += 1;
+    countTemp[count].prices.push(data[i][0]);
   }
   let arr = [];
   for (let key in countTemp) {
-    let price = countTemp[key].price;
+    let prices = countTemp[key].prices;
+    let price = 0;
+    if (prices.length === 1) {
+      price = countTemp[key].prices[0];
+    } else {
+      price = prices.reduce((accumulator, item) => accumulator + item) / prices.length;
+    }
     // 同数量出现 的次数
     let count = countTemp[key].count;
     // 总量 = 次数 * 单个挂单量
@@ -36,24 +43,11 @@ const getSameAmount = function (data, {
         'amount': Number(key).toFixed(2),
         sumCount: sum.toFixed(2),
         sumMoneny: sumPrice.toFixed(1),
-      }
-      if (count === 1) {
-        data.price = countTemp[key].price
+        price: price.toFixed(4),
+        prices: countTemp[key].prices,
       }
       arr.push(data);
     }
-    // if ((count > 1 && sumPrice > 100) || (key * price > 2000)) {
-    //   let data = {
-    //     'count': count,
-    //     'amount': Number(key).toFixed(2),
-    //     sumCount: sum.toFixed(2),
-    //     sumMoneny: (sumPrice | 0),
-    //   }
-    //   if (count === 1) {
-    //     data.price = countTemp[key].price
-    //   }
-    //   arr.push(data);
-    // }
   }
   return arr.sort(function (a, b) {
     return b.sumMoneny - a.sumMoneny
