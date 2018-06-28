@@ -15,6 +15,7 @@
         <el-option value="btc">btc</el-option>
       </el-select>
       <el-button type="primary" :loading="subscribeLoading" @click="subscribe" size="small">查挂单</el-button>
+      <button @click="test">测试</button>
       <div class="tickList" ref="tickList">
         <div class="flex-row " >
           <div class="flex-1">
@@ -62,7 +63,7 @@ export default {
     };
   },
   created() {
-    if (localStorage.precision !== undefined) {
+    if (localStorage.precision === undefined) {
       // 查精度
       fetch(config.URL_HUOBI + '/v1/common/symbols').then((res) => {
         return res.json();
@@ -74,9 +75,7 @@ export default {
     }
   },
   mounted() {
-    // fetch(config.host + '/api/v1/a').then((res) => {
-    //   console.log(res)
-    // })
+    
     this.$refs.tickList.style.maxHeight = window.innerHeight - 50 + 'px';
     this.ws = new WebSocket(`ws://${config.wsHost}/huobi`);
     this.status = 'ws未连接';
@@ -111,6 +110,20 @@ export default {
           minSumPrice,
           minPrice
         });
+        let symbol = this.symbol + this.symbol2;
+        console.log(config.host + '/api/v1/depth')
+        fetch({
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          url: config.host + '/api/v1/depth',
+          body: JSON.stringify({
+            symbol: symbol,
+            time: new Date(),
+            ...this.asksList
+          })
+        })
       }
       if (data.type === 'WS_HUOBI') {
         console.log(data.value)
@@ -169,6 +182,11 @@ export default {
         value: 'subscribe',
         symbols: `${value}`
       }));
+    },
+    test() {
+      fetch(config.host + '/api/v1/a').then((res) => {
+        console.log(res)
+      })
     }
   }
 };
