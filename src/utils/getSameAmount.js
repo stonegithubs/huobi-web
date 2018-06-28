@@ -1,4 +1,9 @@
 
+// 价格精度
+let pricePrecision = 0;
+export function setPricePrecision (precision) {
+  pricePrecision = precision;
+}
 /**
  * 合并相同的价格统计次数并排序
  * @param {Array<Array<number>>} data
@@ -43,7 +48,7 @@ const getSameAmount = function (data, {
         'amount': Number(key).toFixed(2),
         sumCount: sum.toFixed(2),
         sumMoneny: sumPrice.toFixed(1),
-        price: price.toFixed(4),
+        price: price.toFixed(pricePrecision),
         prices: countTemp[key].prices,
       }
       arr.push(data);

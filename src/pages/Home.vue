@@ -36,7 +36,7 @@
 
 <script>
 
-import getSameAmount from '@/utils/getSameAmount';
+import getSameAmount, {setPricePrecision} from '@/utils/getSameAmount';
 import Table from '@/components/Table';
 import config from '@/config';
 // 有多单时， 总和超过最小价，低于则不显示
@@ -61,19 +61,31 @@ export default {
       subscribeLoading: true,
     };
   },
+  created() {
+    if (localStorage.precision !== undefined) {
+      // 查精度
+      fetch(config.URL_HUOBI + '/v1/common/symbols').then((res) => {
+        return res.json();
+      }).then((res) => {
+        if (res.data) {
+          localStorage.precision = JSON.stringify(res.data);
+        }
+      })
+    }
+  },
   mounted() {
-    fetch(config.host + '/api/v1/a').then((res) => {
-      console.log(res)
-    })
+    // fetch(config.host + '/api/v1/a').then((res) => {
+    //   console.log(res)
+    // })
     this.$refs.tickList.style.maxHeight = window.innerHeight - 50 + 'px';
     this.ws = new WebSocket(`ws://${config.wsHost}/huobi`);
     this.status = 'ws未连接';
     this.ws.onopen = () => {
       // Web Socket 已连接上，使用 send() 方法发送数据
-      this.ws.send(JSON.stringify({
-        "type": `ws-huobi`,
-        "value": 'open',
-      }));
+      // this.ws.send(JSON.stringify({
+      //   "type": `ws-huobi`,
+      //   "value": 'open',
+      // }));
       this.status = 'ws-server已连接';
       this.subscribeLoading = false;
     };
@@ -126,7 +138,7 @@ export default {
   methods: {
     subscribe() {
       let value = this.symbol + this.symbol2;
-
+      let precision = JSON.parse(localStorage.precision);
       switch(this.symbol2) {
         case 'btc':
           // 有多单时， 总和超过最小价，低于则不显示
@@ -140,6 +152,17 @@ export default {
           // 1单时， 总和超过最小价，低于则不显示
           minPrice = 1000;
       }
+      precision.some((item) => {
+        // base-currency:"yee"
+        // price-precision:8
+        // quote-currency:"eth"
+        if (item['base-currency'] === this.symbol && item['quote-currency'] === this.symbol2) {
+          setPricePrecision(item['price-precision']);
+          return true;
+        }
+        return false;
+      })
+      ;
       this.subscribeLoading = true;
       this.ws.send(JSON.stringify({
         type: `ws-huobi`,
