@@ -15,7 +15,11 @@
         <el-option value="btc">btc</el-option>
       </el-select>
       <el-button type="primary" :loading="subscribeLoading" @click="subscribe" size="small">查挂单</el-button>
-      <button @click="test">测试</button>
+      <span>
+        <button @click="test">测试</button>
+        <button @click="createTable">创建table</button>
+        <button @click="delTable">删除db</button>
+      </span>
       <div class="tickList" ref="tickList">
         <div class="flex-row " >
           <div class="flex-1">
@@ -111,7 +115,6 @@ export default {
           minPrice
         });
         let symbol = this.symbol + this.symbol2;
-        console.log(config.host + '/api/v1/depth')
         fetch(config.host + '/api/v1/depth', {
           method: 'POST',
           headers: {
@@ -120,13 +123,13 @@ export default {
           mode: 'cors',
           body: JSON.stringify({
             symbol: symbol,
-            time: new Date(),
-            ...this.asksList
+            time: Date.now(),
+            asksList: this.asksList,
+            bidsList: this.bidsList,
           })
         })
       }
       if (data.type === 'WS_HUOBI') {
-        console.log(data.value)
         this.status = 'WS_HUOBI:' + data.value;
         switch(data.value) {
           case 'error':
@@ -184,8 +187,35 @@ export default {
       }));
     },
     test() {
-      fetch(config.host + '/api/v1/a').then((res) => {
+      let value = this.symbol + this.symbol2;
+      fetch(config.host + '/api/v1/showTables').then((res) => {
         console.log(res)
+      });
+    },
+    createTable() {
+      fetch(config.host + '/api/v1/createTable', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        mode: 'cors',
+        body: JSON.stringify({
+          tableName: 'HUOBI_DEPTH'
+        })
+      }).then(res => {
+        console.log(res)
+      })
+    },
+    delTable() {
+      fetch(config.host + '/api/v1/delTable', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        mode: 'cors',
+        body: JSON.stringify({
+          tableName: 'HUOBI_DEPTH'
+        })
       })
     }
   }
