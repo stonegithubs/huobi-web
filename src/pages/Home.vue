@@ -112,12 +112,12 @@ export default {
         });
         let symbol = this.symbol + this.symbol2;
         console.log(config.host + '/api/v1/depth')
-        fetch({
+        fetch(config.host + '/api/v1/depth', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
-          url: config.host + '/api/v1/depth',
+          mode: 'cors',
           body: JSON.stringify({
             symbol: symbol,
             time: new Date(),
