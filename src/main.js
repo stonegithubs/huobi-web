@@ -10,6 +10,8 @@ import {
   Select,
   Option,
   Popover,
+  Tabs,
+  TabPane,
 } from 'element-ui';
 import './assets/css/reset.css'
 import './assets/css/common.css'
@@ -21,6 +23,8 @@ Vue.use(Input)
 Vue.use(Select)
 Vue.use(Option)
 Vue.use(Popover)
+Vue.use(Tabs)
+Vue.use(TabPane)
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
