@@ -26,9 +26,7 @@ export default {
   created() {
   },
   mounted() {
-    fetch(config.URL_HUOBI + '/v1/common/symbols').then((res) => {
-        console.log(res)
-    })
+    console.log()
   },
   beforeDestroy() {
 
