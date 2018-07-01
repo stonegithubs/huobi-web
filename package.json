@@ -11,7 +11,11 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "dexie": "^2.0.4",
+    "echarts": "^4.1.0",
     "element-ui": "^2.4.2",
+    "lodash.throttle": "^4.1.1",
+    "moment": "^2.22.2",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1"
   },

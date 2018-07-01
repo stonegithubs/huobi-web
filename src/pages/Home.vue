@@ -19,7 +19,12 @@
         <button @click="test">测试</button>
         <button @click="createTable">创建table</button>
         <button @click="delTable">删除db</button>
+        <button @click="showLineChart = true">showLineChart</button>
+        <button @click="showLineChart2 = true">showLineChart2</button>
       </span>
+      <div>
+        <span>当前价{{lastKLine.close}}</span>
+      </div>
       <div class="tickList" ref="tickList">
         <div class="flex-row " >
           <div class="flex-1">
@@ -36,23 +41,79 @@
       </div>
       
     </div>
+    <el-dialog
+        title="全部价格"
+        :visible.sync="showLineChart"
+        width="90%"
+        >
+        <div>
+          <LineChart
+            :asksList="asksList"
+            :bidsList="bidsList"
+            :aksFirst="aksFirst"
+            :bidsFirst="bidsFirst"
+          ></LineChart>
+        </div>
+        <span slot="footer" class="dialog-footer">
+            <el-button @click="showLineChart = false" size="small">取 消</el-button>
+            <el-button type="primary" @click="showLineChart = false" size="small">确 定</el-button>
+        </span>
+    </el-dialog>
+
+    <el-dialog
+        title="压力"
+        :visible.sync="showLineChart2"
+        width="90%"
+        >
+        <div>
+          <LineChart2
+            :lastKLine="lastKLine"
+            :asksList="asksList"
+            :bidsList="bidsList"
+            :aksFirst="aksFirst"
+            :bidsFirst="bidsFirst"
+          >
+
+          </LineChart2>
+        </div>
+        <span slot="footer" class="dialog-footer">
+            <el-button @click="showLineChart2 = false" size="small">取 消</el-button>
+            <el-button type="primary" @click="showLineChart2 = false" size="small">确 定</el-button>
+        </span>
+    </el-dialog>
+    
   </div>
 </template>
 
 <script>
-
+import throttle from 'lodash.throttle';
 import getSameAmount, {setPricePrecision} from '@/utils/getSameAmount';
 import Table from '@/components/Table';
+import {LineChart, LineChart2} from '@/components/charts';
 import config from '@/config';
+import db from '@/pulgins/dexie';
 // 有多单时， 总和超过最小价，低于则不显示
 let minSumPrice = 500;
 // 1单时， 总和超过最小价，低于则不显示
 let minPrice = 2000;
 
+let postDepth = throttle(function (body) {
+    fetch(config.host + '/api/v1/depth', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      mode: 'cors',
+      body: body,
+    })
+}, 10000, {trailing: false, leading: true});
+
 export default {
   name: "Home",
   components: {
     Table,
+    LineChart,
+    LineChart2
   },
   data() {
     return {
@@ -60,6 +121,9 @@ export default {
       asksList: [], // 卖单
       bidsList: [], // 买单
       bidsFirst: [],
+      lastKLine: {},
+      showLineChart: false,
+      showLineChart2: false,
       symbol: 'btc',
       symbol2: 'usdt',
       status: 'ws未连接',
@@ -103,7 +167,7 @@ export default {
     this.ws.onmessage = (ev) => {
       var data = JSON.parse(ev.data);
       
-      if (data.tick) {
+      if (data.type === 'WS_HUOBI' && data.tick) {
         this.bidsFirst = data.tick.bids[0],
         this.bidsList = getSameAmount(data.tick.bids, {
           minSumPrice,
@@ -115,19 +179,31 @@ export default {
           minPrice
         });
         let symbol = this.symbol + this.symbol2;
-        fetch(config.host + '/api/v1/depth', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          mode: 'cors',
-          body: JSON.stringify({
+
+        if (this.bidsFirst[1] > 10 || this.aksFirst[1] > 10) {
+          db.HUOBI_DEPTH.put({
+            action: this.bidsFirst[1] > 10 ? 'buy' : 'sell',
             symbol: symbol,
             time: Date.now(),
-            asksList: this.asksList,
-            bidsList: this.bidsList,
-          })
-        })
+            timeUTC: new Date(),
+            asksList: this.asksList.slice(0, 10),
+            bidsList: this.bidsList.slice(0, 10),
+          }).then(id => {
+              console.log(id)
+          }).catch (err => {
+              alert ("Error: " + (err.stack || err));
+          });
+        }
+        postDepth(JSON.stringify({
+          symbol: symbol,
+          time: Date.now(),
+          asksList: this.asksList.slice(0, 10),
+          bidsList: this.bidsList.slice(0, 10),
+        }));
+      }
+      if (data.type === 'WS_HUOBI' && data.kline) {
+        this.lastKLine = data.kline;
+
       }
       if (data.type === 'WS_HUOBI') {
         this.status = 'WS_HUOBI:' + data.value;
