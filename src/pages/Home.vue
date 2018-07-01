@@ -52,6 +52,7 @@
             :bidsList="bidsList"
             :aksFirst="aksFirst"
             :bidsFirst="bidsFirst"
+            :symbol="symbol + symbol2"
           ></LineChart>
         </div>
         <span slot="footer" class="dialog-footer">
@@ -72,6 +73,7 @@
             :bidsList="bidsList"
             :aksFirst="aksFirst"
             :bidsFirst="bidsFirst"
+            :symbol="symbol + symbol2"
           >
 
           </LineChart2>
@@ -179,41 +181,39 @@ export default {
           minPrice
         });
         let symbol = this.symbol + this.symbol2;
-
-        if (this.bidsFirst[1] > 10 || this.aksFirst[1] > 10) {
-          db.HUOBI_DEPTH.put({
-            action: this.bidsFirst[1] > 10 ? 'buy' : 'sell',
+        // 只记录大饼的
+        if (symbol === 'btcusdt') {
+          if (this.bidsFirst[1] > 10 || this.aksFirst[1] > 10) {
+            db.HUOBI_DEPTH.put({
+              action: this.bidsFirst[1] > 50 ? 'buy' : 'sell',
+              symbol: symbol,
+              time: Date.now(),
+              timeUTC: new Date(),
+              aksFirst: this.aksFirst[1],
+              bidsFirst: this.bidsFirst[1],
+              asksList: this.asksList.slice(0, 10),
+              bidsList: this.bidsList.slice(0, 10),
+            }).then(id => {
+                console.log(id)
+            }).catch (err => {
+                alert ("Error: " + (err.stack || err));
+            });
+          }
+          postDepth(JSON.stringify({
             symbol: symbol,
             time: Date.now(),
-            timeUTC: new Date(),
             asksList: this.asksList.slice(0, 10),
             bidsList: this.bidsList.slice(0, 10),
-          }).then(id => {
-              console.log(id)
-          }).catch (err => {
-              alert ("Error: " + (err.stack || err));
-          });
+          }));
         }
-        postDepth(JSON.stringify({
-          symbol: symbol,
-          time: Date.now(),
-          asksList: this.asksList.slice(0, 10),
-          bidsList: this.bidsList.slice(0, 10),
-        }));
+        
       }
       if (data.type === 'WS_HUOBI' && data.kline) {
         this.lastKLine = data.kline;
 
       }
-      if (data.type === 'WS_HUOBI') {
-        this.status = 'WS_HUOBI:' + data.value;
-        switch(data.value) {
-          case 'error':
-          this.status = 'WS_HUOBI:' + data.error;
-          break;
-          case 'ok':
-          break;
-        }
+      if (data.status) {
+        this.status = 'WS_HUOBI:' + data.msg;
         this.subscribeLoading = false;
       }
     };

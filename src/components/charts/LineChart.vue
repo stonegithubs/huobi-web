@@ -162,11 +162,12 @@ export default {
     bidsList: Array,
     aksFirst: Array,
     bidsFirst: Array,
+    symbol: String,
   },
   watch: {
       asksList(asksList) {
           this.push(this.bidsList, this.asksList);
-      }
+      },
   },
   mounted() {
     // 基于准备好的dom，初始化echarts实例
@@ -183,6 +184,7 @@ export default {
             delete option.toolbox;
             delete option.tooltip;
             delete option.legend;
+            
           }
           if (option.xAxis[0].data.length > 2000) {
               option.xAxis[0].data.shift();
@@ -191,7 +193,10 @@ export default {
               option.series[2].data.shift();
               option.series[3].data.shift();
           }
-
+          option.yAxis[0].min = (this.bidsList[0].amount * 0.4) | 0;
+          option.yAxis[0].max = (this.bidsList[0].amount * 6 | 0);
+          option.yAxis[1].min = (this.asksList[0].amount * 0.4) | 0;
+          option.yAxis[1].max = (this.asksList[0].amount * 6) | 0;
           option.xAxis[0].data.push(moment().format("YYYY/MM/DD h:mm:ss"));
           option.series[0].data.push({
               value: this.bidsList[0].amount,
