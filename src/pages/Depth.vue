@@ -16,9 +16,7 @@
       </el-select>
       <el-button type="primary" :loading="subscribeLoading" @click="subscribe" size="small">查挂单</el-button>
       <span>
-        <button @click="test">测试</button>
-        <button @click="createTable">创建table</button>
-        <button @click="delTable">删除db</button>
+        
         <button @click="showLineChart = true">showLineChart</button>
         <button @click="showLineChart2 = true">showLineChart2</button>
       </span>
@@ -100,7 +98,7 @@ let minSumPrice = 500;
 let minPrice = 2000;
 
 let postDepth = throttle(function (body) {
-    fetch(config.host + '/api/v1/depth', {
+    fetch(config.API_HOST + '/api/v1/depth', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -181,15 +179,30 @@ export default {
         });
         let symbol = this.symbol + this.symbol2;
         // 只记录大饼的
-        if (symbol === 'btcusdt') {
-          if (this.bidsFirst[1] > 10 || this.aksFirst[1] > 10) {
+        if (symbol === 'btcusdt' && data.tick.bids) {
+          let bids =  data.tick.bids.splice(0, 2);
+          let asks = data.tick.asks.splice(0, 2);
+          let action = ''; // 移除行为类型
+          bids.forEach((item) => {
+            if (item[1] > 10) {
+              action = 'buy'
+            }
+          });
+          asks.forEach((item) => {
+            if (item[1] > 10) {
+              action = 'sell'
+            }
+          });
+          if (action !== '') {
             db.HUOBI_DEPTH.put({
-              action: this.bidsFirst[1] > 50 ? 'buy' : 'sell',
+              action,
               symbol: symbol,
               time: Date.now(),
               timeUTC: new Date(),
-              aksFirst: this.aksFirst[1],
-              bidsFirst: this.bidsFirst[1],
+              tick: {
+                bids,
+                asks,
+              },
               asksList: this.asksList.slice(0, 10),
               bidsList: this.bidsList.slice(0, 10),
             }).then(id => {
@@ -261,38 +274,6 @@ export default {
         symbols: `${value}`
       }));
     },
-    test() {
-      let value = this.symbol + this.symbol2;
-      fetch(config.host + '/api/v1/showTables').then((res) => {
-        console.log(res)
-      });
-    },
-    createTable() {
-      fetch(config.host + '/api/v1/createTable', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        mode: 'cors',
-        body: JSON.stringify({
-          tableName: 'HUOBI_DEPTH'
-        })
-      }).then(res => {
-        console.log(res)
-      })
-    },
-    delTable() {
-      fetch(config.host + '/api/v1/delTable', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        mode: 'cors',
-        body: JSON.stringify({
-          tableName: 'HUOBI_DEPTH'
-        })
-      })
-    }
   }
 };
 </script>

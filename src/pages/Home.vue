@@ -7,6 +7,9 @@
       <el-tab-pane label="压力位差距" name="second">
         <Dis></Dis>
       </el-tab-pane>
+      <el-tab-pane label="sql" name="Sql">
+        <Sql></Sql>
+      </el-tab-pane>
     </el-tabs>
   </div>
 </template>
@@ -14,11 +17,13 @@
 <script>
 import Dis from './Dis';
 import Depth from './Depth';
+import Sql from './Sql';
 export default {
   name: "Home",
   components: {
     Depth,
     Dis,
+    Sql,
   },
   data() {
     return {

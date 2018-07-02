@@ -39,7 +39,7 @@ let option = {
     }
   },
   legend: {
-    data: ["买", "卖"],
+    data: ["买", "卖", "买一", "卖一"],
     x: "left"
   },
   dataZoom: [
