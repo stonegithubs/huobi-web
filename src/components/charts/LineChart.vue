@@ -187,7 +187,7 @@ export default {
             delete option.legend;
             
           }
-          if (option.xAxis[0].data.length > 2000) {
+          if (option.xAxis[0].data.length > 3000) {
               option.xAxis[0].data.shift();
               option.series[0].data.shift();
               option.series[1].data.shift();

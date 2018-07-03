@@ -129,7 +129,7 @@ export default {
             delete option.toolbox;
             delete option.dataZoom;
           }
-          if (option.xAxis.data.length > 2000) {
+          if (option.xAxis.data.length > 3000) {
               option.xAxis.data.shift();
               option.series[0].data.shift();
               option.series[1].data.shift();
