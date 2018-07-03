@@ -250,7 +250,7 @@ export default {
           action = 'sell'
         }
       });
-      if (action !== '' && diff(last.tick, {bids, asks,}).length !== 0) {
+      if (action !== '' && diff(last.tick, {bids, asks,}) !== undefined) {
         db.HUOBI_DEPTH.put({
           action,
           symbol: symbol,

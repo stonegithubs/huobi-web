@@ -11,35 +11,37 @@
       </el-select>
       <el-button type="primary"  @click="orderBy" size="small">排序</el-button>
     </div>
-    <table>
-        <thead>
-            <tr>
-                <th>
-                Symbols
-                </th>
-                <th>
-                买一/卖一(价格)
-                </th>
-                <th>
-                买单数(max)/卖单数(max)
-                </th>
-                <th>
-                buyCount / sellCount
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-        <tr
-            v-for="(item, index) in list"
-            :key="index"
-        >
-            <td>{{item.symbol}}</td>
-            <td>{{item.tickDis}}</td>
-            <td>{{item.maxCountDis}}</td>
-            <td>{{item.lengthDis}}</td>
-        </tr>
-        </tbody>
-    </table>
+    <div ref="tickList" style="overflow: auto;">
+      <table>
+          <thead>
+              <tr>
+                  <th>
+                  Symbols
+                  </th>
+                  <th>
+                  买一/卖一(价格)
+                  </th>
+                  <th>
+                  买单数(max)/卖单数(max)
+                  </th>
+                  <th>
+                  buyCount / sellCount
+                  </th>
+              </tr>
+          </thead>
+          <tbody>
+          <tr
+              v-for="(item, index) in list"
+              :key="index"
+          >
+              <td>{{item.symbol}}</td>
+              <td>{{item.tickDis}}</td>
+              <td>{{item.maxCountDis}}</td>
+              <td>{{item.lengthDis}}</td>
+          </tr>
+          </tbody>
+      </table>
+    </div>
   </div>
 </template>
 
@@ -64,13 +66,14 @@ export default {
   created() {
   },
   mounted() {
-    
+    this.$refs.tickList.style.maxHeight = window.innerHeight - 50 + 'px';
   },
   beforeDestroy() {
 
   },
   methods: {
     start() {
+      this.list.splice(0, this.list.length - 1);
       this.getAllDetail();
     },
     getAllDetail: async function () {
@@ -83,7 +86,14 @@ export default {
         let item = newSymbols[i];
         let minSumPrice, minPrice;
         let _symbols = item['base-currency'] + item['quote-currency'];
-        let res = await getDepth(_symbols, 'step0');
+        let res;
+        try {
+          res = await getDepth(_symbols, 'step0');
+        } catch (error) {
+          this.isLoading = false;
+          throw error;
+        }
+        
         let bids = res.tick.bids;
         let asks = res.tick.asks;
         // 设置精度
@@ -109,8 +119,22 @@ export default {
           minSumPrice,
           minPrice
         });
-        console.log(bidsList[0].sumMoneny, bidsList[0])
-        let tickDis = ((Number(bidsList[0].sumMoneny) + Number(bidsList[1].sumMoneny)) / 2) / ((Number(asksList[0].sumMoneny) + Number(asksList[1].sumMoneny)) / 2);
+        let bidsAvg = 1;
+        let asksAvg = 1;
+        if (!bidsList.length || !asksList.length) {
+          continue;
+        }
+        if (bidsList.length > 1) {
+          bidsAvg = (Number(bidsList[0].sumMoneny) + Number(bidsList[1].sumMoneny)) / 2;
+        } else if (bidsList.length === 1) {
+          bidsAvg =  Number(bidsList[0].sumMoneny);
+        }
+        if (asksList.length > 1) {
+          asksAvg = (Number(asksList[0].sumMoneny) + Number(asksList[1].sumMoneny)) / 2;
+        } else if (asksList.length === 1) {
+          asksAvg =  Number(asksList[0].sumMoneny);
+        }
+        let tickDis = bidsAvg / asksAvg;
 
         let bidsListOrderByCount = bidsList.sort(function (a, b) {
           return b.count - a.count;
@@ -129,6 +153,7 @@ export default {
       this.isLoading = false;
     },
     orderBy() {
+      
       this.list.sort((a, b) => {
         return b[this.orderByProperty] - a[this.orderByProperty];
       });
