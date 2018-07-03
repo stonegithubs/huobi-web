@@ -8,6 +8,7 @@
 
 <script>
 import moment from "moment";
+import throttle from 'lodash.throttle';
 const echarts = require("echarts");
 let option = {
   title: {
@@ -165,9 +166,9 @@ export default {
     symbol: String,
   },
   watch: {
-      asksList(asksList) {
-          this.push(this.bidsList, this.asksList);
-      },
+      asksList:throttle(function(asksList) {
+          this.push();
+      }, 5000, {trailing: false, leading: true})
   },
   mounted() {
     // 基于准备好的dom，初始化echarts实例
@@ -176,7 +177,7 @@ export default {
     this.chart.setOption(option);
   },
   methods: {
-      push(seriesData, seriesData2) {
+      push() {
           if (option.dataZoom) {
             delete option.dataZoom;
             delete option.title;

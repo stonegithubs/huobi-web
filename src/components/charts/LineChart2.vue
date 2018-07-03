@@ -8,6 +8,7 @@
 
 <script>
 import moment from "moment";
+import throttle from 'lodash.throttle';
 const echarts = require("echarts");
 let option = {
     title: {
@@ -109,9 +110,9 @@ export default {
     lastKLine: Object,
   },
   watch: {
-      lastKLine(lastKLine) {
+      lastKLine: throttle(function (lastKLine) {
           this.push();
-      }
+      }, 5000, {trailing: false, leading: true})
   },
   mounted() {
     // 基于准备好的dom，初始化echarts实例
@@ -137,7 +138,7 @@ export default {
               option.series[4].data.shift();
           }
           option.yAxis.max = (this.lastKLine.close + (this.lastKLine.close * 0.2)) | 0;
-         option.yAxis.min = (this.lastKLine.close - (this.lastKLine.close * 0.2)) | 0;
+          option.yAxis.min = (this.lastKLine.close - (this.lastKLine.close * 0.2)) | 0;
           option.xAxis.data.push(moment().format("YYYY/MM/DD h:mm:ss"));
           option.series[0].data.push({
               value: this.bidsList[0].price,

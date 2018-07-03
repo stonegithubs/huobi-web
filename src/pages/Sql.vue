@@ -47,7 +47,7 @@ export default {
           tableName: 'HUOBI_DEPTH'
         })
       }).then(res => {
-        console.log(res)
+        console.log(res.json())
       })
     },
     delTable() {

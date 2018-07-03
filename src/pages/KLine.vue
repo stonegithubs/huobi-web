@@ -1,20 +1,14 @@
 <template>
   <div>
-    <ul>
-        <li 
-            v-for="(item, index) in list"
-            :key="index"
-        ></li>
-    </ul>
+
   </div>
 </template>
 
 <script>
 import config from '@/config';
-import Dis from './Dis';
-
+import { getKLine } from '@/api/huobiREST';
 export default {
-  name: "Home",
+  name: "Kline",
   components: {
 
   },
@@ -26,14 +20,15 @@ export default {
   created() {
   },
   mounted() {
+    getKLine('btcusdt', '1day', 100).then((res) => {
+        console.log(res)
+    })
     console.log()
   },
   beforeDestroy() {
 
   },
   methods: {
-    handleClick(tab, event) {
-    }
   }
 };
 </script>

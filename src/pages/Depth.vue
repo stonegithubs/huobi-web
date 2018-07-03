@@ -87,11 +87,17 @@
 
 <script>
 import throttle from 'lodash.throttle';
+import diff from 'deep-diff';
+// utils
 import getSameAmount, {setPricePrecision} from '@/utils/getSameAmount';
+// components
 import Table from '@/components/Table';
 import {LineChart, LineChart2} from '@/components/charts';
 import config from '@/config';
+// pulgins
 import db from '@/pulgins/dexie';
+// api
+import {getSymbols} from '@/api/huobiREST';
 // 有多单时， 总和超过最小价，低于则不显示
 let minSumPrice = 500;
 // 1单时， 总和超过最小价，低于则不显示
@@ -106,7 +112,7 @@ let postDepth = throttle(function (body) {
       mode: 'cors',
       body: body,
     })
-}, 10000, {trailing: false, leading: true});
+}, 20000, {trailing: false, leading: true});
 
 export default {
   name: "Depth",
@@ -129,18 +135,6 @@ export default {
       status: 'ws未连接',
       subscribeLoading: true,
     };
-  },
-  created() {
-    if (localStorage.precision === undefined) {
-      // 查精度
-      fetch(config.URL_HUOBI + '/v1/common/symbols').then((res) => {
-        return res.json();
-      }).then((res) => {
-        if (res.data) {
-          localStorage.precision = JSON.stringify(res.data);
-        }
-      })
-    }
   },
   mounted() {
     this.$refs.tickList.style.maxHeight = window.innerHeight - 50 + 'px';
@@ -178,45 +172,9 @@ export default {
           minPrice
         });
         let symbol = this.symbol + this.symbol2;
-        // 只记录大饼的
+        // 只记录大饼的某些特征
         if (symbol === 'btcusdt' && data.tick.bids) {
-          let bids =  data.tick.bids.splice(0, 2);
-          let asks = data.tick.asks.splice(0, 2);
-          let action = ''; // 移除行为类型
-          bids.forEach((item) => {
-            if (item[1] > 10) {
-              action = 'buy'
-            }
-          });
-          asks.forEach((item) => {
-            if (item[1] > 10) {
-              action = 'sell'
-            }
-          });
-          if (action !== '') {
-            db.HUOBI_DEPTH.put({
-              action,
-              symbol: symbol,
-              time: Date.now(),
-              timeUTC: new Date(),
-              tick: {
-                bids,
-                asks,
-              },
-              asksList: this.asksList.slice(0, 10),
-              bidsList: this.bidsList.slice(0, 10),
-            }).then(id => {
-                console.log(id)
-            }).catch (err => {
-                alert ("Error: " + (err.stack || err));
-            });
-          }
-          postDepth(JSON.stringify({
-            symbol: symbol,
-            time: Date.now(),
-            asksList: this.asksList.slice(0, 10),
-            bidsList: this.bidsList.slice(0, 10),
-          }));
+          this.writeSomething(data.tick.bids, data.tick.bids);
         }
         
       }
@@ -240,9 +198,10 @@ export default {
     this.ws.close();
   },
   methods: {
-    subscribe() {
+    subscribe: async function () {
       let value = this.symbol + this.symbol2;
-      let precision = JSON.parse(localStorage.precision);
+
+      let precision = await getSymbols();
       switch(this.symbol2) {
         case 'btc':
           // 有多单时， 总和超过最小价，低于则不显示
@@ -274,6 +233,48 @@ export default {
         symbols: `${value}`
       }));
     },
+    writeSomething: async function (tick_bids, tick_asks) {
+      let symbol = this.symbol + this.symbol2;
+      let bids =  tick_bids.splice(0, 2);
+      let asks = tick_asks.splice(0, 2);
+      let action = ''; // 移除行为类型
+      
+      let last = await db.HUOBI_DEPTH.toCollection().last();
+      bids.forEach((item) => {
+        if (item[1] > 10) {
+          action = 'buy'
+        }
+      });
+      asks.forEach((item) => {
+        if (item[1] > 10) {
+          action = 'sell'
+        }
+      });
+      if (action !== '' && diff(last.tick, {bids, asks,}).length !== 0) {
+        db.HUOBI_DEPTH.put({
+          action,
+          symbol: symbol,
+          time: Date.now(),
+          timeUTC: new Date(),
+          tick: {
+            bids,
+            asks,
+          },
+          asksList: this.asksList.slice(0, 10),
+          bidsList: this.bidsList.slice(0, 10),
+        }).then(id => {
+            console.log('asks:', asks, 'bids:', bids);
+        }).catch (err => {
+            alert ("Error: " + (err.stack || err));
+        });
+      }
+      postDepth(JSON.stringify({
+        symbol: symbol,
+        time: Date.now(),
+        asksList: this.asksList.slice(0, 10),
+        bidsList: this.bidsList.slice(0, 10),
+      }));
+    }
   }
 };
 </script>

@@ -4,26 +4,31 @@
       <el-tab-pane label="Depth" name="Depth">
         <Depth></Depth>
       </el-tab-pane>
-      <el-tab-pane label="压力位差距" name="second">
-        <Dis></Dis>
+      <el-tab-pane label="Difference" name="Difference">
+        <Difference></Difference>
       </el-tab-pane>
       <el-tab-pane label="sql" name="Sql">
         <Sql></Sql>
+      </el-tab-pane>
+      <el-tab-pane label="KLine" name="KLine">
+        <KLine></KLine>
       </el-tab-pane>
     </el-tabs>
   </div>
 </template>
 
 <script>
-import Dis from './Dis';
 import Depth from './Depth';
 import Sql from './Sql';
+import KLine from './KLine';
+import Difference from './Difference';
 export default {
   name: "Home",
   components: {
     Depth,
-    Dis,
+    Difference,
     Sql,
+    KLine,
   },
   data() {
     return {
