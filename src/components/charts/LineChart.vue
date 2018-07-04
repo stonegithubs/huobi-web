@@ -10,6 +10,8 @@
 import moment from "moment";
 import throttle from 'lodash.throttle';
 const echarts = require("echarts");
+
+let preSymbol = '';
 let option = {
   title: {
     text: "关系图",
@@ -194,10 +196,16 @@ export default {
               option.series[2].data.shift();
               option.series[3].data.shift();
           }
-          option.yAxis[0].min = (this.bidsList[0].amount * 0.4) | 0;
-          option.yAxis[0].max = (this.bidsList[0].amount * 6 | 0);
-          option.yAxis[1].min = (this.asksList[0].amount * 0.4) | 0;
-          option.yAxis[1].max = (this.asksList[0].amount * 6) | 0;
+          let maxAmount = this.bidsList[0].amount > this.asksList[0].amount
+                            ? this.bidsList[0].amount
+                            : this.asksList[0].amount;
+          if (preSymbol !== this.symbol) {
+            option.yAxis[0].min = (maxAmount * 0.4) | 0;
+            option.yAxis[0].max = (maxAmount * 6 | 0);
+            option.yAxis[1].min = (maxAmount * 0.4) | 0;
+            option.yAxis[1].max = (maxAmount * 6) | 0;
+            preSymbol = this.symbol;
+          }
           option.xAxis[0].data.push(moment().format("YYYY/MM/DD h:mm:ss"));
           option.series[0].data.push({
               value: this.bidsList[0].amount,

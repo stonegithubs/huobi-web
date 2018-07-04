@@ -95,7 +95,7 @@ import Table from '@/components/Table';
 import {LineChart, LineChart2} from '@/components/charts';
 import config from '@/config';
 // pulgins
-import db from '@/pulgins/dexie';
+import db from '@/plugins/dexie';
 // api
 import {getSymbols} from '@/api/huobiREST';
 // 有多单时， 总和超过最小价，低于则不显示
