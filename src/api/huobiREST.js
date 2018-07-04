@@ -1,6 +1,6 @@
 import Qs from 'qs';
 import http from './http';
-
+import config from '../config';
 
 /**
  * 
@@ -107,6 +107,38 @@ export async function getSymbols () {
       // 做缓存
       localStorage.symbols = JSON.stringify(result.data.data);
       return result.data.data;
+    }
+    const err = {
+      tip: 'error',
+      response: result,
+      data: {},
+      url,
+    };
+    throw err;
+  } catch (err) {
+    throw err;
+  }
+}
+
+/**
+ * 买币
+ * @interface {
+ *  symbol: string,
+ *  amount: string,
+ *  price?: string,
+ *  type: string,
+ * }
+ * @return {Array}
+ */
+export async function buyLimit (params) {
+  const url = config.API_HOST + '/api/v1/buy_limit';
+  try {
+    const result = await http.post(
+      url,
+      params
+    );
+    if (result.status === 200 && result.data.status === 'ok') {
+      return result.data;
     }
     const err = {
       tip: 'error',

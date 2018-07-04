@@ -13,6 +13,9 @@
       <el-tab-pane label="KLine" name="KLine">
         <KLine></KLine>
       </el-tab-pane>
+      <el-tab-pane label="Market" name="Market">
+        <Market></Market>
+      </el-tab-pane>
     </el-tabs>
   </div>
 </template>
@@ -22,6 +25,7 @@ import Depth from './Depth';
 import Sql from './Sql';
 import KLine from './KLine';
 import Difference from './Difference';
+import Market from './Market';
 export default {
   name: "Home",
   components: {
@@ -29,6 +33,7 @@ export default {
     Difference,
     Sql,
     KLine,
+    Market,
   },
   data() {
     return {
