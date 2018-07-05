@@ -34,7 +34,7 @@
         <el-option value="buy-limit">限价买</el-option>
         <el-option value="sell-limit">限价卖</el-option>
       </el-select>
-      <el-button type="primary" :loading="subscribeLoading" @click="buyLimit" size="small">买</el-button>
+      <el-button type="primary" :loading="buttonLoading" @click="buyLimit" size="small">买</el-button>
   </div>
 </template>
 
@@ -52,7 +52,8 @@ export default {
       symbol: '',
       amount: '',
       price: '',
-      type: 'buy-limit'
+      type: 'buy-limit',
+      buttonLoading: false,
     };
   },
   created() {
@@ -65,6 +66,7 @@ export default {
   },
   methods: {
       buyLimit() {
+        this.buttonLoading = true;
         buyLimit({
             symbol: this.symbol,
             amount: this.amount,
@@ -72,6 +74,8 @@ export default {
             type: this.type,
         }).then((res) => {
             console.log(res)
+        }).finally(() => {
+          this.buttonLoading = false;
         })
       }
   }
