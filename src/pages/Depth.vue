@@ -13,6 +13,7 @@
       <el-select v-model="symbol2" placeholder="请选择" size="small">
         <el-option value="usdt">usdt</el-option>
         <el-option value="btc">btc</el-option>
+        <el-option value="eth">eth</el-option>
       </el-select>
       <el-button
         type="primary"
@@ -39,12 +40,12 @@
           <div class="flex-1">
             <span>买单({{bidsList.length}})</span>
             <span>买1:{{bidsFirst}}</span>
-            <Table :data="bidsList"></Table>
+            <Table :data="bidsList" :quoteCurrency="quoteCurrency"></Table>
           </div>
           <div class="flex-1">
             <span>卖单({{asksList.length}})</span>
             <span>卖1:{{aksFirst}}</span>
-            <Table :data="asksList"></Table>
+            <Table :data="asksList" :quoteCurrency="quoteCurrency"></Table>
           </div>
         </div>
       </div>
@@ -108,7 +109,7 @@ import config from '@/config';
 // pulgins
 import db from '@/plugins/dexie';
 // api
-import {getSymbols} from '@/api/huobiREST';
+import {getSymbols, getKLine} from '@/api/huobiREST';
 // 有多单时， 总和超过最小价，低于则不显示
 let minSumPrice = 500;
 // 1单时， 总和超过最小价，低于则不显示
@@ -139,6 +140,7 @@ export default {
       bidsList: [], // 买单
       bidsFirst: [],
       lastKLine: {},
+      quoteCurrency: 'usdt',
       showLineChart: false,
       showLineChart2: false,
       symbol: 'btc',
@@ -185,16 +187,14 @@ export default {
           minPrice,
           type: 'asks'
         });
-        let symbol = this.symbol + this.symbol2;
         // 只记录大饼的某些特征
-        if (symbol === 'btcusdt' && data.tick.bids) {
+        if (data.symbol === 'btcusdt' && data.tick.bids) {
           this.writeSomething(data.tick.bids, data.tick.bids);
         }
         
       }
       if (data.type === 'WS_HUOBI' && data.kline) {
         this.lastKLine = data.kline;
-
       }
       if (data.status) {
         this.status = 'WS_HUOBI:' + data.msg;
@@ -214,38 +214,55 @@ export default {
   methods: {
     subscribe: async function () {
       let value = this.symbol + this.symbol2;
+      // 单位为美元
+      window.ethPrice = 0;
+      window.btcPrice = 0;
+      this.quoteCurrency = '$';
 
-      let precision = await getSymbols();
-      switch(this.symbol2) {
-        case 'btc':
-          // 有多单时， 总和超过最小价，低于则不显示
-          minSumPrice = 0.15;
-          // 1单时， 总和超过最小价，低于则不显示
-          minPrice = 0.5;
-          break;
-        case 'usdt': 
-          // 有多单时， 总和超过最小价，低于则不显示
-          minSumPrice = 200;
-          // 1单时， 总和超过最小价，低于则不显示
-          minPrice = 1000;
-      }
-      precision.some((item) => {
+      // 有多单时， 总和超过最小价，低于则不显示
+      let minSumPrice = 200;
+      // 1单时， 总和超过最小价，低于则不显示
+      let minPrice = 1000;
+
+      let precisionData = await getSymbols();
+      let pricePrecision = 0;
+      let amountPrecision = 0;
+      precisionData.some((item) => {
         // base-currency:"yee"
         // price-precision:8
         // quote-currency:"eth"
         if (item['base-currency'] === this.symbol && item['quote-currency'] === this.symbol2) {
-          getSameAmount.setConfig({pricePrecision: item['price-precision']});
+          pricePrecision = item['price-precision'];
+          amountPrecision = item['amount-precision'];
           return true;
         }
         return false;
-      })
-      ;
-      this.subscribeLoading = true;
+      });
+      
+      if (this.symbol2 === 'eth') {
+        let res = await getKLine('ethusdt', '1min', 1);
+        window.ethPrice = res.data[0].close;
+        this.quoteCurrency = 'ETH';
+      } else if (this.symbol2 === 'btc') {
+        let res = await getKLine('btcusdt', '1min', 1);
+        window.btcPrice = res.data[0].close;
+        this.quoteCurrency = 'BTC';
+      }
+      // 设置精度
+      getSameAmount.setConfig({
+        pricePrecision,
+        amountPrecision,
+        quoteCurrency: this.symbol2
+      });
+      
+      // 开始订阅
       this.ws.send(JSON.stringify({
         type: `ws-huobi`,
         value: 'subscribe',
         symbols: `${value}`
       }));
+
+      this.subscribeLoading = true;
     },
     sortBy() {
       getSameAmount.setConfig({sortBy: this.sortByValue});

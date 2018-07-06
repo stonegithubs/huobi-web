@@ -1,8 +1,10 @@
 
-// 价格精度
-let pricePrecision = 0;
+
+
 let config = {
-  pricePrecision: 0,
+  quoteCurrency: 'usdt', // 交易对
+  pricePrecision: 0, // 价格精度
+  amountPrecision: 0, // 量 的精度
   sortBy: 'sumMoneny',
 }
 /**
@@ -23,6 +25,8 @@ const getSameAmount = function (data, {
 } = {}) {
   // data = data.slice(0, 400)
   let countTemp = {};
+
+  // 统计重复次数
   for (let i = 0; i < data.length; i++) {
     let count = data[i][1];
 
@@ -39,6 +43,7 @@ const getSameAmount = function (data, {
   for (let key in countTemp) {
     let prices = countTemp[key].prices;
     let price = 0;
+    // 多个重复则取个平均数
     if (prices.length === 1) {
       price = countTemp[key].prices[0];
     } else {
@@ -50,13 +55,21 @@ const getSameAmount = function (data, {
     let sum = count * key;
     // 总价
     let sumPrice = sum * price;
+    let sumDollar = sumPrice;
 
-    if ((count > 1 && sumPrice > minSumPrice) || (key * price > minPrice)) {
+    // 转换成美元价格
+    if (config.quoteCurrency === 'btc') {
+      sumDollar = sumPrice * window.btcPrice;
+    } else if (config.quoteCurrency === 'eth') {
+      sumDollar = sumPrice * window.ethPrice;
+    }
+    if ((count > 1 && sumDollar > minSumPrice) || (sumDollar > minPrice)) {
       let data = {
         'count': count,
-        'amount': Number(key).toFixed(2),
-        sumCount: sum.toFixed(2),
-        sumMoneny: sumPrice.toFixed(1),
+        'amount': Number(key).toFixed(config.amountPrecision),
+        sumCount: sum.toFixed(config.amountPrecision),
+        sumMoneny: sumPrice.toFixed(2),
+        sumDollar: sumDollar.toFixed(2),
         price: price.toFixed(config.pricePrecision),
         prices: countTemp[key].prices,
       }

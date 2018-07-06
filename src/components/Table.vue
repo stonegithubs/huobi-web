@@ -13,10 +13,13 @@
                 sumCount
                 </th>
                 <th>
-                sumMoneny
+                sumMoneny({{quoteCurrency}})
                 </th>
                 <th>
-                price
+                $($/k)
+                </th>
+                <th>
+                price({{quoteCurrency}})
                 </th>
             </tr>
         </thead>
@@ -29,6 +32,7 @@
             <td>{{item.amount}}</td>
             <td>{{item.sumCount}}</td>
             <td>{{item.sumMoneny}}</td>
+            <td>{{(item.sumDollar / 1000).toFixed(3)}}</td>
             <td>
                 <span>{{item.price}}</span>
                 <el-button
@@ -72,7 +76,8 @@ export default {
         default () {
             return [];
         }
-    }
+    },
+    quoteCurrency: String,
   },
   mounted() {
   },
