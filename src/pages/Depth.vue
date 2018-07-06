@@ -219,13 +219,13 @@ export default {
       switch(this.symbol2) {
         case 'btc':
           // 有多单时， 总和超过最小价，低于则不显示
-          minSumPrice = 0.5;
+          minSumPrice = 0.15;
           // 1单时， 总和超过最小价，低于则不显示
-          minPrice = 0.4;
+          minPrice = 0.5;
           break;
         case 'usdt': 
           // 有多单时， 总和超过最小价，低于则不显示
-          minSumPrice = 100;
+          minSumPrice = 200;
           // 1单时， 总和超过最小价，低于则不显示
           minPrice = 1000;
       }
