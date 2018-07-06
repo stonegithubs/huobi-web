@@ -35,7 +35,12 @@ let option = {
     trigger: "axis",
    
     formatter: function (params) {
-      console.log(params[0])
+      console.log(`
+        买最大单(量): ${params[0].data.value}<br />
+        卖最大单(量): ${params[1].data.value}<br />
+        买一(量): ${params[2].data.value}<br />
+        卖一(量): ${params[3].data.value}<br />
+      `)
       return `
         买最大单(量): ${params[0].data.value}<br />
         卖最大单(量): ${params[1].data.value}<br />
@@ -226,6 +231,7 @@ export default {
               value: this.aksFirst[1],
               price: this.aksFirst[0]
           });
+          console.log(this.chart.getOption())
           this.chart.setOption(option);
       }
   }

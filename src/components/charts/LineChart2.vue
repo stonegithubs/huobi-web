@@ -10,6 +10,8 @@
 import moment from "moment";
 import throttle from 'lodash.throttle';
 const echarts = require("echarts");
+let preSymbol = '';
+
 let option = {
     title: {
         text: '买一卖一',
@@ -108,6 +110,7 @@ export default {
     aksFirst: Array,
     bidsFirst: Array,
     lastKLine: Object,
+    symbol: String,
   },
   watch: {
       lastKLine: throttle(function (lastKLine) {
@@ -137,31 +140,44 @@ export default {
               option.series[3].data.shift();
               option.series[4].data.shift();
           }
-          option.yAxis.max = (this.lastKLine.close + (this.lastKLine.close * 0.2)) | 0;
-          option.yAxis.min = (this.lastKLine.close - (this.lastKLine.close * 0.2)) | 0;
+          let btcPrice = 1;
+          if (this.symbol.substr(-3) === "btc") {
+                btcPrice = 6626;
+            }
+          if (preSymbol !== this.symbol) {
+            
+            
+            
+            let lastClose = this.lastKLine.close * btcPrice;
+            option.yAxis.max = (lastClose + (lastClose * 0.2)).toFixed(2);
+            option.yAxis.min = (lastClose - (lastClose * 0.2)).toFixed(2);
+            console.log(option.yAxis.max)
+            preSymbol = this.symbol;
+          }
+          
           option.xAxis.data.push(moment().format("YYYY/MM/DD h:mm:ss"));
           option.series[0].data.push({
-              value: this.bidsList[0].price,
+              value: this.bidsList[0].price * btcPrice,
               name: 'price',
               ...this.bidsList[0]
           });
           option.series[1].data.push({
-              value: this.asksList[0].price,
+              value: this.asksList[0].price * btcPrice,
               name: 'price',
               ...this.asksList[0]
           });
           option.series[2].data.push({
               count: this.bidsFirst[1],
               name: 'price',
-              value: this.bidsFirst[0]
+              value: this.bidsFirst[0] * btcPrice
           });
           option.series[3].data.push({
               count: this.aksFirst[1],
               name: 'price',
-              value: this.aksFirst[0]
+              value: this.aksFirst[0] * btcPrice
           });
           option.series[4].data.push({
-              value: this.lastKLine.close,
+              value: this.lastKLine.close * btcPrice,
               name: 'price',
           });
           this.chart.setOption(option);
