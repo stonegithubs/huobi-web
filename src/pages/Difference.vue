@@ -5,7 +5,7 @@
       <el-button type="primary" :loading="isLoading" @click="start" size="small">开始</el-button>
 
       <el-select v-model="orderByProperty" placeholder="请选择" size="small">
-        <el-option value="tickDis">买一/卖一(价格)</el-option>
+        <el-option value="tickDis">买一/卖一(总价格)</el-option>
         <el-option value="maxCountDis">买单数(max)/卖单数(max)</el-option>
         <el-option value="lengthDis">buyCount / sellCount</el-option>
       </el-select>
@@ -101,13 +101,13 @@ export default {
         switch(item['quote-currency']) {
           case 'btc':
             // 有多单时， 总和超过最小价，低于则不显示
-            minSumPrice = 0.4;
+            minSumPrice = 0.15;
             // 1单时， 总和超过最小价，低于则不显示
             minPrice = 0.5;
             break;
           case 'usdt': 
             // 有多单时， 总和超过最小价，低于则不显示
-            minSumPrice = 100;
+            minSumPrice = 200;
             // 1单时， 总和超过最小价，低于则不显示
             minPrice = 1000;
         }
