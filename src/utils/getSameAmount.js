@@ -1,8 +1,16 @@
 
 // 价格精度
 let pricePrecision = 0;
-export function setPricePrecision (precision) {
-  pricePrecision = precision;
+let config = {
+  pricePrecision: 0,
+  sortBy: 'sumMoneny',
+}
+/**
+ * 
+ * @param {Object} newConfig 
+ */
+export function setConfig (newConfig) {
+  Object.assign(config, newConfig);
 }
 /**
  * 合并相同的价格统计次数并排序
@@ -11,6 +19,7 @@ export function setPricePrecision (precision) {
 const getSameAmount = function (data, {
   minSumPrice = 100,
   minPrice = 500,
+  type = '',
 } = {}) {
   // data = data.slice(0, 400)
   let countTemp = {};
@@ -48,15 +57,20 @@ const getSameAmount = function (data, {
         'amount': Number(key).toFixed(2),
         sumCount: sum.toFixed(2),
         sumMoneny: sumPrice.toFixed(1),
-        price: price.toFixed(pricePrecision),
+        price: price.toFixed(config.pricePrecision),
         prices: countTemp[key].prices,
       }
       arr.push(data);
     }
   }
+  if (type === 'asks' && config.sortBy === 'price') {
+    return arr.sort(function (a, b) {
+      return a[config.sortBy] - b[config.sortBy]
+    });
+  }
   return arr.sort(function (a, b) {
-    return b.sumMoneny - a.sumMoneny
+    return b[config.sortBy] - a[config.sortBy]
   });
 }
-
+getSameAmount.setConfig = setConfig;
 export default getSameAmount;

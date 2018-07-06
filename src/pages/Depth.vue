@@ -14,12 +14,23 @@
         <el-option value="usdt">usdt</el-option>
         <el-option value="btc">btc</el-option>
       </el-select>
-      <el-button type="primary" :loading="subscribeLoading" @click="subscribe" size="small">查挂单</el-button>
-      <span>
-        
-        <button @click="showLineChart = true">showLineChart</button>
-        <button @click="showLineChart2 = true">showLineChart2</button>
-      </span>
+      <el-button
+        type="primary"
+        :loading="subscribeLoading"
+        @click="subscribe"
+        size="small"
+      >查挂单
+      </el-button>
+      <el-select v-model="sortByValue" @change="sortBy" placeholder="请选择" size="small">
+        <el-option value="sumMoneny">按sumMoneny排序</el-option>
+        <el-option value="price">按price排序</el-option>
+      </el-select>
+      <el-button type="primary" @click="showLineChart2 = true" size="small">
+        showLineChart2
+      </el-button>
+      <el-button type="primary"  @click="showLineChart = true" size="small">
+        showLineChart
+      </el-button>
       <div>
         <span>当前价{{lastKLine.close}}</span>
       </div>
@@ -89,7 +100,7 @@
 import throttle from 'lodash.throttle';
 import diff from 'deep-diff';
 // utils
-import getSameAmount, {setPricePrecision} from '@/utils/getSameAmount';
+import getSameAmount from '@/utils/getSameAmount';
 // components
 import Table from '@/components/Table';
 import {LineChart, LineChart2} from '@/components/charts';
@@ -133,6 +144,7 @@ export default {
       symbol: 'btc',
       symbol2: 'usdt',
       status: 'ws未连接',
+      sortByValue: 'sumMoneny',
       subscribeLoading: true,
     };
   },
@@ -164,12 +176,14 @@ export default {
         this.bidsFirst = data.tick.bids[0],
         this.bidsList = getSameAmount(data.tick.bids, {
           minSumPrice,
-          minPrice
+          minPrice,
+          type: 'bids'
         });
         this.aksFirst = data.tick.asks[0],
         this.asksList = getSameAmount(data.tick.asks, {
           minSumPrice,
-          minPrice
+          minPrice,
+          type: 'asks'
         });
         let symbol = this.symbol + this.symbol2;
         // 只记录大饼的某些特征
@@ -220,7 +234,7 @@ export default {
         // price-precision:8
         // quote-currency:"eth"
         if (item['base-currency'] === this.symbol && item['quote-currency'] === this.symbol2) {
-          setPricePrecision(item['price-precision']);
+          getSameAmount.setConfig({pricePrecision: item['price-precision']});
           return true;
         }
         return false;
@@ -232,6 +246,9 @@ export default {
         value: 'subscribe',
         symbols: `${value}`
       }));
+    },
+    sortBy() {
+      getSameAmount.setConfig({sortBy: this.sortByValue});
     },
     writeSomething: async function (tick_bids, tick_asks) {
       let symbol = this.symbol + this.symbol2;

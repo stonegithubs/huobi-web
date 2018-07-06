@@ -49,7 +49,7 @@
 import config from '@/config';
 import { getDepth, getSymbols } from '@/api/huobiREST';
 // utils
-import getSameAmount, {setPricePrecision} from '@/utils/getSameAmount';
+import getSameAmount from '@/utils/getSameAmount';
 
 export default {
   name: "Difference",
@@ -97,13 +97,13 @@ export default {
         let bids = res.tick.bids;
         let asks = res.tick.asks;
         // 设置精度
-        setPricePrecision(item['price-precision']);
+        getSameAmount.setConfig({ pricePrecision: item['price-precision'] });
         switch(item['quote-currency']) {
           case 'btc':
             // 有多单时， 总和超过最小价，低于则不显示
-            minSumPrice = 0.5;
+            minSumPrice = 0.4;
             // 1单时， 总和超过最小价，低于则不显示
-            minPrice = 0.4;
+            minPrice = 0.5;
             break;
           case 'usdt': 
             // 有多单时， 总和超过最小价，低于则不显示
@@ -113,11 +113,13 @@ export default {
         }
         let bidsList = getSameAmount(bids, {
           minSumPrice,
-          minPrice
+          minPrice,
+          type: 'bids'
         });
         let asksList = getSameAmount(asks, {
           minSumPrice,
-          minPrice
+          minPrice,
+          type: 'asks'
         });
         let bidsAvg = 1;
         let asksAvg = 1;
