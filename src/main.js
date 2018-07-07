@@ -3,6 +3,7 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import store from './store'
 import {
   Button,
   Dialog,
@@ -12,6 +13,7 @@ import {
   Popover,
   Tabs,
   TabPane,
+  Notification,
 } from 'element-ui';
 import './assets/css/reset.css'
 import './assets/css/common.css'
@@ -25,10 +27,12 @@ Vue.use(Option)
 Vue.use(Popover)
 Vue.use(Tabs)
 Vue.use(TabPane)
+Vue.prototype.$notify = Notification;
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>'
 })

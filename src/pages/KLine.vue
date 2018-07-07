@@ -1,6 +1,8 @@
 <template>
   <div>
+    <div class="flex-row">
 
+    </div>
   </div>
 </template>
 
@@ -20,10 +22,10 @@ export default {
   created() {
   },
   mounted() {
-    getKLine('btcusdt', '1day', 100).then((res) => {
-        console.log(res)
-    })
-    console.log()
+    // getKLine('btcusdt', '1day', 100).then((res) => {
+    //     console.log(res)
+    // })
+
   },
   beforeDestroy() {
 

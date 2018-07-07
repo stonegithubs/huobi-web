@@ -18,7 +18,7 @@
 import config from '@/config';
 
 export default {
-  name: "Home",
+  name: "Sql",
   components: {
 
   },

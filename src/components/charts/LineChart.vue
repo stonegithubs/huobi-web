@@ -2,56 +2,45 @@
 
 <template>
   <div>
-    <canvas ref="canvas" width="1000px" height="500px"></canvas>
+    <div ref="container" class="echarts-container">
+    </div>
   </div>
 </template>
 
 <script>
 import moment from "moment";
 import throttle from 'lodash.throttle';
+
+import { color } from './config';
+
 const echarts = require("echarts");
 
 let preSymbol = '';
 let option = {
+  color,
   title: {
-    text: "关系图",
+    text: "量的博弈",
     subtext: "",
-    x: "center",
+    x: "left",
     align: "right"
   },
   grid: {
     bottom: 80
   },
-  toolbox: {
-    feature: {
-      dataZoom: {
-        yAxisIndex: "none"
-      },
-      restore: {},
-      saveAsImage: {}
-    }
-  },
+
   tooltip: {
     trigger: "axis",
-   
-    formatter: function (params) {
-      console.log(`
-        买最大单(量): ${params[0].data.value}<br />
-        卖最大单(量): ${params[1].data.value}<br />
-        买一(量): ${params[2].data.value}<br />
-        卖一(量): ${params[3].data.value}<br />
-      `)
-      return `
-        买最大单(量): ${params[0].data.value}<br />
-        卖最大单(量): ${params[1].data.value}<br />
-        买一(量): ${params[2].data.value}<br />
-        卖一(量): ${params[3].data.value}<br />
-      `;
+    axisPointer: {
+        type: 'cross',
+        animation: false,
+        label: {
+            backgroundColor: '#505765'
+        }
     }
   },
   legend: {
-    data: ["买", "卖", "买一", "卖一"],
-    x: "left"
+    data: ["买(amount)", "卖(amount)", "买一(amount)", "卖一(amount)"],
+    x: "center"
   },
   dataZoom: [
     {
@@ -77,12 +66,12 @@ let option = {
   ],
   yAxis: [
     {
-      name: "买",
+      name: "买(amount)",
       type: "value",
       max: 1000
     },
     {
-      name: "卖",
+      name: "卖(amount)",
       nameLocation: "start",
       max: 1000,
       type: "value",
@@ -91,7 +80,7 @@ let option = {
   ],
   series: [
     {
-      name: "买",
+      name: "买(amount)",
       type: "line",
       animation: false,
       areaStyle: {
@@ -118,7 +107,7 @@ let option = {
       data: []
     },
     {
-      name: "卖",
+      name: "卖(amount)",
       type: "line",
       yAxisIndex: 1,
       animation: false,
@@ -146,14 +135,14 @@ let option = {
       data: []
     },
     {
-        name: '买一',
+        name: '买一(amount)',
         type: 'line',
         showSymbol: false,
         hoverAnimation: false,
         data: []
     },
     {
-        name: '卖一',
+        name: '卖一(amount)',
         type: 'line',
         showSymbol: false,
         hoverAnimation: false,
@@ -162,7 +151,7 @@ let option = {
   ]
 };
 export default {
-  name: "charts",
+  name: "LineCharts",
   components: {},
   data() {
     return {
@@ -182,7 +171,7 @@ export default {
   },
   mounted() {
     // 基于准备好的dom，初始化echarts实例
-    this.chart = echarts.init(this.$refs.canvas);
+    this.chart = echarts.init(this.$refs.container);
     // 绘制图表
     this.chart.setOption(option);
   },
@@ -212,6 +201,12 @@ export default {
             option.yAxis[0].max = (maxAmount * 6 | 0);
             option.yAxis[1].min = (maxAmount * 0.4) | 0;
             option.yAxis[1].max = (maxAmount * 6) | 0;
+
+            option.xAxis[0].data = [];
+            option.series[0].data = [];
+            option.series[1].data = [];
+            option.series[2].data = [];
+            option.series[3].data = [];
             preSymbol = this.symbol;
           }
           option.xAxis[0].data.push(moment().format("YYYY/MM/DD h:mm:ss"));
@@ -231,7 +226,6 @@ export default {
               value: this.aksFirst[1],
               price: this.aksFirst[0]
           });
-          console.log(this.chart.getOption())
           this.chart.setOption(option);
       }
   }

@@ -90,7 +90,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 
 table {
   padding: 10px 20px;

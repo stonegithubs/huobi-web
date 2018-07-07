@@ -1,20 +1,25 @@
 
 
 <template>
-  <div style="height: 580px; overflow: auto;">
-    <canvas ref="canvas" width="1000px" height="580px"></canvas>
+  <div >
+      <div class="echarts-container" ref="container">
+
+      </div>
   </div>
 </template>
 
 <script>
 import moment from "moment";
 import throttle from 'lodash.throttle';
+import { color } from './config';
+
 const echarts = require("echarts");
 let preSymbol = '';
 
 let option = {
+    color,
     title: {
-        text: '买一卖一',
+        text: '买一卖一(price)',
         subtext: ''
     },
     tooltip: {
@@ -30,18 +35,7 @@ let option = {
     legend: {
         data:['多方压力位','空方压力位', '买一' ,'卖一', '当前价格']
     },
-    toolbox: {
-        show: true,
-        feature: {
-            dataZoom: {
-                yAxisIndex: 'none'
-            },
-            dataView: {readOnly: false},
-            magicType: {type: ['line', 'bar']},
-            restore: {},
-            saveAsImage: {}
-        }
-    },
+
     dataZoom: [
         {
             show: true,
@@ -98,7 +92,7 @@ let option = {
 };
 
 export default {
-  name: "charts",
+  name: "LineCharts",
   components: {},
   data() {
     return {
@@ -109,17 +103,17 @@ export default {
     bidsList: Array,
     aksFirst: Array,
     bidsFirst: Array,
-    lastKLine: Object,
+    lastKline: Object,
     symbol: String,
   },
   watch: {
-      lastKLine: throttle(function (lastKLine) {
+      lastKline: throttle(function (lastKline) {
           this.push();
       }, 5000, {trailing: false, leading: true})
   },
   mounted() {
     // 基于准备好的dom，初始化echarts实例
-    this.chart = echarts.init(this.$refs.canvas);
+    this.chart = echarts.init(this.$refs.container);
     // 绘制图表
     this.chart.setOption(option);
   },
@@ -145,13 +139,15 @@ export default {
                 btcPrice = 6626;
             }
           if (preSymbol !== this.symbol) {
-            
-            
-            
-            let lastClose = this.lastKLine.close * btcPrice;
+            let lastClose = this.lastKline.close * btcPrice;
             option.yAxis.max = (lastClose + (lastClose * 0.2)).toFixed(2);
             option.yAxis.min = (lastClose - (lastClose * 0.2)).toFixed(2);
-            console.log(option.yAxis.max)
+            option.xAxis.data = [];
+            option.series[0].data = [];
+            option.series[1].data = [];
+            option.series[2].data = [];
+            option.series[3].data = [];
+            option.series[4].data = [];
             preSymbol = this.symbol;
           }
           
@@ -177,7 +173,7 @@ export default {
               value: this.aksFirst[0] * btcPrice
           });
           option.series[4].data.push({
-              value: this.lastKLine.close * btcPrice,
+              value: this.lastKline.close * btcPrice,
               name: 'price',
           });
           this.chart.setOption(option);
