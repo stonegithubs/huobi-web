@@ -184,8 +184,12 @@ export default {
         autoTrade: async function () {
             this.buttonLoading = true;
             
-            let balanceList = await getBalance();
-
+            let balanceList = null;
+            try {
+                balanceList = await getBalance()
+            } catch (error) {
+                this.autoTrade();
+            }
             // 对币余额
             let balance = '';
             // 当前币的余额
@@ -232,26 +236,31 @@ export default {
                 buyCount: 2 - orderType.buyCount,
                 sellCount: 2 - orderType.sellCount,
             });
-            if (canUseAmount > 400 && orderType.buyCount < 3) {
-                await limit({
-                    symbol: this.symbol + this.quoteCurrency,
-                    amount: 400,
-                    price: prices.buyPrice,
-                    type: 'buy-limit',
-                    action: "buy"
-                });
-                this.getOpenOrders();
+            try {
+                if (canUseAmount > 400 && orderType.buyCount < 3) {
+                    await limit({
+                        symbol: this.symbol + this.quoteCurrency,
+                        amount: 400,
+                        price: prices.buyPrice,
+                        type: 'buy-limit',
+                        action: "buy"
+                    });
+                    this.getOpenOrders();
+                }
+                if (symbolBalance > 400 && orderType.sellCount < 3) {
+                    await limit({
+                        symbol: this.symbol + this.quoteCurrency,
+                        amount: 400,
+                        price: prices.sellPrice,
+                        type: 'sell-limit',
+                        action: "sell"
+                    });
+                    this.getOpenOrders();
+                }
+            } catch (error) {
+                this.autoTrade();
             }
-            if (symbolBalance > 400 && orderType.sellCount < 3) {
-                await limit({
-                    symbol: this.symbol + this.quoteCurrency,
-                    amount: 400,
-                    price: prices.sellPrice,
-                    type: 'sell-limit',
-                    action: "sell"
-                });
-                this.getOpenOrders();
-            }
+            
             this.buttonLoading = false;
             setTimeout(() => {
                 this.checkOrder();
@@ -274,7 +283,9 @@ export default {
             let openOrders = this.openOrders.sort((a, b) => {
                 return Number(b.price) - Number(a.price);
             });
-        
+
+            let pricesCount = {};
+            let sameOrider = null;
             if (Array.isArray(this.openOrders)) {
                 this.openOrders.forEach((item, index) => {
                     if (item.type === 'buy-limit' && maxBuyOrider === null) {
@@ -282,7 +293,15 @@ export default {
                     } else if (item.type === 'sell-limit' && maxSellOrider === null) {
                         maxSellOrider = item;
                     }
+                    if (pricesCount[item.price] === undefined) {
+                        pricesCount[item.price] = 1;
+                    } else {
+                        sameOrider = item;
+                    }
                 });
+            }
+            if (sameOrider !== null) {
+                await this.cancelOrder(sameOrider.id);
             }
             /**
              * 涨跌幅
