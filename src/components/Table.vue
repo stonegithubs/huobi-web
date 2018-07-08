@@ -13,7 +13,7 @@
                 sumCount
                 </th>
                 <th>
-                sumMoneny({{quoteCurrency}})
+                sum({{quoteCurrency}})
                 </th>
                 <th>
                 $($/k)

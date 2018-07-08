@@ -27,6 +27,7 @@ const getSameAmount = function (data, {
 	type = '',
 	pricePrecision = config.pricePrecision,
 	amountPrecision = config.amountPrecision,
+	quoteCurrency = config.quoteCurrency,
 } = {}) {
 	// data = data.slice(0, 400)
 	let countTemp = {};
@@ -63,9 +64,9 @@ const getSameAmount = function (data, {
 		let sumDollar = sumPrice;
 
 		// 转换成美元价格
-		if (config.quoteCurrency === 'btc') {
+		if (quoteCurrency === 'btc') {
 			sumDollar = sumPrice * window.btcPrice;
-		} else if (config.quoteCurrency === 'eth') {
+		} else if (quoteCurrency === 'eth') {
 			sumDollar = sumPrice * window.ethPrice;
 		}
 		if ((count > 1 && sumDollar > config.minSumPrice) || (sumDollar > config.minPrice)) {

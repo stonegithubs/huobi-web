@@ -55,7 +55,7 @@ const mutations = {
         state.bidsList = payload.bidsList;
         state.aksFirst = payload.aksFirst;
         state.bidsFirst = payload.bidsFirst;
-        state.symbols = payload.symbols;
+        state.responseSymbol = payload.responseSymbol;
     },
 }
 

@@ -140,8 +140,8 @@ export default {
             }
           if (preSymbol !== this.symbol) {
             let lastClose = this.lastKline.close * btcPrice;
-            option.yAxis.max = (lastClose + (lastClose * 0.2)).toFixed(2);
-            option.yAxis.min = (lastClose - (lastClose * 0.2)).toFixed(2);
+            option.yAxis.max = (lastClose + (lastClose * 0.2)).toFixed(4);
+            option.yAxis.min = (lastClose - (lastClose * 0.2)).toFixed(4);
             option.xAxis.data = [];
             option.series[0].data = [];
             option.series[1].data = [];
@@ -152,13 +152,21 @@ export default {
           }
           
           option.xAxis.data.push(moment().format("YYYY/MM/DD h:mm:ss"));
+
+          const avg = function  (list) {
+              let res = (Number(list[0].price) + Number(list[1].price)) / 2;
+              if (res.toString().length > 8) {
+                  return Number(res).toFixed(8)
+              }
+              return res;
+          }
           option.series[0].data.push({
-              value: this.bidsList[0].price * btcPrice,
+              value: avg(this.bidsList) * btcPrice,
               name: 'price',
               ...this.bidsList[0]
           });
           option.series[1].data.push({
-              value: this.asksList[0].price * btcPrice,
+              value: avg(this.asksList) * btcPrice,
               name: 'price',
               ...this.asksList[0]
           });

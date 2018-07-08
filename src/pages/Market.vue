@@ -92,7 +92,6 @@
                     <td>{{item['field-amount']}}</td>
                     <td>{{item.amount}}</td>
                     <td>
-                        <span>{{item.price}}</span>
                         <el-button
                         size="small"
                         @click="cancelOrder(item.id)"
@@ -154,6 +153,9 @@ export default {
     },
     beforeDestroy() {},
     methods: {
+        /**
+         * 下单
+         */
         trade() {
             this.buttonLoading = true;
             limit({
@@ -181,7 +183,14 @@ export default {
                 this.buttonLoading = false;
             });
         },
+        /**
+         * 跟单
+         */
         autoTrade: async function () {
+
+            if ((this.symbol + this.quoteCurrency) !== this.responseSymbol) {
+                return;
+            }
             this.buttonLoading = true;
             
             let balanceList = null;
@@ -229,28 +238,36 @@ export default {
                     orderType.sellCount++; 
                 }
             });
+            /* 买卖最多下单数 */
+            let maxOrider = 3;
+            /* 最大金额 */
+            let maxPrice = 461;
+            let amount = this.quoteCurrency === 'usdt' 
+                            ?  maxPrice / lastPrice
+                            : maxPrice / window.btcPrice / lastPrice;
+            amount = amount.toFixed(this.amountPrecision);
             // 拿推荐的价格
             let prices = getTracePrice({
                 bidsList: this.bidsList,
                 asksList: this.asksList,
-                buyCount: 2 - orderType.buyCount,
-                sellCount: 2 - orderType.sellCount,
+                buyCount: maxOrider - orderType.buyCount,
+                sellCount: maxOrider - orderType.sellCount,
             });
             try {
-                if (canUseAmount > 400 && orderType.buyCount < 3) {
+                if (canUseAmount > amount && orderType.buyCount < maxOrider) {
                     await limit({
                         symbol: this.symbol + this.quoteCurrency,
-                        amount: 400,
+                        amount: amount,
                         price: prices.buyPrice,
                         type: 'buy-limit',
                         action: "buy"
                     });
                     this.getOpenOrders();
                 }
-                if (symbolBalance > 400 && orderType.sellCount < 3) {
+                if (symbolBalance > amount && orderType.sellCount < maxOrider) {
                     await limit({
                         symbol: this.symbol + this.quoteCurrency,
-                        amount: 400,
+                        amount: amount,
                         price: prices.sellPrice,
                         type: 'sell-limit',
                         action: "sell"
@@ -267,9 +284,11 @@ export default {
             }, 20000);
         },
         checkOrder: async function() {
-            
             await this.getOpenOrders();
-            if (!Array.isArray(this.openOrders) || this.openOrders.length === 0) {
+            if (
+                !Array.isArray(this.openOrders)
+                || this.openOrders.length === 0
+                || (this.symbol + this.quoteCurrency) !== this.responseSymbol) {
                 return;
             }
             let prices = getTracePrice({
@@ -280,6 +299,7 @@ export default {
             });
             let maxBuyOrider = null;
             let maxSellOrider = null;
+            let minBuyOrider = null;
             let openOrders = this.openOrders.sort((a, b) => {
                 return Number(b.price) - Number(a.price);
             });
@@ -288,8 +308,11 @@ export default {
             let sameOrider = null;
             if (Array.isArray(this.openOrders)) {
                 this.openOrders.forEach((item, index) => {
-                    if (item.type === 'buy-limit' && maxBuyOrider === null) {
-                        maxBuyOrider = item; 
+                    if (item.type === 'buy-limit') {
+                        if (maxBuyOrider === null) {
+                               maxBuyOrider = item; 
+                        }
+                        minBuyOrider = item;
                     } else if (item.type === 'sell-limit' && maxSellOrider === null) {
                         maxSellOrider = item;
                     }
@@ -310,12 +333,15 @@ export default {
             function getDis(a, b) {
                 return Math.abs(a - Number(b)) / b;
             }
-            
-            if (maxBuyOrider !== null && getDis(prices.bindsAvg, maxBuyOrider.price) > 0.11) {
+
+            if (maxBuyOrider !== null && getDis(prices.bindsAvg, maxBuyOrider.price) > 0.6) {
                 await this.cancelOrder(maxBuyOrider.id);
             }
-            
-            if (maxSellOrider !== null && getDis(prices.asksAvg, maxSellOrider.price) > 0.11) {
+            console.log(getDis(prices.bindsAvg, minBuyOrider.price))
+            if (minBuyOrider !== null && getDis(prices.bindsAvg, minBuyOrider.price) > 0.6) {
+                await this.cancelOrder(minBuyOrider.id);
+            }
+            if (maxSellOrider !== null && getDis(prices.asksAvg, maxSellOrider.price) > 0.6) {
                 await this.cancelOrder(maxSellOrider.id);
             }
             
@@ -332,9 +358,10 @@ export default {
                 // base-currency:"yee"
                 // price-precision:8
                 // quote-currency:"eth"
-                if (item['base-currency'] === 'pai' && item['quote-currency'] === 'btc') {
-                pricePrecision = item['price-precision'];
-                amountPrecision = item['amount-precision'];
+                if (item['base-currency'] === this.symbol && item['quote-currency'] === this.quoteCurrency) {
+                    pricePrecision = item['price-precision'];
+                    amountPrecision = item['amount-precision'];
+                    this.amountPrecision = amountPrecision;
                 return true;
                 }
                 return false;

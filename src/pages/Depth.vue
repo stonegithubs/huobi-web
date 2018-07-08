@@ -169,12 +169,12 @@ export default {
             });
             
             if (this.symbol2 === 'eth') {
-                let res = await getKLine('ethusdt', '1min', 1);
-                window.ethPrice = res.data[0].close;
+                let res = await getKLine('ethusdt', '1min', 2);
+                window.ethPrice = res.data[1].close;
                 this.quoteCurrency = 'ETH';
             } else if (this.symbol2 === 'btc') {
-                let res = await getKLine('btcusdt', '1min', 1);
-                window.btcPrice = res.data[0].close;
+                let res = await getKLine('btcusdt', '1min', 2);
+                window.btcPrice = res.data[1].close;
                 this.quoteCurrency = 'BTC';
             }
             // 设置精度

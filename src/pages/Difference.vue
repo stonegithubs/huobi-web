@@ -8,6 +8,8 @@
         <el-option value="tickDis">买一/卖一(总价格)</el-option>
         <el-option value="maxCountDis">买单数(max)/卖单数(max)</el-option>
         <el-option value="lengthDis">buyCount / sellCount</el-option>
+        <el-option value="buy1Money">买一总价($)</el-option>
+        <el-option value="sell1Money">卖一总价($)</el-option>
       </el-select>
       <el-button type="primary"  @click="orderBy" size="small">排序</el-button>
     </div>
@@ -27,6 +29,12 @@
                   <th>
                   buyCount / sellCount
                   </th>
+                  <th>
+                  买一总价($/k)
+                  </th>
+                  <th>
+                  卖一总价($/k)
+                  </th>
               </tr>
           </thead>
           <tbody>
@@ -38,6 +46,8 @@
               <td>{{item.tickDis}}</td>
               <td>{{item.maxCountDis}}</td>
               <td>{{item.lengthDis}}</td>
+              <td>{{(item.buy1Money / 1000).toFixed(2)}}</td>
+              <td>{{(item.sell1Money / 1000).toFixed(2)}}</td>
           </tr>
           </tbody>
       </table>
@@ -96,32 +106,16 @@ export default {
         
         let bids = res.tick.bids;
         let asks = res.tick.asks;
-
-        switch(item['quote-currency']) {
-          case 'btc':
-            // 有多单时， 总和超过最小价，低于则不显示
-            minSumPrice = 0.15;
-            // 1单时， 总和超过最小价，低于则不显示
-            minPrice = 0.5;
-            break;
-          case 'usdt': 
-            // 有多单时， 总和超过最小价，低于则不显示
-            minSumPrice = 200;
-            // 1单时， 总和超过最小价，低于则不显示
-            minPrice = 1000;
-        }
         let bidsList = getSameAmount(bids, {
           pricePrecision: item['price-precision'],
           amountPrecision: item['amount-precision'],
-          minSumPrice,
-          minPrice,
+          quoteCurrency: item['quote-currency'],
           type: 'bids'
         });
         let asksList = getSameAmount(asks, {
           pricePrecision: item['price-precision'],
           amountPrecision: item['amount-precision'],
-          minSumPrice,
-          minPrice,
+          quoteCurrency: item['quote-currency'],
           type: 'asks'
         });
         let bidsAvg = 1;
@@ -139,8 +133,11 @@ export default {
         } else if (asksList.length === 1) {
           asksAvg =  Number(asksList[0].sumMoneny);
         }
+        // 买一/卖一
         let tickDis = bidsAvg / asksAvg;
-
+        // 买一卖一价格($)
+        let buy1Money = bidsList[0].sumDollar;
+        let sell1Money = asksList[1].sumDollar;
         let bidsListOrderByCount = bidsList.sort(function (a, b) {
           return b.count - a.count;
         });
@@ -151,7 +148,9 @@ export default {
           symbol: _symbols,
           tickDis: tickDis.toFixed(3),
           maxCountDis: (bidsListOrderByCount[0].count / asksListOrderByCount[0].count).toFixed(3),
-          lengthDis: (bidsList.length / asksList.length).toFixed(3)
+          lengthDis: (bidsList.length / asksList.length).toFixed(3),
+          buy1Money,
+          sell1Money,
         });
       }
 

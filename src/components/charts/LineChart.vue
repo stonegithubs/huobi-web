@@ -197,9 +197,9 @@ export default {
                             ? this.bidsList[0].amount
                             : this.asksList[0].amount;
           if (preSymbol !== this.symbol) {
-            option.yAxis[0].min = (maxAmount * 0.4) | 0;
+            option.yAxis[0].min = (maxAmount * 0.3) | 0;
             option.yAxis[0].max = (maxAmount * 6 | 0);
-            option.yAxis[1].min = (maxAmount * 0.4) | 0;
+            option.yAxis[1].min = (maxAmount * 0.3) | 0;
             option.yAxis[1].max = (maxAmount * 6) | 0;
 
             option.xAxis[0].data = [];
