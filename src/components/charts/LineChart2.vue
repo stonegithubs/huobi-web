@@ -119,6 +119,9 @@ export default {
   },
   methods: {
       push() {
+          if (!this.bidsList.length && !this.asksList.length) {
+                    return;
+                }
           if (option.dataZoom) {
             delete option.title;
             delete option.tooltip;
@@ -136,12 +139,12 @@ export default {
           }
           let btcPrice = 1;
           if (this.symbol.substr(-3) === "btc") {
-                btcPrice = 6626;
+                btcPrice = window.btcPrice;
             }
           if (preSymbol !== this.symbol) {
             let lastClose = this.lastKline.close * btcPrice;
-            option.yAxis.max = (lastClose + (lastClose * 0.2)).toFixed(4);
-            option.yAxis.min = (lastClose - (lastClose * 0.2)).toFixed(4);
+            option.yAxis.max = (lastClose + (lastClose * 0.15)).toFixed(4);
+            option.yAxis.min = (lastClose - (lastClose * 0.15)).toFixed(4);
             option.xAxis.data = [];
             option.series[0].data = [];
             option.series[1].data = [];

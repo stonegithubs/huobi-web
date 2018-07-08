@@ -199,6 +199,13 @@ export default {
                 value: 'subscribeKline',
                 symbol: `${this.symbols}`
             });
+            this.$store.commit('UPTATE_DEPTH', {
+                asksList: [],
+                bidsList: [],
+                bidsFirst: [],
+                aksFirst: [],
+                responseSymbol: ''
+            });
         },
         sortBy() {
             getSameAmount.setConfig({sortBy: this.sortByValue});

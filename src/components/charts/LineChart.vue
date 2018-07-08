@@ -151,84 +151,87 @@ let option = {
   ]
 };
 export default {
-  name: "LineCharts",
-  components: {},
-  data() {
-    return {
-    };
-  },
-  props: {
-    asksList: Array,
-    bidsList: Array,
-    aksFirst: Array,
-    bidsFirst: Array,
-    symbol: String,
-  },
-  watch: {
-      asksList:throttle(function(asksList) {
-          this.push();
-      }, 5000, {trailing: false, leading: true})
-  },
-  mounted() {
-    // 基于准备好的dom，初始化echarts实例
-    this.chart = echarts.init(this.$refs.container);
-    // 绘制图表
-    this.chart.setOption(option);
-  },
-  methods: {
-      push() {
-          if (option.dataZoom) {
-            delete option.dataZoom;
-            delete option.title;
-            delete option.grid;
-            delete option.toolbox;
-            delete option.tooltip;
-            delete option.legend;
-            
-          }
-          if (option.xAxis[0].data.length > 3000) {
-              option.xAxis[0].data.shift();
-              option.series[0].data.shift();
-              option.series[1].data.shift();
-              option.series[2].data.shift();
-              option.series[3].data.shift();
-          }
-          let maxAmount = this.bidsList[0].amount > this.asksList[0].amount
-                            ? this.bidsList[0].amount
-                            : this.asksList[0].amount;
-          if (preSymbol !== this.symbol) {
-            option.yAxis[0].min = (maxAmount * 0.3) | 0;
-            option.yAxis[0].max = (maxAmount * 6 | 0);
-            option.yAxis[1].min = (maxAmount * 0.3) | 0;
-            option.yAxis[1].max = (maxAmount * 6) | 0;
+    name: "LineCharts",
+    components: {},
+    data() {
+        return {
+        };
+    },
+    props: {
+        asksList: Array,
+        bidsList: Array,
+        aksFirst: Array,
+        bidsFirst: Array,
+        symbol: String,
+    },
+    watch: {
+        asksList:throttle(function(asksList) {
+            this.push();
+        }, 5000, {trailing: false, leading: true})
+    },
+    mounted() {
+        // 基于准备好的dom，初始化echarts实例
+        this.chart = echarts.init(this.$refs.container);
+        // 绘制图表
+        this.chart.setOption(option);
+    },
+    methods: {
+            push() {
+                if (!this.bidsList.length && !this.asksList.length) {
+                    return;
+                }
+                if (option.dataZoom) {
+                    delete option.dataZoom;
+                    delete option.title;
+                    delete option.grid;
+                    delete option.toolbox;
+                    delete option.tooltip;
+                    delete option.legend;
+                    
+                }
+                if (option.xAxis[0].data.length > 3000) {
+                    option.xAxis[0].data.shift();
+                    option.series[0].data.shift();
+                    option.series[1].data.shift();
+                    option.series[2].data.shift();
+                    option.series[3].data.shift();
+                }
+                let maxAmount = this.bidsList[0].amount > this.asksList[0].amount
+                                    ? this.bidsList[0].amount
+                                    : this.asksList[0].amount;
+                if (preSymbol !== this.symbol) {
+                    option.yAxis[0].min = (maxAmount * 0.3) | 0;
+                    option.yAxis[0].max = (maxAmount * 6 | 0);
+                    option.yAxis[1].min = (maxAmount * 0.3) | 0;
+                    option.yAxis[1].max = (maxAmount * 6) | 0;
 
-            option.xAxis[0].data = [];
-            option.series[0].data = [];
-            option.series[1].data = [];
-            option.series[2].data = [];
-            option.series[3].data = [];
-            preSymbol = this.symbol;
-          }
-          option.xAxis[0].data.push(moment().format("YYYY/MM/DD h:mm:ss"));
-          option.series[0].data.push({
-              value: this.bidsList[0].amount,
-              ...this.bidsList[0]
-          });
-          option.series[1].data.push({
-              value: this.asksList[0].amount,
-              ...this.asksList[0]
-          });
-          option.series[2].data.push({
-              value: this.bidsFirst[1],
-              price: this.bidsFirst[0]
-          });
-          option.series[3].data.push({
-              value: this.aksFirst[1],
-              price: this.aksFirst[0]
-          });
-          this.chart.setOption(option);
-      }
-  }
+                    option.xAxis[0].data = [];
+                    option.series[0].data = [];
+                    option.series[1].data = [];
+                    option.series[2].data = [];
+                    option.series[3].data = [];
+                    preSymbol = this.symbol;
+                }
+                option.xAxis[0].data.push(moment().format("YYYY/MM/DD h:mm:ss"));
+                option.series[0].data.push({
+                    value: this.bidsList[0].amount,
+                    ...this.bidsList[0]
+                });
+                option.series[1].data.push({
+                    value: this.asksList[0].amount,
+                    ...this.asksList[0]
+                });
+                option.series[2].data.push({
+                    value: this.bidsFirst[1],
+                    price: this.bidsFirst[0]
+                });
+                option.series[3].data.push({
+                    value: this.aksFirst[1],
+                    price: this.aksFirst[0]
+                });
+                this.chart.setOption(option);
+            }
+    }
 };
 </script>
 

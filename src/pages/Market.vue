@@ -333,15 +333,18 @@ export default {
             function getDis(a, b) {
                 return Math.abs(a - Number(b)) / b;
             }
-
-            if (maxBuyOrider !== null && getDis(prices.bindsAvg, maxBuyOrider.price) > 0.6) {
+            console.log('buy:', getDis(prices.bindsAvg, maxBuyOrider.price))
+            console.log('sell:',  getDis(prices.asksAvg, maxSellOrider.price))
+            // 如果价格再下跌，取消订单，提高买入点
+            if (maxBuyOrider !== null && getDis(prices.bindsAvg, maxBuyOrider.price) > 0.03) {
                 await this.cancelOrder(maxBuyOrider.id);
             }
-            console.log(getDis(prices.bindsAvg, minBuyOrider.price))
-            if (minBuyOrider !== null && getDis(prices.bindsAvg, minBuyOrider.price) > 0.6) {
+            // 如果价格再上涨，取消订单，提高买入点
+            if (minBuyOrider !== null && getDis(prices.bindsAvg, minBuyOrider.price) > 0.03) {
                 await this.cancelOrder(minBuyOrider.id);
             }
-            if (maxSellOrider !== null && getDis(prices.asksAvg, maxSellOrider.price) > 0.6) {
+
+            if (maxSellOrider !== null && getDis(prices.asksAvg, maxSellOrider.price) > 0.3) {
                 await this.cancelOrder(maxSellOrider.id);
             }
             
