@@ -192,12 +192,12 @@ export default {
             wsSend({
                 type: `ws-huobi`,
                 value: 'subscribeDepth',
-                symbols: [`${this.symbols}`]
+                symbol: `${this.symbols}`
             });
             wsSend({
                 type: `ws-huobi`,
                 value: 'subscribeKline',
-                symbols: [`${this.symbols}`]
+                symbol: `${this.symbols}`
             });
         },
         sortBy() {

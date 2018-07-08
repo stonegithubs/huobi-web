@@ -25,6 +25,8 @@ export function setConfig(newConfig) {
  */
 const getSameAmount = function (data, {
 	type = '',
+	pricePrecision = config.pricePrecision,
+	amountPrecision = config.amountPrecision,
 } = {}) {
 	// data = data.slice(0, 400)
 	let countTemp = {};
@@ -69,11 +71,11 @@ const getSameAmount = function (data, {
 		if ((count > 1 && sumDollar > config.minSumPrice) || (sumDollar > config.minPrice)) {
 			let data = {
 				'count': count,
-				'amount': Number(key).toFixed(config.amountPrecision),
-				sumCount: sum.toFixed(config.amountPrecision),
+				'amount': Number(key).toFixed(amountPrecision),
+				sumCount: sum.toFixed(amountPrecision),
 				sumMoneny: sumPrice.toFixed(2),
 				sumDollar: sumDollar.toFixed(2),
-				price: price.toFixed(config.pricePrecision),
+				price: price.toFixed(pricePrecision),
 				prices: countTemp[key].prices,
 			}
 			arr.push(data);

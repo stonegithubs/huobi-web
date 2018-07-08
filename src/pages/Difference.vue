@@ -96,8 +96,7 @@ export default {
         
         let bids = res.tick.bids;
         let asks = res.tick.asks;
-        // 设置精度
-        getSameAmount.setConfig({ pricePrecision: item['price-precision'] });
+
         switch(item['quote-currency']) {
           case 'btc':
             // 有多单时， 总和超过最小价，低于则不显示
@@ -112,11 +111,15 @@ export default {
             minPrice = 1000;
         }
         let bidsList = getSameAmount(bids, {
+          pricePrecision: item['price-precision'],
+          amountPrecision: item['amount-precision'],
           minSumPrice,
           minPrice,
           type: 'bids'
         });
         let asksList = getSameAmount(asks, {
+          pricePrecision: item['price-precision'],
+          amountPrecision: item['amount-precision'],
           minSumPrice,
           minPrice,
           type: 'asks'
