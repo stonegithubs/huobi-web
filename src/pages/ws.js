@@ -15,7 +15,6 @@ wsconfig.set = function (data) {
 const ws = new WebSocket(`ws://${config.wsHost}/huobi`);
 ws.onmessage = (ev) => {
     let data = JSON.parse(ev.data);
-    console.log(data)
     if (data.type === "WS_HUOBI") {
         if (data.tick && data.symbol === config.symbol) {
             let bidsFirst = data.tick.bids[0];
