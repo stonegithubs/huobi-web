@@ -15,6 +15,7 @@ wsconfig.set = function (data) {
 const ws = new WebSocket(`ws://${config.wsHost}/huobi`);
 ws.onmessage = (ev) => {
     let data = JSON.parse(ev.data);
+    console.log(data)
     if (data.type === "WS_HUOBI") {
         if (data.tick && data.symbol === config.symbol) {
             let bidsFirst = data.tick.bids[0];
@@ -66,18 +67,18 @@ ws.onmessage = (ev) => {
 
 ws.onclose = () => {
     // 关闭 websocket
-    store.commit('updateHuobiState', {
-        stateKey: 'WS_HUOBI_STATUS',
-        data: {
-            status: 'error',
-            msg: 'close',
-        },
-    });
+    // store.commit('updateHuobiState', {
+    //     stateKey: 'WS_HUOBI_STATUS',
+    //     data: {
+    //         status: 'error',
+    //         msg: 'close',
+    //     },
+    // });
 };
 ws.onerror = (err) => {
     
     store.commit('updateHuobiState', {
-        stateKey: 'WS_HUOBI_STATUS',
+        stateKey: 'WS_SERVER_STATUS',
         data: {
             status: 'error',
             msg: err,

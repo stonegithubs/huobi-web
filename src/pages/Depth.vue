@@ -74,7 +74,7 @@ export default {
             symbols: '', // symbol + symbol2
             sortByValue: 'sumMoneny',
             subscribeLoading: false,
-            subscribeDisable: true,
+            subscribeDisable: false,
         };
     },
     computed:{
@@ -93,7 +93,7 @@ export default {
     },
     watch: {
         bidsList(bidsList) {
-            this.subscribeLoading = !(bidsList.length > 0);
+            // this.subscribeLoading = !(bidsList.length > 0);
         },
         status(status) {
             this.$notify({
@@ -104,7 +104,7 @@ export default {
             
         },
         useWSAble(useWSAble){
-            this.subscribeDisable = !useWSAble;
+            // this.subscribeDisable = !useWSAble;
         }
     },
     created() {
@@ -129,7 +129,7 @@ export default {
     },
     mounted() {
         this.$refs.tickList.style.maxHeight = window.innerHeight - 50 + 'px';
-        this.subscribeDisable = !this.useWSAble;
+        // this.subscribeDisable = !this.useWSAble;
     },
     beforeDestroy() {
         
@@ -138,13 +138,13 @@ export default {
         subscribeDepth: async function () {
             this.subscribeLoading = true;
             // 没打开就先打开
-            if (this.status.msg.indexOf('open') === -1) {
-                wsSend({
-                    type: `ws-huobi`,
-                    value: 'open',
-                });
-                return;
-            }
+            // if (this.status.msg && this.status.msg.indexOf('open') === -1) {
+            //     wsSend({
+            //         type: `ws-huobi`,
+            //         value: 'open',
+            //     });
+            //     return;
+            // }
             let value = this.symbol + this.symbol2;
             this.symbols = value;
             
@@ -187,7 +187,6 @@ export default {
             wsconfig.set({
                 symbol: this.symbols,
             });
-            console.log(this.symbols)
             // 开始订阅
             wsSend({
                 type: `ws-huobi`,
@@ -206,6 +205,7 @@ export default {
                 aksFirst: [],
                 responseSymbol: ''
             });
+            this.subscribeLoading = false;
         },
         sortBy() {
             getSameAmount.setConfig({sortBy: this.sortByValue});
