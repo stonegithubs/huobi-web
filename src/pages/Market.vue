@@ -212,6 +212,7 @@ export default {
             let symbolBalance = '';
             if (balanceList === null) {
                 this.buttonLoading = false;
+                this.autoTrade();
                 throw Error('balanceList没有查到');
             }
             balanceList.list.forEach((item) => {
@@ -222,7 +223,6 @@ export default {
                     symbolBalance = Number(item.balance);
                 }
             });
-
             let kline = await getKLine(this.symbol + this.quoteCurrency, '1min', 2);
             if (kline.data === null) {
                 this.buttonLoading = false;
@@ -342,19 +342,20 @@ export default {
             }
             
             // 如果价格再下跌，取消订单，提高买入点
-            if (maxBuyOrider !== null && getDis(prices.bindsAvg, maxBuyOrider.price) > 0.03) {
+            if (maxBuyOrider !== null && getDis(prices.bindsAvg, maxBuyOrider.price) > 0.035) {
                 await this.cancelOrder(maxBuyOrider.id);
+                console.log('buy:', getDis(prices.bindsAvg, maxBuyOrider.price))
             }
             // 如果价格再上涨，取消订单，提高买入点
-            if (minBuyOrider !== null && getDis(prices.bindsAvg, minBuyOrider.price) > 0.03) {
+            if (minBuyOrider !== null && getDis(prices.bindsAvg, minBuyOrider.price) > 0.035) {
                 await this.cancelOrder(minBuyOrider.id);
             }
 
-            if (maxSellOrider !== null && getDis(prices.asksAvg, maxSellOrider.price) > 0.3) {
+            if (maxSellOrider !== null && getDis(prices.asksAvg, maxSellOrider.price) > 0.035) {
                 await this.cancelOrder(maxSellOrider.id);
+                console.log('sell:',  getDis(prices.asksAvg, maxSellOrider.price))
             }
-            console.log('buy:', getDis(prices.bindsAvg, maxBuyOrider.price))
-            console.log('sell:',  getDis(prices.asksAvg, maxSellOrider.price))
+    
             setTimeout(() => {
                 this.autoTrade();
             }, 20000);

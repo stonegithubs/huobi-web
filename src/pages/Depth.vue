@@ -167,16 +167,20 @@ export default {
                 }
                 return false;
             });
-            
-            if (this.symbol2 === 'eth') {
-                let res = await getKLine('ethusdt', '1min', 2);
-                window.ethPrice = res.data[1].close;
-                this.quoteCurrency = 'ETH';
-            } else if (this.symbol2 === 'btc') {
-                let res = await getKLine('btcusdt', '1min', 2);
-                window.btcPrice = res.data[1].close;
-                this.quoteCurrency = 'BTC';
+            try {
+                if (this.symbol2 === 'eth') {
+                    let res = await getKLine('ethusdt', '1min', 2);
+                    window.ethPrice = res.data[1].close;
+                    this.quoteCurrency = 'ETH';
+                } else if (this.symbol2 === 'btc') {
+                    let res = await getKLine('btcusdt', '1min', 2);
+                    window.btcPrice = res.data[1].close;
+                    this.quoteCurrency = 'BTC';
+                }
+            } catch (error) {
+                this.subscribeLoading = false;
             }
+            
             // 设置精度
             getSameAmount.setConfig({
                 pricePrecision,

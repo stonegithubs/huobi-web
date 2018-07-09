@@ -1,7 +1,4 @@
 
-import { getKLine } from '@/api/huobiREST';
-
-
 /* amount:"141940.65"
 count:1
 price:"0.00018500"
