@@ -66,13 +66,13 @@ ws.onmessage = (ev) => {
 
 ws.onclose = () => {
     // 关闭 websocket
-    // store.commit('updateHuobiState', {
-    //     stateKey: 'WS_HUOBI_STATUS',
-    //     data: {
-    //         status: 'error',
-    //         msg: 'close',
-    //     },
-    // });
+    store.commit('updateHuobiState', {
+        stateKey: 'WS_SERVER_STATUS',
+        data: {
+            status: 'error',
+            msg: 'close',
+        },
+    });
 };
 ws.onerror = (err) => {
     

@@ -58,16 +58,12 @@ export default {
         
     },
     beforeDestroy() {
-        // wsSend({
-        //     type: `ws-huobi`,
-        //     value: 'close',
-        // });
         this.$notify({
             title: 'WS状态',
             message: `msg: ws_server closed`,
             duration: 3000
         });
-        // ws.close();
+        ws.close();
     },
     methods: {
         handleClick(tab, event) {},
