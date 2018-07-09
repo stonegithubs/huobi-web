@@ -38,7 +38,13 @@
 
         <div style="margin: 10px;">
 
-
+            <el-input
+                style="width: 100px;"
+                placeholder="testPrice"
+                v-model="testPrice"
+                size="small"
+                clearable>
+            </el-input>
             <el-button type="primary" :loading="buttonLoading" @click="getOpenOrders" size="small">查委托</el-button>
             <el-button type="primary" :loading="buttonLoading" @click="autoTrade" size="small">根据Depth自动跟单</el-button>
             <el-button type="primary" :loading="buttonLoading" @click="checkOrder" size="small">检查订单是否合理</el-button>
@@ -136,6 +142,7 @@ export default {
             openOrders: [],
             quoteCurrency: 'btc',
             amountPrecision: 4,
+            testPrice: 10
         };
     },
     computed:{
@@ -241,7 +248,7 @@ export default {
             /* 买卖最多下单数 */
             let maxOrider = 3;
             /* 最大金额 */
-            let maxPrice = 461;
+            let maxPrice = this.testPrice;
             let amount = this.quoteCurrency === 'usdt' 
                             ?  maxPrice / lastPrice
                             : maxPrice / window.btcPrice / lastPrice;
@@ -333,8 +340,7 @@ export default {
             function getDis(a, b) {
                 return Math.abs(a - Number(b)) / b;
             }
-            console.log('buy:', getDis(prices.bindsAvg, maxBuyOrider.price))
-            console.log('sell:',  getDis(prices.asksAvg, maxSellOrider.price))
+            
             // 如果价格再下跌，取消订单，提高买入点
             if (maxBuyOrider !== null && getDis(prices.bindsAvg, maxBuyOrider.price) > 0.03) {
                 await this.cancelOrder(maxBuyOrider.id);
@@ -347,7 +353,8 @@ export default {
             if (maxSellOrider !== null && getDis(prices.asksAvg, maxSellOrider.price) > 0.3) {
                 await this.cancelOrder(maxSellOrider.id);
             }
-            
+            console.log('buy:', getDis(prices.bindsAvg, maxBuyOrider.price))
+            console.log('sell:',  getDis(prices.asksAvg, maxSellOrider.price))
             setTimeout(() => {
                 this.autoTrade();
             }, 20000);
