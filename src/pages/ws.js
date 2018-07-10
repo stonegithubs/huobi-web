@@ -33,7 +33,7 @@ ws.onmessage = (ev) => {
                 responseSymbol: data.symbol
             });
             // 只记录大饼的某些特征
-            if (data.symbol === 'btcusdt') {
+            if (data.symbol === 'btcusdt' || data.symbol === 'paibtc') {
                 writeSomething({
                     asksList,
                     bidsList,

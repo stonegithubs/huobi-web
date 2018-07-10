@@ -87,6 +87,7 @@ export default {
       this.getAllDetail();
     },
     getAllDetail: async function () {
+      this.list.length = 0;
       this.isLoading = true;
       let symbols = await getSymbols();
       let newSymbols = symbols.filter((item) => {
@@ -155,6 +156,7 @@ export default {
       }
 
       this.isLoading = false;
+      this.orderBy();
     },
     orderBy() {
       
