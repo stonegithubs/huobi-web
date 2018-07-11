@@ -143,8 +143,8 @@ export default {
             }
           if (preSymbol !== this.symbol) {
             let lastClose = this.lastKline.close * btcPrice;
-            option.yAxis.max = (lastClose + (lastClose * 0.15)).toFixed(4);
-            option.yAxis.min = (lastClose - (lastClose * 0.15)).toFixed(4);
+            option.yAxis.max = (lastClose + (lastClose * 0.10)).toFixed(4);
+            option.yAxis.min = (lastClose - (lastClose * 0.10)).toFixed(4);
             option.xAxis.data = [];
             option.series[0].data = [];
             option.series[1].data = [];
