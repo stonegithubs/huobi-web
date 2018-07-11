@@ -26,6 +26,13 @@
         <el-option value="sumMoneny">按sumMoneny排序</el-option>
         <el-option value="price">按price排序</el-option>
       </el-select>
+
+      <el-button
+        type="danger"
+        @click="reset"
+        size="small"
+      >重启ws
+      </el-button>
       <div>
         <span>当前价{{lastKline.close}}</span>
       </div>
@@ -135,6 +142,12 @@ export default {
         
     },
     methods: {
+        reset() {
+            wsSend({
+                type: `ws-huobi`,
+                value: 'reset'
+            });
+        },
         subscribeDepth: async function () {
             this.subscribeLoading = true;
             // 没打开就先打开
@@ -214,7 +227,7 @@ export default {
         sortBy() {
             getSameAmount.setConfig({sortBy: this.sortByValue});
         },
-
+        
     }
 };
 </script>

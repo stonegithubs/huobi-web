@@ -56,7 +56,7 @@ export const getTracePrice = function ({
     let sellIndex = Math.round(newAsksList.length/2) - sellCount;
     
     return {
-        buyPrice: newBidsList[buyIndex].price,
+        buyPrice: newBidsList[buyIndex] ? newBidsList[buyIndex].price : newBidsList[0].price,
         sellPrice: newAsksList[sellIndex].price,
         asksAvg,
         bindsAvg,
