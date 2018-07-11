@@ -119,16 +119,19 @@ async function writeSomething({
     let last = await db.HUOBI_DEPTH.toCollection().last();
     bids.forEach((item) => {
         if (item[1] > 10) {
-        action = 'buy'
+            action = 'buy'
         }
     });
     asks.forEach((item) => {
         if (item[1] > 10) {
-        action = 'sell'
+            action = 'sell'
         }
     });
-
-    if (action !== '' && diff({bids: last.tick.bids, asks: last.tick.asks}, {bids, asks,}) !== undefined) {
+    let same = false;
+    if (last !== undefined && diff({bids: last.tick.bids, asks: last.tick.asks}, {bids, asks,}) !== undefined) {
+        same = true;
+    }
+    if (action !== '' && !same && symbol === 'btcusdt') {
         db.HUOBI_DEPTH.put({
             action,
             symbol: symbol,
