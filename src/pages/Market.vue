@@ -269,7 +269,7 @@ export default {
                         type: 'buy-limit',
                         action: "buy"
                     });
-                    this.getOpenOrders();
+                    await this.getOpenOrders();
                 }
                 if (symbolBalance > amount && orderType.sellCount < maxOrider) {
                     await limit({
@@ -279,7 +279,7 @@ export default {
                         type: 'sell-limit',
                         action: "sell"
                     });
-                    this.getOpenOrders();
+                    await this.getOpenOrders();
                 }
             } catch (error) {
                 this.autoTrade();
