@@ -99,7 +99,7 @@ let postDepth = throttle(function (body) {
       mode: 'cors',
       body: body,
     })
-}, 20000, {trailing: false, leading: true});
+}, 10000, {trailing: false, leading: true});
 /**
  * 
  * 记录depth到indexedDB和数据库
@@ -151,6 +151,7 @@ async function writeSomething({
     postDepth(JSON.stringify({
         symbol: symbol,
         time: Date.now(),
+
         asksList: asksList.slice(0, 10),
         bidsList: bidsList.slice(0, 10),
     }));
