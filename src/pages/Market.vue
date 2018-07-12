@@ -269,7 +269,7 @@ export default {
                         type: 'buy-limit',
                         action: "buy"
                     });
-                    this.getOpenOrders();
+                    await this.getOpenOrders();
                 }
                 if (symbolBalance > amount && orderType.sellCount < maxOrider) {
                     await limit({
@@ -279,7 +279,7 @@ export default {
                         type: 'sell-limit',
                         action: "sell"
                     });
-                    this.getOpenOrders();
+                    await this.getOpenOrders();
                 }
             } catch (error) {
                 this.autoTrade();
@@ -343,18 +343,18 @@ export default {
             
             // 如果价格再下跌，取消订单，提高买入点
             if (maxBuyOrider !== null && getDis(prices.bindsAvg, maxBuyOrider.price) > 0.04) {
-                console.log('buy:', prices, getDis(prices.bindsAvg, maxBuyOrider.price))
                 await this.cancelOrder(maxBuyOrider.id);
             }
+            console.log('buy:', prices, getDis(prices.bindsAvg, maxBuyOrider.price))
             // 如果价格再上涨，取消订单，提高买入点
             if (minBuyOrider !== null && maxBuyOrider !== minBuyOrider && getDis(prices.bindsAvg, minBuyOrider.price) > 0.04) {
                 await this.cancelOrder(minBuyOrider.id);
             }
 
             if (maxSellOrider !== null && getDis(prices.asksAvg, maxSellOrider.price) > 0.04) {
-                console.log('sell:', prices, getDis(prices.asksAvg, maxSellOrider.price))
                 await this.cancelOrder(maxSellOrider.id);
             }
+            console.log('sell:', prices, getDis(prices.asksAvg, maxSellOrider.price))
     
             setTimeout(() => {
                 this.autoTrade();

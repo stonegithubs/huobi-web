@@ -99,7 +99,7 @@ let postDepth = throttle(function (body) {
       mode: 'cors',
       body: body,
     })
-}, 20000, {trailing: false, leading: true});
+}, 10000, {trailing: false, leading: true});
 /**
  * 
  * 记录depth到indexedDB和数据库
@@ -114,16 +114,32 @@ async function writeSomething({
     let bids =  tick_bids.splice(0, 2);
     let asks = tick_asks.splice(0, 2);
     let action = ''; // 移除行为类型
-    
+    let quoteCurrency = '';
+    let price = 1;
+
+    let _temp = {
+        usdt: 1,
+        btc: window.btcPrice,
+        eth: window.ethPrice,
+    }
+    for (let key in _temp) {
+        if (symbol.endsWith(key)) {
+            price = _temp[key];
+            break;
+        }
+    }
+
     // 对比是否一样，一样就不push了
     let last = await db.HUOBI_DEPTH.toCollection().last();
     bids.forEach((item) => {
-        if (item[1] > 10) {
+        item[3] = item[1] * price;
+        if (item[3] > 50000) {
             action = 'buy'
         }
     });
     asks.forEach((item) => {
-        if (item[1] > 10) {
+        item[3] = item[1] * price;
+        if (item[1] > 50000) {
             action = 'sell'
         }
     });
@@ -151,6 +167,10 @@ async function writeSomething({
     postDepth(JSON.stringify({
         symbol: symbol,
         time: Date.now(),
+        tick: {
+            bids,
+            asks,
+        },
         asksList: asksList.slice(0, 10),
         bidsList: bidsList.slice(0, 10),
     }));
