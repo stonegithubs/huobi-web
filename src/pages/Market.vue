@@ -115,6 +115,7 @@
 <script>
 import moment from "moment";
 import { mapState, mapGetters } from 'vuex';
+var random = require('lodash.random');
 import config from "@/config";
 
 import {
@@ -128,6 +129,8 @@ import {
 } from "@/api/huobiREST";
 import ws, {wsconfig, wsSend} from './ws';
 import { getTracePrice } from './autoTrace';
+
+let preSame = false;
 export default {
   name: "Market",
   components: {},
@@ -260,6 +263,34 @@ export default {
                 buyCount: maxOrider - orderType.buyCount,
                 sellCount: maxOrider - orderType.sellCount,
             });
+            // same
+            let pricesCount = {};
+            let sameOrider = null;
+            if (Array.isArray(this.openOrders)) {
+                this.openOrders.forEach((item, index) => {
+                    if (pricesCount[item.price] === undefined) {
+                        pricesCount[item.price] = 1;
+                    } else {
+                        sameOrider = item;
+                    }
+                });
+            }
+
+            if (sameOrider !== null) {
+                preSame = true;
+                let action = sameOrider.type.indexOf('buy') > -1 ? "buy" : 'sell';
+                maxOrider = prices.bak.length;
+                await this.cancelOrder(sameOrider.id);
+                await limit({
+                        symbol: this.symbol + this.quoteCurrency,
+                        amount: sameOrider.amount,
+                        price: prices.bak[random(0, prices.bak.length - 1)][action === 'buy' ? 'buyPrice' : 'sellPrice'],
+                        type: sameOrider.type,
+                        action: action,
+                    });
+                await this.getOpenOrders();
+            }
+
             try {
                 if (canUseAmount > amount && orderType.buyCount < maxOrider) {
                     await limit({
@@ -267,7 +298,8 @@ export default {
                         amount: amount,
                         price: prices.buyPrice,
                         type: 'buy-limit',
-                        action: "buy"
+                        action: "buy",
+                        preSame: preSame,
                     });
                     await this.getOpenOrders();
                 }
@@ -277,7 +309,8 @@ export default {
                         amount: amount,
                         price: prices.sellPrice,
                         type: 'sell-limit',
-                        action: "sell"
+                        action: "sell",
+                        preSame: preSame,
                     });
                     await this.getOpenOrders();
                 }
@@ -331,7 +364,10 @@ export default {
                 });
             }
             if (sameOrider !== null) {
+                preSame = true;
                 await this.cancelOrder(sameOrider.id);
+            } else {
+                preSame = false;
             }
             /**
              * 涨跌幅

@@ -20,6 +20,7 @@ export const getTracePrice = function ({
     asksList,
     buyCount,
     sellCount,
+    preSame,
 }) {
 
     let bindsAvg = 0;
@@ -33,6 +34,16 @@ export const getTracePrice = function ({
 
     let sum1 = 0;
     let sum2 = 0;
+    // 重复则取第一个作为备用
+    let bak = [];
+    let len = newBidsList.length > newAsksList.length ? newAsksList.length : newBidsList.length;
+
+    for(let i = 0; i < len; i++) {
+        bak.push({
+            buyPrice: newBidsList[i].price,
+            sellPrice: newAsksList[i].price
+        });
+    }
     newBidsList.forEach(item => {
         sum1 += Number(item.price);
     });
@@ -55,10 +66,13 @@ export const getTracePrice = function ({
     dis = newAsksList.length > 5 ? sellCount: 1;
     let sellIndex = Math.round(newAsksList.length/2) - sellCount;
     
+    
+
     return {
         buyPrice: newBidsList[buyIndex] ? newBidsList[buyIndex].price : newBidsList[0].price,
         sellPrice: newAsksList[sellIndex].price,
         asksAvg,
         bindsAvg,
-    }
+        bak: bak
+    };
 }
