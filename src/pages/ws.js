@@ -123,8 +123,10 @@ async function writeSomething({
         eth: window.ethPrice,
     }
     for (let key in _temp) {
+        
         if (symbol.endsWith(key)) {
             price = _temp[key];
+            console.log(price)
             break;
         }
     }
@@ -132,14 +134,14 @@ async function writeSomething({
     // 对比是否一样，一样就不push了
     let last = await db.HUOBI_DEPTH.toCollection().last();
     bids.forEach((item) => {
-        item[3] = item[1] * price;
-        if (item[3] > 50000) {
+        item[2] = (item[1] * item[0] * price) | 0;
+        if (item[2] > 50000) {
             action = 'buy'
         }
     });
     asks.forEach((item) => {
-        item[3] = item[1] * price;
-        if (item[1] > 50000) {
+        item[2] = (item[1] * item[0] * price) | 0;
+        if (item[2] > 50000) {
             action = 'sell'
         }
     });
