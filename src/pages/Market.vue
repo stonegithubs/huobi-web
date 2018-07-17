@@ -381,7 +381,7 @@ export default {
             if (maxBuyOrider !== null && getDis(prices.bindsAvg, maxBuyOrider.price) > 0.04) {
                 await this.cancelOrder(maxBuyOrider.id);
             }
-            console.log('buy:', prices, getDis(prices.bindsAvg, maxBuyOrider.price))
+            // console.log('buy:', prices, getDis(prices.bindsAvg, maxBuyOrider.price))
             // 如果价格再上涨，取消订单，提高买入点
             if (minBuyOrider !== null && maxBuyOrider !== minBuyOrider && getDis(prices.bindsAvg, minBuyOrider.price) > 0.04) {
                 await this.cancelOrder(minBuyOrider.id);
@@ -390,7 +390,7 @@ export default {
             if (maxSellOrider !== null && getDis(prices.asksAvg, maxSellOrider.price) > 0.04) {
                 await this.cancelOrder(maxSellOrider.id);
             }
-            console.log('sell:', prices, getDis(prices.asksAvg, maxSellOrider.price))
+            
     
             setTimeout(() => {
                 this.autoTrade();
