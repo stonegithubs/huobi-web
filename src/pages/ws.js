@@ -26,6 +26,7 @@ ws.onmessage = (ev) => {
                 type: 'asks'
             });
             store.commit('UPTATE_DEPTH', {
+                tick: data.tick,
                 asksList: asksList,
                 bidsList: bidsList,
                 bidsFirst: bidsFirst,
@@ -37,8 +38,8 @@ ws.onmessage = (ev) => {
                 writeSomething({
                     asksList,
                     bidsList,
-                    tick_bids: data.tick.bids,
-                    tick_asks: data.tick.asks,
+                    tick_bids: JSON.parse(JSON.stringify(data.tick.bids)),
+                    tick_asks: JSON.parse(JSON.stringify(data.tick.asks)),
                     symbol: data.symbol
                 });
             }

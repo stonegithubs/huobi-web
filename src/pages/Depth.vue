@@ -216,6 +216,10 @@ export default {
                 symbol: `${this.symbols}`
             });
             this.$store.commit('UPTATE_DEPTH', {
+                tick: {
+                    asks: [],
+                    bids: []
+                },
                 asksList: [],
                 bidsList: [],
                 bidsFirst: [],

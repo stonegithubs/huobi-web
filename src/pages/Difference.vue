@@ -12,6 +12,7 @@
         <el-option value="sell1Money">卖一总价($)</el-option>
       </el-select>
       <el-button type="primary"  @click="orderBy" size="small">排序</el-button>
+      <el-button type="danger"  @click="stopSearch" size="small">中断自动查询</el-button>
     </div>
     <div ref="tickList" style="overflow: auto;">
       <table>
@@ -77,17 +78,18 @@ export default {
   },
   mounted() {
     this.$refs.tickList.style.maxHeight = window.innerHeight - 50 + 'px';
+    this.seachAble = true;
   },
   beforeDestroy() {
 
   },
   methods: {
     start() {
-      this.list.splice(0, this.list.length - 1);
       this.getAllDetail();
     },
     getAllDetail: async function () {
-      this.list.length = 0;
+      // this.list.length = 0;
+      const list = this.list.length === 0 ? this.list : [];
       this.isLoading = true;
       let symbols = await getSymbols();
       let newSymbols = symbols.filter((item) => {
@@ -138,14 +140,14 @@ export default {
         let tickDis = bidsAvg / asksAvg;
         // 买一卖一价格($)
         let buy1Money = bidsList[0].sumDollar;
-        let sell1Money = asksList[1].sumDollar;
+        let sell1Money = asksList[0].sumDollar;
         let bidsListOrderByCount = bidsList.sort(function (a, b) {
           return b.count - a.count;
         });
         let asksListOrderByCount = asksList.sort(function (a, b) {
           return b.count - a.count;
         });
-        this.list.push({
+        list.push({
           symbol: _symbols,
           tickDis: tickDis.toFixed(3),
           maxCountDis: (bidsListOrderByCount[0].count / asksListOrderByCount[0].count).toFixed(3),
@@ -154,15 +156,23 @@ export default {
           sell1Money,
         });
       }
-
+      this.list.length = 0;
+      this.list = list;
       this.isLoading = false;
       this.orderBy();
+      if (!this.seachAble) {
+        return;
+      }
+      this.start();
     },
     orderBy() {
       
       this.list.sort((a, b) => {
         return b[this.orderByProperty] - a[this.orderByProperty];
       });
+    },
+    stopSearch() {
+      this.seachAble = false;
     }
   }
 };

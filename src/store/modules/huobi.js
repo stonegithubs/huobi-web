@@ -1,6 +1,11 @@
 import * as types from '../mutation-types';
 
 const state = {
+    /* 挂单原始数据 */
+    tick: {
+        asks: [],
+        bids: []
+    },
     /* 买卖深度 */
     asksList: [],
     bidsList: [],
@@ -51,6 +56,7 @@ const mutations = {
         state[payload.stateKey] = payload.data;
     },
     [types.UPTATE_DEPTH](state, payload) {
+        state.tick = payload.tick;
         state.asksList = payload.asksList;
         state.bidsList = payload.bidsList;
         state.aksFirst = payload.aksFirst;

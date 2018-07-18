@@ -7,17 +7,20 @@
       <el-tab-pane label="Charts" name="Charts">
         <Charts></Charts>
       </el-tab-pane>
-      <el-tab-pane label="Difference" name="Difference">
-        <Difference></Difference>
-      </el-tab-pane>
-      <el-tab-pane label="sql" name="Sql">
-        <Sql></Sql>
-      </el-tab-pane>
       <el-tab-pane label="KLine" name="KLine">
         <KLine></KLine>
       </el-tab-pane>
+      <el-tab-pane label="Difference" name="Difference">
+        <Difference></Difference>
+      </el-tab-pane>
       <el-tab-pane label="Market" name="Market">
         <Market></Market>
+      </el-tab-pane>
+      <el-tab-pane label="Density" name="Density">
+        <Density></Density>
+      </el-tab-pane>
+      <el-tab-pane label="sql" name="Sql">
+        <Sql></Sql>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -36,6 +39,7 @@ import KLine from "./KLine";
 import Difference from "./Difference";
 import Market from "./Market";
 import Charts from "./Charts";
+import Density from "./Density";
 export default {
     name: "Home",
     components: {
@@ -44,7 +48,8 @@ export default {
         Sql,
         KLine,
         Market,
-        Charts
+        Charts,
+        Density,
     },
     data() {
         return {
