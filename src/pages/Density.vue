@@ -1,9 +1,6 @@
 <template>
     <div>
-        <div>
-
-        </div>
-        <div class="tickList">
+        <div class="tickList" ref="tickList">
             <div class="flex-row container">
                 <div class="flex-1">
                     <DensityTable :data="buyDensityList" :quoteCurrency="quoteCurrency"></DensityTable>
@@ -75,7 +72,7 @@ export default {
         
     },
     mounted() {
-        this.$el.style.maxHeight = window.innerHeight - 50 + 'px';
+        this.$refs.tickList.style.maxHeight = window.innerHeight - 50 + 'px';
         // this.subscribeDisable = !this.useWSAble;
     },
     beforeDestroy() {
