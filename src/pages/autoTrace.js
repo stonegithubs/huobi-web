@@ -70,7 +70,7 @@ export const getTracePrice = function ({
 
     return {
         buyPrice: newBidsList[buyIndex] ? newBidsList[buyIndex].price : newBidsList[0].price,
-        sellPrice: newAsksList[sellIndex].price,
+        sellPrice: newAsksList[sellIndex] ? newAsksList[sellIndex].price : newAsksList[0].price,
         asksAvg,
         bindsAvg,
         bak: bak
