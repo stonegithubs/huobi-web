@@ -50,11 +50,11 @@ ws.onmessage = (ev) => {
                 data: data.kline,
             });
         } else if (data.trade) {
-            console.log(data.trade)
-            store.commit('updateHuobiState', {
-                stateKey: 'trade',
-                data:trade(data.trade),
-            });
+            // console.log(data.trade)
+            // store.commit('updateHuobiState', {
+            //     stateKey: 'trade',
+            //     data:trade(data.trade),
+            // });
         }
     }
 
