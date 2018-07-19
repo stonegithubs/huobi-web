@@ -215,6 +215,11 @@ export default {
                 value: 'subscribeKline',
                 symbol: `${this.symbols}`
             });
+            wsSend({
+                type: `ws-huobi`,
+                value: 'subscribeDepth',
+                symbol: `${this.symbols}`
+            });
             this.$store.commit('UPTATE_DEPTH', {
                 tick: {
                     asks: [],
