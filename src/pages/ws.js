@@ -5,6 +5,7 @@ import store from '@/store';
 import db from '@/plugins/dexie';
 // utils
 import getSameAmount from '@/utils/getSameAmount';
+import trade from '@/utils/trade';
 export const wsconfig = {
     symbol: '',
 }
@@ -49,9 +50,10 @@ ws.onmessage = (ev) => {
                 data: data.kline,
             });
         } else if (data.trade) {
+            console.log(data.trade)
             store.commit('updateHuobiState', {
                 stateKey: 'trade',
-                data: data.trade,
+                data:trade(data.trade),
             });
         }
     }

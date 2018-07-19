@@ -1,3 +1,5 @@
+import getPriceIndex from './getPriceIndex';
+
 /**
  * 挂单密度
  * @param {string[]} asksList 
@@ -20,19 +22,7 @@ const getOrderDensity = function ({asksList, bidsList, currentPrice, symbol}) {
     const _asksList = JSON.parse(JSON.stringify(asksList));
     const _bidsList = JSON.parse(JSON.stringify(bidsList));
 
-    // btc eth交易对转美元
-    let _temp = {
-        usdt: 1,
-        btc: window.btcPrice,
-        eth: window.ethPrice,
-    }
-    let _price;
-    for (let key in _temp) {
-        if (symbol.endsWith(key)) {
-            _price = _temp[key];
-            break;
-        }
-    }
+    let _price = getPriceIndex(symbol);
     for (let i = 0.001; i < 0.4; i+=0.001) {
         i = Number(i.toFixed(6));
         let buyPrice = (currentPrice * (1 - i));

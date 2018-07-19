@@ -6,6 +6,8 @@ const state = {
         asks: [],
         bids: []
     },
+    /* 成交 */
+    trade: {},
     /* 买卖深度 */
     asksList: [],
     bidsList: [],
