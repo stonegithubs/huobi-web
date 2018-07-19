@@ -217,7 +217,7 @@ export default {
             });
             wsSend({
                 type: `ws-huobi`,
-                value: 'subscribeDepth',
+                value: 'subscribeTrade',
                 symbol: `${this.symbols}`
             });
             this.$store.commit('UPTATE_DEPTH', {
