@@ -49,6 +49,10 @@ ws.onmessage = (ev) => {
                 data: data.kline,
             });
         } else if (data.trade) {
+            store.commit('updateHuobiState', {
+                stateKey: 'trade',
+                data: data.trade,
+            });
         }
     }
 
