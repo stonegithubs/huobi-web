@@ -34,6 +34,7 @@
                 <el-option value="sell-limit">限价卖</el-option>
             </el-select>
             <el-button type="primary" :loading="buttonLoading" @click="trade" size="small">下单</el-button>
+            <el-button type="primary" :loading="buttonLoading" @click="timeoutBuy" size="small">定时抢新币</el-button>
         </div>
 
         <div style="margin: 10px;">
@@ -438,6 +439,16 @@ export default {
                 this.getOpenOrders();
                 this.buttonLoading = false;
             });
+        },
+        timeoutBuy: async function () {
+            // await limit({
+            //             symbol: this.symbol + this.quoteCurrency,
+            //             amount: sameOrider.amount,
+            //             price: prices.bak[random(0, prices.bak.length - 1)][action === 'buy' ? 'buyPrice' : 'sellPrice'],
+            //             type: sameOrider.type,
+            //             action: action,
+            //         });
+            //     await this.getOpenOrders();
         }
     }
 };

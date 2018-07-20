@@ -121,6 +121,31 @@ export async function getSymbols () {
 }
 
 /**
+ * 
+ * @param {string} symbol 
+ * @param {string} quoteCurrency
+ */
+export const getSymbolInfo = async function (symbol, quoteCurrency) {
+  let precisionData = await getSymbols();
+  let pricePrecision = 0;
+  let amountPrecision = 0;
+  precisionData.some((item) => {
+      // base-currency:"yee"
+      // price-precision:8
+      // quote-currency:"eth"
+      if (item['base-currency'] === symbol && item['quote-currency'] === quoteCurrency) {
+          pricePrecision = item['price-precision'];
+          amountPrecision = item['amount-precision'];
+          return true;
+      }
+      return false;
+  });
+  return {
+    pricePrecision,
+    amountPrecision
+  }
+}
+/**
  * 买币
  * @interface {
  *  symbol: string,
