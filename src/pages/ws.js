@@ -49,12 +49,12 @@ ws.onmessage = (ev) => {
                 stateKey: 'lastKline',
                 data: data.kline,
             });
-        } else if (data.trade) {
+        } else if (data.trade && data.symbol === config.symbol) {
             // console.log(data.trade)
-            // store.commit('updateHuobiState', {
-            //     stateKey: 'trade',
-            //     data:trade(data.trade),
-            // });
+            store.commit('updateHuobiState', {
+                stateKey: 'trade',
+                data: data.trade,
+            });
         }
     }
 

@@ -21,18 +21,28 @@
 
           </LineChart2>
       </div>
+
+      <div>
+          <BarChart
+            :trade="trade"
+            :symbol="responseSymbol"
+          >
+
+          </BarChart>
+      </div>
   </div>
 </template>
 
 <script>
 import { mapState, mapGetters } from 'vuex';
 import config from '@/config';
-import {LineChart, LineChart2} from '@/components/charts';
+import {LineChart, LineChart2, BarChart} from '@/components/charts';
 export default {
     name: "Charts",
     components: {
         LineChart,
-        LineChart2
+        LineChart2,
+        BarChart
     },
     data() {
         return {
@@ -46,8 +56,10 @@ export default {
             asksList: state => state.huobi.asksList,
             lastKline: state => state.huobi.lastKline,
             responseSymbol: state => state.huobi.responseSymbol,
+            trade: state => state.huobi.trade,
         }),
-   },
+    },
+
     created() {
     },
     mounted() {
@@ -57,6 +69,7 @@ export default {
 
     },
     methods: {
+
     }
 };
 </script>

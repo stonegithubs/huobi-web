@@ -41,8 +41,8 @@ let option = {
             show: true,
             realtime: true,
             yAxisIndex: 0,
-            start: 74,
-            end: 90
+            start: 60,
+            end: 80
         },
         {
             show: true,

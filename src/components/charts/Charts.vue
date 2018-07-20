@@ -16,7 +16,8 @@ export default {
   watch: {
     options(options) {
       this.chart.setOption(options)
-    }
+    },
+   
   },
   mounted() {
     // 基于准备好的dom，初始化echarts实例
