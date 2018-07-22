@@ -6,6 +6,7 @@ import db from '@/plugins/dexie';
 // utils
 import getSameAmount from '@/utils/getSameAmount';
 import trade from '@/utils/trade';
+import getPriceIndex from '@/utils/getPriceIndex';
 export const wsconfig = {
     symbol: '',
 }
@@ -59,7 +60,7 @@ ws.onmessage = (ev) => {
     }
 
     if (data.status) {
-        console.log(data)
+
         store.commit('updateHuobiState', {
             stateKey: 'WS_HUOBI_STATUS',
             data: {
@@ -72,6 +73,7 @@ ws.onmessage = (ev) => {
 };
 
 ws.onclose = () => {
+    console.log('ws.close');
     // 关闭 websocket
     store.commit('updateHuobiState', {
         stateKey: 'WS_SERVER_STATUS',
@@ -122,21 +124,7 @@ async function writeSomething({
     let asks = tick_asks.splice(0, 2);
     let action = ''; // 移除行为类型
     let quoteCurrency = '';
-    let price = 1;
-
-    let _temp = {
-        usdt: 1,
-        btc: window.btcPrice,
-        eth: window.ethPrice,
-    }
-    for (let key in _temp) {
-        
-        if (symbol.endsWith(key)) {
-            price = _temp[key];
-            console.log(price)
-            break;
-        }
-    }
+    let price = getPriceIndex(symbol);
 
     // 对比是否一样，一样就不push了
     let last = await db.HUOBI_DEPTH.toCollection().last();

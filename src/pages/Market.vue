@@ -46,6 +46,20 @@
                 size="small"
                 clearable>
             </el-input>
+            <el-input
+                style="width: 100px;"
+                placeholder="buyCount"
+                v-model="buyCount"
+                size="small"
+                clearable>
+            </el-input>
+            <el-input
+                style="width: 100px;"
+                placeholder="sellCount"
+                v-model="sellCount"
+                size="small"
+                clearable>
+            </el-input>
             <el-button type="primary" :loading="buttonLoading" @click="getOpenOrders" size="small">查委托</el-button>
             <el-button type="primary" :loading="buttonLoading" @click="autoTrade" size="small">根据Depth自动跟单</el-button>
             <el-button type="primary" :loading="buttonLoading" @click="checkOrder" size="small">检查订单是否合理</el-button>
@@ -146,7 +160,9 @@ export default {
             openOrders: [],
             quoteCurrency: 'btc',
             amountPrecision: 4,
-            testPrice: 10
+            testPrice: 10,
+            buyCount: 3,
+            sellCount: 3,
         };
     },
     computed:{
@@ -250,7 +266,7 @@ export default {
                 }
             });
             /* 买卖最多下单数 */
-            let maxOrider = 3;
+
             /* 最大金额 */
             let maxPrice = this.testPrice;
             let amount = this.quoteCurrency === 'usdt' 
@@ -261,9 +277,10 @@ export default {
             let prices = getTracePrice({
                 bidsList: this.bidsList,
                 asksList: this.asksList,
-                buyCount: maxOrider - orderType.buyCount,
-                sellCount: maxOrider - orderType.sellCount,
+                buyCount: this.buyCount - orderType.buyCount,
+                sellCount: this.sellCount - orderType.sellCount,
             });
+            console.log(prices)
             // same
             let pricesCount = {};
             let sameOrider = null;
@@ -280,7 +297,9 @@ export default {
             if (sameOrider !== null) {
                 preSame = true;
                 let action = sameOrider.type.indexOf('buy') > -1 ? "buy" : 'sell';
-                maxOrider = prices.bak.length;
+
+                this.buyCount = prices.bak.length;
+                this.sellCount = prices.bak.length
                 await this.cancelOrder(sameOrider.id);
                 await limit({
                         symbol: this.symbol + this.quoteCurrency,
@@ -293,7 +312,7 @@ export default {
             }
 
             try {
-                if (canUseAmount > amount && orderType.buyCount < maxOrider) {
+                if (canUseAmount > amount && orderType.buyCount < this.buyCount) {
                     await limit({
                         symbol: this.symbol + this.quoteCurrency,
                         amount: amount,
@@ -304,7 +323,7 @@ export default {
                     });
                     await this.getOpenOrders();
                 }
-                if (symbolBalance > amount && orderType.sellCount < maxOrider) {
+                if (symbolBalance > amount && orderType.sellCount < this.sellCount) {
                     await limit({
                         symbol: this.symbol + this.quoteCurrency,
                         amount: amount,

@@ -151,7 +151,7 @@ export default {
             // 时间填充0补齐 -> 15320829 0000000
             let _timeToStringDate = _time.padEnd(13, '0');
             let usdt = (data.price * data.amount * this._price) | 0 ;
-            console.log(option)
+
             if (preXData === undefined || new Date(preXData.ts).getTime() < new Date(Number(_timeToStringDate)).getTime()) {
                 option.xAxis[0].data.push({
                     value: moment(Number(_timeToStringDate)).format("YYYY/MM/DD h:mm:ss"),
@@ -169,7 +169,6 @@ export default {
                 this.chart.setOption(option);
             } else if (preXData = _time) {
                 let lastIndex = option.xAxis[0].data.length - 1;
-                console.log(data)
                 // 合并交易额
                 if (data.direction === 'buy') {
                     option.series[0].data[lastIndex] += usdt;
