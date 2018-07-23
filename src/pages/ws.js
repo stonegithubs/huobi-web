@@ -7,16 +7,43 @@ import db from '@/plugins/dexie';
 import getSameAmount from '@/utils/getSameAmount';
 import trade from '@/utils/trade';
 import getPriceIndex from '@/utils/getPriceIndex';
+
+let ws = null;
+let pre_ping = 0;
+let ping = 0;
+
 export const wsconfig = {
     symbol: '',
 }
 wsconfig.set = function (data) {
     Object.assign(config, data);
 }
+const openWs = function (params) {
+    ws = new WebSocket(`ws://${config.wsHost}/huobi`);
+    ws.onmessage = onmessage;
+    ws.onclose = onclose;
+    ws.onerror = onerror;
+}
+openWs();
+/**
+ * @return {Promise}
+ */
+const closeWs = function () {
+    return new Promise(function (resolve, reject) {
+        if (!(ws !== null && ws.readyState === WebSocket.OPEN)) {
+            reject({});
+            return;
+        }
+        ws.onclose = function () {
+            resolve();
+        }
+        ws.close();
+    });
+};
 
-const ws = new WebSocket(`ws://${config.wsHost}/huobi`);
-ws.onmessage = (ev) => {
+function onmessage(ev) {
     let data = JSON.parse(ev.data);
+    let ping = Date.now();
     if (data.type === "WS_HUOBI") {
         if (data.tick && data.symbol === config.symbol) {
             let bidsFirst = data.tick.bids[0];
@@ -70,9 +97,9 @@ ws.onmessage = (ev) => {
             },
         });
     }
-};
+}
 
-ws.onclose = () => {
+function onclose() {
     console.log('ws.close');
     // 关闭 websocket
     store.commit('updateHuobiState', {
@@ -82,9 +109,8 @@ ws.onclose = () => {
             msg: 'close',
         },
     });
-};
-ws.onerror = (err) => {
-    
+}
+function onerror(err) {
     store.commit('updateHuobiState', {
         stateKey: 'WS_SERVER_STATUS',
         data: {
@@ -92,7 +118,19 @@ ws.onerror = (err) => {
             msg: err,
         },
     });
-};
+}
+// 心跳监测
+
+
+setInterval(function () {
+    if (ping === pre_ping) {
+        closeWs().then(() => {
+            openWs()
+        }).catch(console);
+    } else {
+        pre_ping = ping;
+    }
+}, 1000 * 60 * 10);
 
 export const wsSend = function (data) {
     ws.send(JSON.stringify(data));
