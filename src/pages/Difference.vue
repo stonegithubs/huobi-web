@@ -15,43 +15,45 @@
       <el-button type="danger"  @click="stopSearch" size="small">中断自动查询</el-button>
     </div>
     <div ref="tickList" style="overflow: auto;">
-      <table>
-          <thead>
-              <tr>
-                  <th>
-                  Symbols
-                  </th>
-                  <th>
-                  买一/卖一(价格)
-                  </th>
-                  <th>
-                  买单数(max)/卖单数(max)
-                  </th>
-                  <th>
-                  buyCount / sellCount
-                  </th>
-                  <th>
-                  买一总价($/k)
-                  </th>
-                  <th>
-                  卖一总价($/k)
-                  </th>
-              </tr>
-          </thead>
-          <tbody>
-          <tr
-              v-for="(item, index) in list"
-              :key="index"
-          >
-              <td>{{item.symbol}}</td>
-              <td>{{item.tickDis}}</td>
-              <td>{{item.maxCountDis}}</td>
-              <td>{{item.lengthDis}}</td>
-              <td>{{(item.buy1Money / 1000).toFixed(2)}}</td>
-              <td>{{(item.sell1Money / 1000).toFixed(2)}}</td>
-          </tr>
-          </tbody>
-      </table>
+      <div>
+        <table>
+            <thead>
+                <tr>
+                    <th>
+                    Symbols
+                    </th>
+                    <th>
+                    买一/卖一(价格)
+                    </th>
+                    <th>
+                    买单数(max)/卖单数(max)
+                    </th>
+                    <th>
+                    buyCount / sellCount
+                    </th>
+                    <th>
+                    买一总价($/k)
+                    </th>
+                    <th>
+                    卖一总价($/k)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+            <tr
+                v-for="(item, index) in list"
+                :key="index"
+            >
+                <td>{{item.symbol}}</td>
+                <td>{{item.tickDis}}</td>
+                <td>{{item.maxCountDis}}</td>
+                <td>{{item.lengthDis}}</td>
+                <td>{{(item.buy1Money / 1000).toFixed(2)}}</td>
+                <td>{{(item.sell1Money / 1000).toFixed(2)}}</td>
+            </tr>
+            </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </template>
@@ -156,14 +158,20 @@ export default {
           sell1Money,
         });
       }
-      this.list.length = 0;
-      this.list = list;
+
+      if (list !== this.list) {
+        this.list.length = 0;
+        this.list = list;
+      }
+      
       this.isLoading = false;
       this.orderBy();
       if (!this.seachAble) {
         return;
       }
-      this.start();
+      setTimeout(() => {
+        this.start();
+      }, 2000);
     },
     orderBy() {
       

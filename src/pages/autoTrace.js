@@ -66,12 +66,12 @@ export const getTracePrice = function ({
     asksAvg = sum2 / newAsksList.length;
     
     let dis = newBidsList.length > 5 ? buyCount: 1;
-    let buyIndex = Math.round(newBidsList.length/2) - buyCount + 2;
-
+    let buyIndex = Math.round(newBidsList.length/2) + buyCount;
+    console.log(newBidsList)
     dis = newAsksList.length > 5 ? sellCount: 1;
-    let sellIndex = Math.round(newAsksList.length/2) - sellCount + 2;
+    let sellIndex = Math.round(newAsksList.length/2) - sellCount;
     
-    console.log(newBidsList.length, buyIndex)
+    console.log(newAsksList)
     return {
         buyPrice: newBidsList[buyIndex] ? newBidsList[buyIndex].price : newBidsList[0].price,
         sellPrice: newAsksList[sellIndex] ? newAsksList[sellIndex].price : newAsksList[0].price,
