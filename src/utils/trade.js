@@ -61,5 +61,3 @@ const tradeAnalysis = function ({data, symbol}) {
 }
 
 export default tradeAnalysis;
-
-tradeAnalysis({data, symbol: 'btcusdt'});

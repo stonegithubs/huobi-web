@@ -4,7 +4,7 @@
  * @param {Function} fn
  * @example timeoutTask('2018-08-18T21:03:00', () => {});
  */
-export const timeoutTask = function (time, fn) {
+const timeoutTask = function (time, fn) {
     const tempDate = typeof time === 'number' ? time : Date.parse(time);
     const timer = setInterval(function () {
       let now = Date.now();
@@ -14,3 +14,5 @@ export const timeoutTask = function (time, fn) {
       }
     }, 1000);
 }
+
+export default timeoutTask;
