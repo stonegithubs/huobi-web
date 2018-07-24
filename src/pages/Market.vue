@@ -132,10 +132,11 @@ import moment from "moment";
 import { mapState, mapGetters } from 'vuex';
 var random = require('lodash.random');
 import config from "@/config";
-
+import timeoutTask from '@/utils/timeoutTask';
 import {
     limit,
     getSymbols,
+    getSymbolInfo,
     getOpenOrders,
     cancelOrder,
     getBalance,
@@ -185,12 +186,13 @@ export default {
          */
         trade() {
             this.buttonLoading = true;
-            limit({
+            console.log(this.type.search('buy'))
+            return limit({
                 symbol: this.symbol + this.quoteCurrency,
                 amount: this.amount,
                 price: this.price,
                 type: this.type,
-                action: "buy"
+                action: this.type.indexOf('buy') > -1 ? 'buy' : 'sell'
             }).then(res => {
                 if (res.status === 'ok' && res.data !== undefined) {
                     this.$notify({
@@ -460,14 +462,16 @@ export default {
             });
         },
         timeoutBuy: async function () {
-            // await limit({
-            //             symbol: this.symbol + this.quoteCurrency,
-            //             amount: sameOrider.amount,
-            //             price: prices.bak[random(0, prices.bak.length - 1)][action === 'buy' ? 'buyPrice' : 'sellPrice'],
-            //             type: sameOrider.type,
-            //             action: action,
-            //         });
-            //     await this.getOpenOrders();
+            // let {
+            //     pricePrecision,
+            //     amountPrecision
+            // } = await getSymbolInfo(this.symbol, this.quoteCurrency);
+            
+            // await this.trade();
+
+            timeoutTask('2018-07-24T21:03:00', () => {
+                this.trade();
+            });
         }
     }
 };
