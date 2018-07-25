@@ -50,10 +50,10 @@ export const getTracePrice = function ({
     let bak = [];
     let len = newBidsList.length > newAsksList.length ? newAsksList.length : newBidsList.length;
 
-    for(let i = 0; i < len; i++) {
+    for(let i = 0; i < (len / 2); i++) {
         bak.push({
             buyPrice: newBidsList[i].price,
-            sellPrice: newAsksList[i].price
+            sellPrice: newAsksList[len - i - 1].price
         });
     }
     newBidsList.forEach(item => {
