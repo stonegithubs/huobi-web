@@ -161,9 +161,7 @@ export default {
             let value = this.symbol + this.symbol2;
             this.symbols = value;
             
-            // 单位为美元
-            window.ethPrice = 0;
-            window.btcPrice = 0;
+            
             this.quoteCurrency = '$';
 
             let precisionData = await getSymbols();
@@ -180,18 +178,10 @@ export default {
                 }
                 return false;
             });
-            try {
-                if (this.symbol2 === 'eth') {
-                    let res = await getKLine('ethusdt', '1min', 2);
-                    window.ethPrice = res.data[1].close;
-                    this.quoteCurrency = 'ETH';
-                } else if (this.symbol2 === 'btc') {
-                    let res = await getKLine('btcusdt', '1min', 2);
-                    window.btcPrice = res.data[1].close;
-                    this.quoteCurrency = 'BTC';
-                }
-            } catch (error) {
-                this.subscribeLoading = false;
+            if (this.symbol2 === 'eth') {
+                this.quoteCurrency = 'ETH';
+            } else if (this.symbol2 === 'btc') {
+                this.quoteCurrency = 'BTC';
             }
             
             // 设置精度
