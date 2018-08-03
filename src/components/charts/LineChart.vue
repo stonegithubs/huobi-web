@@ -196,14 +196,14 @@ export default {
                     option.series[2].data.shift();
                     option.series[3].data.shift();
                 }
-                let maxAmount = this.bidsList[0].amount > this.asksList[0].amount
+                let maxAmount = Number(this.bidsList[0].amount) > Number(this.asksList[0].amount)
                                     ? this.bidsList[0].amount
                                     : this.asksList[0].amount;
                 if (preSymbol !== this.symbol) {
-                    option.yAxis[0].min = (maxAmount * 0.3) | 0;
-                    option.yAxis[0].max = (maxAmount * 10 | 0);
-                    option.yAxis[1].min = (maxAmount * 0.3) | 0;
-                    option.yAxis[1].max = (maxAmount * 10) | 0;
+                    option.yAxis[0].min = (maxAmount * 0.2) | 0;
+                    option.yAxis[0].max = (maxAmount * 4 | 0);
+                    option.yAxis[1].min = (maxAmount * 0.2) | 0;
+                    option.yAxis[1].max = (maxAmount * 4) | 0;
 
                     option.xAxis[0].data = [];
                     option.series[0].data = [];
