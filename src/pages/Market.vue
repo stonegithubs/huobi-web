@@ -469,7 +469,7 @@ export default {
             
             // await this.trade();
 
-            timeoutTask('2018-07-24T21:03:00', () => {
+            timeoutTask('2018-07-25T15:00:00', () => {
                 this.trade();
             });
         }
