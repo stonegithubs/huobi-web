@@ -29,6 +29,7 @@ openWs();
  * @return {Promise}
  */
 const closeWs = function () {
+    console.log('closeWs');
     return new Promise(function (resolve, reject) {
         if (!(ws !== null && ws.readyState === WebSocket.OPEN)) {
             reject({});
