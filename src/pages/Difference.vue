@@ -106,7 +106,8 @@ export default {
           res = await getDepth(_symbols, 'step0');
         } catch (error) {
           this.isLoading = false;
-          throw error;
+          console.error(error);
+          continue;
         }
         
         let bids = res.tick.bids;

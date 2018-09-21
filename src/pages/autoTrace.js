@@ -40,7 +40,6 @@ export const getTracePrice = function ({
     let newBidsList = getTop(bidsList);
     let newAsksList = getTop(asksList);
     if (newBidsList.length <= 2) {
-        alert('不建议刷单');
         return;
     }
 
