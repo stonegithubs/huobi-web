@@ -35,25 +35,25 @@ export default {
         };
     },
     computed:{
-            ...mapState({
-                tick: state => state.huobi.tick,
-                bidsFirst: state => state.huobi.bidsFirst,
-                aksFirst: state => state.huobi.aksFirst,
-                lastKline: state => state.huobi.lastKline,
-                responseSymbol: state => state.huobi.responseSymbol,
-            }),
-            ...mapGetters([
-                'useWSAble'
-            ]),
-            quoteCurrency() {
-                if (!this.responseSymbol) {
-                    return 'usdt';
-                } else if (this.responseSymbol.endsWith('btc')) {
-                    return 'btc';
-                } else if (this.responseSymbol.endsWith('eth')) {
-                    return 'eth';
-                }
-            },
+        ...mapState({
+            tick: state => state.huobi.tick,
+            bidsFirst: state => state.huobi.bidsFirst,
+            aksFirst: state => state.huobi.aksFirst,
+            lastKline: state => state.huobi.lastKline,
+            responseSymbol: state => state.huobi.responseSymbol,
+        }),
+        ...mapGetters([
+            'useWSAble'
+        ]),
+        quoteCurrency() {
+            if (!this.responseSymbol) {
+                return 'usdt';
+            } else if (this.responseSymbol.endsWith('btc')) {
+                return 'btc';
+            } else if (this.responseSymbol.endsWith('eth')) {
+                return 'eth';
+            }
+        },
     },
     watch: {
         tick(){

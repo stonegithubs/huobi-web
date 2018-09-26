@@ -12,7 +12,7 @@ import moment from "moment";
 import throttle from 'lodash.throttle';
 import getPriceIndex from '@/utils/getPriceIndex';
 import { color } from './config';
-
+import AbnormalMonitoring from '../../pages/abnormal';
 const echarts = require("echarts");
 
 let preSymbol = '';
@@ -102,6 +102,7 @@ export default {
         trade() {
             this.trade.data.forEach((item) => {
                 this.push(item);
+                this.am.speed(item);
             });
         }
     },
@@ -119,6 +120,7 @@ export default {
         delete option.legend;
 
         this._price = 1;
+        this.am = new AbnormalMonitoring();
     },
     methods: {
         /**
