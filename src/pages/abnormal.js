@@ -85,7 +85,9 @@ export default class AbnormalMonitoring {
         if (ts > this.nextTime) {
             const disPrice = data.price - this._preTrade.price;
             let status = disPrice > 0 ? '涨' : '跌';
-            status = disPrice === 0 ? '横盘' : status;
+            if (Math.abs(disPrice) < 0.01) {
+                status = '横盘';
+            }
             this.pushSatus({
                 status: status,
                 strength: (disPrice / this._preTrade.price).toFixed(3),
@@ -108,7 +110,7 @@ export default class AbnormalMonitoring {
     pushSatus(status) {
         if (this.historyStatus.length > 6) {
             this.historyStatus.shift();
-            console.log(this)
+            console.log(this.historyStatus, this)
         }
         this.historyStatus.push(status);
     }

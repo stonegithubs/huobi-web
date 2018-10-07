@@ -12,7 +12,7 @@ import config from '../config';
 const http = axios.create({
   baseURL: config.URL_HUOBI,
   timeout: 30000,
-  headers: {
+  headers: {  
     'Content-Type': 'application/x-www-form-urlencoded',
   },
   transformRequest: [function (data, headers) {
