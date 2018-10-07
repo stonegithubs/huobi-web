@@ -112,6 +112,7 @@ function onclose() {
     });
 }
 function onerror(err) {
+    console.error(err);
     store.commit('updateHuobiState', {
         stateKey: 'WS_SERVER_STATUS',
         data: {

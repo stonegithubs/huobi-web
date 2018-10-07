@@ -43,6 +43,7 @@ export async function getDepth (symbol, type) {
   const url = '/market/depth?' + Qs.stringify({
     symbol,
     type,
+    AccessKeyId: '2f0f54a2-8e5d9137-982b01e1-5789d'
   });;
   try {
     const result = await http.get(

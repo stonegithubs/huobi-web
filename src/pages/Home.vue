@@ -40,6 +40,7 @@ import Difference from "./Difference";
 import Market from "./Market";
 import Charts from "./Charts";
 import Density from "./Density";
+
 export default {
     name: "Home",
     components: {
@@ -60,14 +61,14 @@ export default {
       // 单位为美元
         window.ethPrice = 466;
         window.btcPrice = 8000;
-        getKLine('ethusdt', '1min', 2).then(res => {
-          window.ethPrice = res.data[1].close;
-        });
-        getKLine('btcusdt', '1min', 2).then(res => {
-          window.btcPrice = res.data[1].close;
-        });
     },
     mounted() {
+        getKLine('ethusdt', '1min', 2).then(res => {
+            window.ethPrice = res.data[1].close;
+        });
+        getKLine('btcusdt', '1min', 2).then(res => {
+            window.btcPrice = res.data[1].close;
+        });
         
     },
     beforeDestroy() {

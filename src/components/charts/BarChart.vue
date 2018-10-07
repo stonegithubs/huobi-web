@@ -12,7 +12,7 @@ import moment from "moment";
 import throttle from 'lodash.throttle';
 import getPriceIndex from '@/utils/getPriceIndex';
 import { color } from './config';
-
+import AbnormalMonitoring from '../../pages/abnormal';
 const echarts = require("echarts");
 
 let preSymbol = '';
@@ -20,7 +20,7 @@ let preSymbol = '';
 let option = {
   color,
   title: {
-    text: "金额流动(usdt / k)",
+    text: "金额流动(usdt)",
     subtext: "",
     x: "left",
     align: "right"
@@ -40,7 +40,7 @@ let option = {
     }
   },
   legend: {
-    data: ["买入金额($/k)", "卖出金额($/k)"],
+    data: ["买入金额($)", "卖出金额($)"],
     x: "center"
   },
   dataZoom: [
@@ -70,7 +70,7 @@ let option = {
   },
   series: [
     {
-        name: '买入金额($/k)',
+        name: '买入金额($)',
         type: 'bar',
         stack: 'one',
         showSymbol: false,
@@ -78,7 +78,7 @@ let option = {
         data: []
     },
     {
-        name: '卖出金额($/k)',
+        name: '卖出金额($)',
         type: 'bar',
         stack: 'one',
         showSymbol: false,
@@ -102,6 +102,7 @@ export default {
         trade() {
             this.trade.data.forEach((item) => {
                 this.push(item);
+                this.am.speed(item);
             });
         }
     },
@@ -119,6 +120,7 @@ export default {
         delete option.legend;
 
         this._price = 1;
+        this.am = new AbnormalMonitoring();
     },
     methods: {
         /**
