@@ -64,15 +64,15 @@ function onmessage(ev) {
                 responseSymbol: data.symbol
             });
             // 只记录大饼的某些特征
-            if (data.symbol === 'btcusdt' || data.symbol === 'paibtc') {
-                writeSomething({
-                    asksList,
-                    bidsList,
-                    tick_bids: JSON.parse(JSON.stringify(data.tick.bids)),
-                    tick_asks: JSON.parse(JSON.stringify(data.tick.asks)),
-                    symbol: data.symbol
-                });
-            }
+            // if (data.symbol === 'btcusdt' || data.symbol === 'paibtc') {
+            //     writeSomething({
+            //         asksList,
+            //         bidsList,
+            //         tick_bids: JSON.parse(JSON.stringify(data.tick.bids)),
+            //         tick_asks: JSON.parse(JSON.stringify(data.tick.asks)),
+            //         symbol: data.symbol
+            //     });
+            // }
         } else if (data.kline && data.symbol === config.symbol) {
             store.commit('updateHuobiState', {
                 stateKey: 'lastKline',
