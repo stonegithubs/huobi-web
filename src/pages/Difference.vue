@@ -60,7 +60,7 @@
 
 <script>
 import config from '@/config';
-import { getDepth, getSymbols } from '@/api/huobiREST';
+import { getDepth, getDetailMerged, getSymbols } from '@/api/huobiREST';
 // utils
 import getSameAmount from '@/utils/getSameAmount';
 

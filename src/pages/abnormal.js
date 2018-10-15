@@ -43,7 +43,7 @@ export default class AbnormalMonitoring {
          * {time: Date, status: '涨'}
          */
         this.historyStatus = [];
-        this.disTime = toMillisecond('1min'); // 5min
+        this.disTime = toMillisecond('4min'); // 5min
         // 上一个
         this._preTrade = {};
     }
@@ -85,12 +85,12 @@ export default class AbnormalMonitoring {
         if (ts > this.nextTime) {
             const disPrice = data.price - this._preTrade.price;
             let status = disPrice > 0 ? '涨' : '跌';
-            if (Math.abs(disPrice) < 0.01) {
+            if (Math.abs(disPrice) < 0.1) {
                 status = '横盘';
             }
             this.pushSatus({
                 status: status,
-                strength: (disPrice / this._preTrade.price).toFixed(3),
+                strength: (disPrice / this._preTrade.price * 100).toFixed(3),
                 ts: ts,
                 price: data.price,
                 timeUTC: moment(ts).format("YYYY/MM/DD h:mm:ss"),
@@ -108,7 +108,7 @@ export default class AbnormalMonitoring {
      * @param {Object} status 
      */
     pushSatus(status) {
-        if (this.historyStatus.length > 6) {
+        if (this.historyStatus.length > 10) {
             this.historyStatus.shift();
             console.log(this.historyStatus, this)
         }
