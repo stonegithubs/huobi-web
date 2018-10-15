@@ -12,8 +12,10 @@ import moment from "moment";
 import throttle from 'lodash.throttle';
 
 import { color } from './config';
-
+import G2 from '@antv/g2';
 const echarts = require("echarts");
+
+
 
 let preSymbol = '';
 let option = {
@@ -170,10 +172,40 @@ export default {
         }, 5000, {trailing: false, leading: true})
     },
     mounted() {
-        // 基于准备好的dom，初始化echarts实例
-        this.chart = echarts.init(this.$refs.container);
-        // 绘制图表
-        this.chart.setOption(option);
+        // // 基于准备好的dom，初始化echarts实例
+        // this.chart = echarts.init(this.$refs.container);
+        // // 绘制图表
+        // this.chart.setOption(option);
+
+        this.chart = new G2.Chart({
+          container: this.$refs.container,
+          width: 600,
+          height: 300,
+          forceFit: true,
+        });
+        chart.source(data, {
+          time: {
+            range: [0, 1]
+          }
+        });
+        chart.tooltip({
+          crosshairs: {
+            type: 'line'
+          }
+        });
+        chart.axis('amount', {
+          label: {
+            formatter: function formatter(val) {
+              return val + '$';
+            }
+          }
+        });
+        chart.line().position('amount').color('symbol');
+        chart.point().position('amount').color('symbol').size(4).shape('circle').style({
+          stroke: '#fff',
+          lineWidth: 1
+        });
+        chart.render();
     },
     methods: {
             push() {
