@@ -124,15 +124,15 @@ function onerror(err) {
 // 心跳监测
 
 
-setInterval(function () {
-    if (ping === pre_ping) {
-        closeWs().then(() => {
-            openWs()
-        }).catch(console);
-    } else {
-        pre_ping = ping;
-    }
-}, 1000 * 60 * 10);
+// setInterval(function () {
+//     if (ping === pre_ping) {
+//         closeWs().then(() => {
+//             openWs()
+//         }).catch(console);
+//     } else {
+//         pre_ping = ping;
+//     }
+// }, 1000 * 60 * 10);
 
 export const wsSend = function (data) {
     ws.send(JSON.stringify(data));

@@ -13,7 +13,7 @@ const http = axios.create({
   baseURL: config.URL_HUOBI,
   timeout: 30000,
   headers: {  
-    'Content-Type': 'application/x-www-form-urlencoded',
+    'Content-Type': 'application/json',
   },
   transformRequest: [function (data, headers) {
     if (headers['Content-Type'] === 'application/x-www-form-urlencoded' && Object.prototype.toString(data) === '[object Object]') {
