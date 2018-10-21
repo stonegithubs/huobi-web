@@ -40,7 +40,7 @@ export async function getKLine(symbol, period, size) {
  * @return {Promise}
  */
 export async function getDepth (symbol, type) {
-  const url = config.API_HOST + '/api/market/depth?' + Qs.stringify({
+  const url = config.API_HOST + '/api/v1/market/depth?' + Qs.stringify({
     symbol,
     type,
     AccessKeyId: '2f0f54a2-8e5d9137-982b01e1-5789d'
