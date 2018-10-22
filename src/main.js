@@ -13,6 +13,8 @@ import {
   Popover,
   Tabs,
   TabPane,
+  Menu,
+  MenuItem,
   Notification,
 } from 'element-ui';
 import './assets/css/reset.css'
@@ -27,6 +29,8 @@ Vue.use(Option)
 Vue.use(Popover)
 Vue.use(Tabs)
 Vue.use(TabPane)
+Vue.use(Menu)
+Vue.use(MenuItem)
 Vue.prototype.$notify = Notification;
 /* eslint-disable no-new */
 new Vue({
