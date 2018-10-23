@@ -2,8 +2,9 @@
 
 <template>
   <div>
-    <div  ref="container" class="echarts-container">
+    <div  ref="container" class="charts-container">
     </div>
+    <div ref="slider" class="chart-slider"> </div>
   </div>
 </template>
 
@@ -11,8 +12,8 @@
 import moment from "moment";
 import throttle from "lodash.throttle";
 import G2 from "@antv/g2";
-import { DataSet, View } from '@antv/data-set';
-import '@antv/g2-plugin-slider';
+import DataSet from '@antv/data-set';
+import Slider from '@antv/g2-plugin-slider';
 import { color } from "./config";
 import { getAmountChartData } from '@/api/chart';
 
@@ -33,14 +34,14 @@ export default {
     getData() {
       getAmountChartData('btcusdt').then((res) => {
         // this.chart.changeData(res.data);
-        this.chart = initChart(this.$refs.container, res.data);
+        this.chart = initChart(this.$refs.container, res.data, this);
         // chart.render();
       })
     }
   }
 };
 
-function initChart(container, data) {
+function initChart(container, data, vm) {
   var ds = new DataSet({
     state: {
       start: new Date(data[data.length / 2].time).getTime(),
@@ -105,13 +106,14 @@ function initChart(container, data) {
 
   // 创建 Slider
   var slider = new Slider({
-    container: containerp,
+    container: vm.$refs.slider,
     width: 'auto',
     height: 26,
+    margin: [40, 40, 40, 80],
     start: ds.state.start, // 和状态量对应
     end: ds.state.end,
     xAxis: 'time',
-    yAxis: 'flow',
+    yAxis: 'amount',
     scales: {
       time: {
         type: 'time',
@@ -137,7 +139,10 @@ function initChart(container, data) {
 </script>
 
 <style>
-.echarts-container{
+.charts-container{
   position: relative;
+}
+.chart-slider{
+  width: 98%;
 }
 </style>
