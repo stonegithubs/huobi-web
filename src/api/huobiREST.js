@@ -10,7 +10,7 @@ import config from '../config';
  * @return {Promise}
  */
 export async function getKLine(symbol, period, size) {
-  const url = config.API_HOST + '/api/v1/get_kline?' + Qs.stringify({
+  const url = config.API_HOST + '/api/huobi/v1/get_kline?' + Qs.stringify({
     symbol,
     period,
     size,
@@ -40,7 +40,7 @@ export async function getKLine(symbol, period, size) {
  * @return {Promise}
  */
 export async function getDepth (symbol, type) {
-  const url = config.API_HOST + '/api/v1/market/depth?' + Qs.stringify({
+  const url = config.API_HOST + '/api/huobi/v1/market/depth?' + Qs.stringify({
     symbol,
     type,
     AccessKeyId: '2f0f54a2-8e5d9137-982b01e1-5789d'
@@ -159,7 +159,7 @@ export const getSymbolInfo = async function (symbol, quoteCurrency) {
  * @return {Promise}
  */
 export async function limit (params) {
-  const url = config.API_HOST + '/api/v1/limit';
+  const url = config.API_HOST + '/api/huobi/v1/limit';
   try {
     const result = await http.post(
       url,
@@ -187,7 +187,7 @@ export async function limit (params) {
  * @return {Promise}
  */
 export async function cancelOrder (orderId) {
-  const url = config.API_HOST + '/api/v1/cancelOrder';
+  const url = config.API_HOST + '/api/huobi/v1/cancelOrder';
   try {
     const result = await http.post(
       url,
@@ -217,7 +217,7 @@ export async function cancelOrder (orderId) {
  * @return {Promise}
  */
 export async function getOpenOrders (params) {
-  const url = config.API_HOST + '/api/v1/openOrders?' + Qs.stringify(params);;
+  const url = config.API_HOST + '/api/huobi/v1/openOrders?' + Qs.stringify(params);;
   try {
     const result = await http.get(
       url,
@@ -243,7 +243,7 @@ export async function getOpenOrders (params) {
  * @return {Promise}
  */
 export async function getBalance () {
-  const url = config.API_HOST + '/api/v1/get_balance';
+  const url = config.API_HOST + '/api/huobi/v1/get_balance';
   try {
     const result = await http.get(
       url,
@@ -271,7 +271,7 @@ export async function getBalance () {
  * @return {Promise}
  */
 export async function getOrder (orderId) {
-  const url = config.API_HOST + '/api/v1/get_order?orderId=' + orderId;
+  const url = config.API_HOST + '/api/huobi/v1/get_order?orderId=' + orderId;
   try {
     const result = await http.get(
       url,

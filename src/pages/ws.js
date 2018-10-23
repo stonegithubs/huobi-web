@@ -2,7 +2,7 @@ import throttle from 'lodash.throttle';
 import diff from 'deep-diff';
 import config from '@/config';
 import store from '@/store';
-import db from '@/plugins/dexie';
+
 // utils
 import getSameAmount from '@/utils/getSameAmount';
 import trade from '@/utils/trade';
@@ -140,7 +140,7 @@ export const wsSend = function (data) {
 
 
 let postDepth = throttle(function (body) {
-    fetch(config.API_HOST + '/api/v1/depth', {
+    fetch(config.API_HOST + '/api/huobi/v1/depth', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -162,45 +162,7 @@ async function writeSomething({
 }) {
     let bids =  tick_bids.splice(0, 2);
     let asks = tick_asks.splice(0, 2);
-    let action = ''; // 移除行为类型
-    let quoteCurrency = '';
-    let price = getPriceIndex(symbol);
 
-    // 对比是否一样，一样就不push了
-    let last = await db.HUOBI_DEPTH.toCollection().last();
-    bids.forEach((item) => {
-        item[2] = (item[1] * item[0] * price) | 0;
-        if (item[2] > 50000) {
-            action = 'buy'
-        }
-    });
-    asks.forEach((item) => {
-        item[2] = (item[1] * item[0] * price) | 0;
-        if (item[2] > 50000) {
-            action = 'sell'
-        }
-    });
-    let same = false;
-    if (last !== undefined && diff({bids: last.tick.bids, asks: last.tick.asks}, {bids, asks,}) !== undefined) {
-        same = true;
-    }
-    if (action !== '' && !same && symbol === 'btcusdt') {
-        db.HUOBI_DEPTH.put({
-            action,
-            symbol: symbol,
-            time: Date.now(),
-            timeUTC: new Date(),
-            tick: {
-                bids,
-                asks,
-            },
-            asksList: asksList.slice(0, 10),
-            bidsList: bidsList.slice(0, 10),
-        }).then(id => {
-        }).catch (err => {
-            alert ("Error: " + (err.stack || err));
-        });
-    }
     postDepth(JSON.stringify({
         symbol: symbol,
         time: Date.now(),

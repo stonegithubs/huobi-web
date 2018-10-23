@@ -1,15 +1,67 @@
 <template>
   <div id="app">
-    <router-view/>
+    <el-menu
+      :default-active="activeIndex"
+      class="el-menu-demo"
+      mode="horizontal"
+      router
+      @select="handleSelect"
+    >
+      <el-menu-item index="charts">Charts</el-menu-item>
+      <el-menu-item index="depth">Depth</el-menu-item>
+      
+      <el-menu-item index="difference">Difference</el-menu-item>
+      <el-menu-item index="trade">Trade</el-menu-item>
+      <el-menu-item index="density">Density</el-menu-item>
+    </el-menu>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
+import { getKLine } from "@/api/huobiREST";
+// utils
+import getSameAmount from "@/utils/getSameAmount";
+import config from "@/config";
+import ws, { wsSend } from "./pages/ws";
 export default {
-  name: 'App'
-}
+  name: "App",
+  components: {},
+  data() {
+    return {
+      activeIndex: "charts"
+    };
+  },
+  created() {
+    // 单位为美元
+    window.ethPrice = 466;
+    window.btcPrice = 8000;
+  },
+  mounted() {
+    getKLine("ethusdt", "1min", 2).then(res => {
+      window.ethPrice = res.data[1].close;
+    });
+    getKLine("btcusdt", "1min", 2).then(res => {
+      window.btcPrice = res.data[1].close;
+    });
+  },
+  beforeDestroy() {
+    this.$notify({
+      title: "WS状态",
+      message: `msg: ws_server closed`,
+      duration: 3000
+    });
+    ws.close();
+  },
+  methods: {
+    handleClick(tab, event) {},
+    handleSelect() {}
+  }
+};
 </script>
 
 <style>
-
+.page-content{
+  padding: 30px;
+}
 </style>

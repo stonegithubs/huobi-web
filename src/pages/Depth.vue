@@ -137,6 +137,7 @@ export default {
     mounted() {
         this.$refs.tickList.style.maxHeight = window.innerHeight - 50 + 'px';
         // this.subscribeDisable = !this.useWSAble;
+        console.log(1)
     },
     beforeDestroy() {
         

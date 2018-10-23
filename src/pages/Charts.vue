@@ -1,15 +1,15 @@
 <template>
-  <div class="tab-content">
-      <div class="">
-          <LineChart
-            :asksList="asksList"
-            :bidsList="bidsList"
-            :aksFirst="aksFirst"
-            :bidsFirst="bidsFirst"
-            :symbol="responseSymbol"
-          ></LineChart>
+  <div class="page-content">
+      <div class="chart-wrap">
+           <LineChart
+                :asksList="asksList"
+                :bidsList="bidsList"
+                :aksFirst="aksFirst"
+                :bidsFirst="bidsFirst"
+                :symbol="responseSymbol"
+            ></LineChart>
       </div>
-      <div class="">
+      <div class="chart-wrap">
           <LineChart2
             :lastKline="lastKline"
             :asksList="asksList"
@@ -18,11 +18,10 @@
             :bidsFirst="bidsFirst"
             :symbol="responseSymbol"
           >
-
           </LineChart2>
       </div>
 
-      <div>
+      <div class="chart-wrap">
           <BarChart
             :trade="trade"
             :symbol="responseSymbol"

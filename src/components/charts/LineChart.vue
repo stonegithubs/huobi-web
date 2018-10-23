@@ -13,9 +13,9 @@ import throttle from "lodash.throttle";
 import { color } from "./config";
 import G2 from "@antv/g2";
 import { getAmountChartData } from '@/api/chart';
-
+console.log(G2)
 export default {
-  name: "LineCharts",
+  name: "AmoutChart",
   components: {},
   data() {
     return {};
@@ -23,17 +23,8 @@ export default {
   props: {
     data: Array
   },
-  watch: {
-    asksList: throttle(
-      function(asksList) {
-        this.push();
-      },
-      5000,
-      { trailing: false, leading: true }
-    )
-  },
   mounted() {
-    this.chart = initChart(this.$refs.container);
+    // this.chart = initChart(this.$refs.container);
     this.getData();
   },
   methods: {
@@ -48,19 +39,44 @@ export default {
 };
 
 function initChart(container, data) {
+  var ds = new DataSet({
+    state: {
+      start: new Date(data[data.length / 2].time).getTime(),
+      end: Date.now(),
+    }
+  });
+  var dv = ds.createView('origin').source(data);
 
-  const chart = new G2.Chart({
+  dv.transform({
+    type: 'filter',
+    callback: function callback(obj) {
+      var time = new Date(obj.time).getTime(); // !注意：时间格式，建议转换为时间戳进行比较
+      return time >= ds.state.start && time <= ds.state.end;
+    }
+  });
+  var chart = new G2.Chart({
     container: container,
-    width: container.clientWidth,
     height: 500,
     forceFit: true
   });
-
-  chart.source(data, {
+  // var scale = {
+  //   time: {
+  //     type: 'time',
+  //     tickCount: 8,
+  //     mask: 'm/dd hh:MM:SS'
+  //   },
+  //   amount: {
+  //     alias: 'bu'
+  //   },
+  //   rain: {
+  //     alias: '降雨量(mm)'
+  //   }
+  // };
+  chart.source(dv, {
     'time': {
       type: 'time',
       nice: false,
-      mask: "MM/DD h:mm:ss",
+      mask: "M/DD h:mm:ss",
       tickInterval: 30 * 60 * 1000 // 对于 linear 类型的数据，可以设置 tickInterval 参数来设定每个刻度之间的间距，time 类型的单位为微秒
     },
     // value: {
@@ -84,6 +100,36 @@ function initChart(container, data) {
     .position("time*amount")
     .color("type");
   chart.render();
+
+  // 创建 Slider
+  var slider = new Slider({
+    container: containerp,
+    width: 'auto',
+    height: 26,
+    start: ds.state.start, // 和状态量对应
+    end: ds.state.end,
+    xAxis: 'time',
+    yAxis: 'flow',
+    scales: {
+      time: {
+        type: 'time',
+        tickCount: 10,
+        mask: 'M/DD H:mm:ss'
+      }
+    },
+    data: dv,
+    backgroundChart: {
+      type: 'line'
+    },
+    onChange: function onChange(_ref) {
+      var startValue = _ref.startValue,
+        endValue = _ref.endValue;
+
+      ds.setState('start', startValue);
+      ds.setState('end', endValue);
+    }
+  });
+  slider.render();
   return chart;
 }
 </script>
