@@ -10,10 +10,12 @@
 <script>
 import moment from "moment";
 import throttle from "lodash.throttle";
-import { color } from "./config";
 import G2 from "@antv/g2";
+import { DataSet, View } from '@antv/data-set';
+import '@antv/g2-plugin-slider';
+import { color } from "./config";
 import { getAmountChartData } from '@/api/chart';
-console.log(G2)
+
 export default {
   name: "AmoutChart",
   components: {},
