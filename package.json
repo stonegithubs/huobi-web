@@ -15,8 +15,6 @@
     "@antv/g2": "^3.3.1",
     "@antv/g2-plugin-slider": "^2.1.0",
     "axios": "^0.18.0",
-    "deep-diff": "^1.0.1",
-    "dexie": "^2.0.4",
     "echarts": "^4.1.0",
     "element-ui": "^2.4.2",
     "lodash.random": "^3.2.0",

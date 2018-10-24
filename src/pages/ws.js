@@ -1,5 +1,4 @@
 import throttle from 'lodash.throttle';
-import diff from 'deep-diff';
 import config from '@/config';
 import store from '@/store';
 
