@@ -33,75 +33,90 @@ export default {
   methods: {
     getData() {
       getAmountChartData('btcusdt').then((res) => {
+        if (this.chart) {
+          this.chart.changeData(transformData(res.data, this));
+          return;
+        }
         // this.chart.changeData(res.data);
-        this.chart = initChart(this.$refs.container, res.data, this);
+        this.chart = initChart(this.$refs.container, transformData(res.data, this), this);
         // chart.render();
+      
+      }).finally(() => {
+        setTimeout(() => {
+          this.getData();
+        }, 10 * 1000);
       })
     }
   }
 };
 
-function initChart(container, data, vm) {
-  var ds = new DataSet({
+function transformData(data, vm) {
+
+  vm.ds = new DataSet({
     state: {
-      start: new Date(data[data.length / 2].time).getTime(),
+      start: new Date(data[parseInt(data.length / 2)].time).getTime(),
       end: Date.now(),
     }
   });
-  var dv = ds.createView('origin').source(data);
-
+  var dv = vm.ds.createView().source(data);
+  dv.transform({
+    type: 'fold',
+    fields: ['bids_max_1', 'asks_max_1', 'buy_1', 'sell_1'],
+    key: 'type',
+    value: 'value',
+    retains: ['bids_max_1', 'asks_max_1', 'buy_1', 'sell_1', 'time', 'price']
+  });
   dv.transform({
     type: 'filter',
     callback: function callback(obj) {
       var time = new Date(obj.time).getTime(); // !注意：时间格式，建议转换为时间戳进行比较
-      return time >= ds.state.start && time <= ds.state.end;
+      return time >= vm.ds.state.start && time <= vm.ds.state.end;
     }
   });
+  console.log(dv)
+  return dv;
+}
+function initChart(container, dv, vm) {
   var chart = new G2.Chart({
     container: container,
     height: 500,
     forceFit: true
   });
-  // var scale = {
-  //   time: {
-  //     type: 'time',
-  //     tickCount: 8,
-  //     mask: 'm/dd hh:MM:SS'
-  //   },
-  //   amount: {
-  //     alias: 'bu'
-  //   },
-  //   rain: {
-  //     alias: '降雨量(mm)'
-  //   }
-  // };
+
   chart.source(dv, {
     'time': {
       type: 'time',
       nice: false,
       mask: "M/DD h:mm:ss",
+      tickCount: 10,
       tickInterval: 30 * 60 * 1000 // 对于 linear 类型的数据，可以设置 tickInterval 参数来设定每个刻度之间的间距，time 类型的单位为微秒
     },
-    // value: {
-    //   tickInterval: 10
+    // price: {
+    //   min: 0,
+    //   max: 20000
     // }
+  });
+  chart.axis('value', {
+    label: {
+      formatter: function formatter(val) {
+        return (val / 10000) + '万usdt';
+      }
+    }
   });
   chart.tooltip({
     crosshairs: {
       type: "line"
     }
   });
-  chart.axis("amount", {
-    label: {
-      formatter: function formatter(val) {
-        return val + "$";
-      }
-    }
-  });
+
   chart
     .line()
-    .position("time*amount")
-    .color("type");
+    .position("time*value")
+    .color("type", color);
+  // chart
+  //   .line()
+  //   .position("time*price")
+  //   .color("type", '#000');
   chart.render();
 
   // 创建 Slider
@@ -110,10 +125,10 @@ function initChart(container, data, vm) {
     width: 'auto',
     height: 26,
     margin: [40, 40, 40, 80],
-    start: ds.state.start, // 和状态量对应
-    end: ds.state.end,
+    start: vm.ds.state.start, // 和状态量对应
+    end: vm.ds.state.end,
     xAxis: 'time',
-    yAxis: 'amount',
+    yAxis: 'value',
     scales: {
       time: {
         type: 'time',
@@ -129,8 +144,8 @@ function initChart(container, data, vm) {
       var startValue = _ref.startValue,
         endValue = _ref.endValue;
 
-      ds.setState('start', startValue);
-      ds.setState('end', endValue);
+      vm.ds.setState('start', startValue);
+      vm.ds.setState('end', endValue);
     }
   });
   slider.render();

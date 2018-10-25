@@ -16,7 +16,7 @@ export default new Router({
       component: Depth
     },
     {
-      path: '/charts',
+      path: '/',
       name: 'Charts',
       component: Charts
     },
