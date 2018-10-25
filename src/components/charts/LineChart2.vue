@@ -1,197 +1,178 @@
 
 
 <template>
-  <div >
-      <div class="echarts-container" ref="container">
-
-      </div>
+  <div>
+    <div class="text-center">
+      <h3>资金流入流出</h3>
+    </div>
+    <div  ref="container" class="charts-container">
+    </div>
+    <div ref="slider" class="chart-slider"> </div>
   </div>
 </template>
 
 <script>
 import moment from "moment";
-import throttle from 'lodash.throttle';
-import { color } from './config';
+import throttle from "lodash.throttle";
+import G2 from "@antv/g2";
+import DataSet from "@antv/data-set";
+import Slider from "@antv/g2-plugin-slider";
+import { color } from "./config";
+import { getAmountChartData } from "@/api/chart";
 
-const echarts = require("echarts");
-let preSymbol = '';
-
-let option = {
-    color,
-    title: {
-        text: '买一卖一(price)',
-        subtext: ''
-    },
-    tooltip: {
-        trigger: 'axis',
-        axisPointer: {
-            type: 'cross',
-            animation: false,
-            label: {
-                backgroundColor: '#505765'
-            }
-        }
-    },
-    legend: {
-        data:['多方压力位','空方压力位', '买一' ,'卖一', '当前价格']
-    },
-
-    dataZoom: [
-        {
-            show: true,
-            realtime: true,
-            yAxisIndex: 0,
-            start: 60,
-            end: 80
-        },
-        {
-            show: true,
-            realtime: true,
-            xAxisIndex: 0,
-            start: 40,
-            end: 100
-        },
-    ],
-    xAxis: {
-        type: 'category',
-        boundaryGap: false,
-        axisLine: {onZero: false},
-        data: []
-    },
-    yAxis: {
-        type: 'value',
-        axisLabel: {
-            formatter: '{value} $'
-        },
-        min: 4000,
-    },
-    series: [
-        {
-            name:'多方压力位',
-            type:'line',
-            data:[],
-        },
-        {
-            name:'空方压力位',
-            type:'line',
-            data:[],
-        }, {
-            name:'买一',
-            type:'line',
-            data:[]
-        }, {
-            name:'卖一',
-            type:'line',
-            data:[]
-        }, {
-            name:'当前价格',
-            type:'line',
-            data:[]
-        }
-    ]
-};
+let preSymbol = "";
 
 export default {
   name: "LineCharts",
-  components: {},
+
   data() {
-    return {
-    };
+    return {};
   },
-  props: {
-    asksList: Array,
-    bidsList: Array,
-    aksFirst: Array,
-    bidsFirst: Array,
-    lastKline: Object,
-    symbol: String,
-  },
-  watch: {
-      lastKline: throttle(function (lastKline) {
-          this.push();
-      }, 5000, {trailing: false, leading: true})
-  },
+  props: {},
   mounted() {
-    // 基于准备好的dom，初始化echarts实例
-    this.chart = echarts.init(this.$refs.container);
-    // 绘制图表
-    this.chart.setOption(option);
+    this.getData();
   },
   methods: {
-      push() {
-          if (!this.bidsList.length && !this.asksList.length) {
-                    return;
-                }
-          if (option.dataZoom) {
-            delete option.title;
-            delete option.tooltip;
-            delete option.legend;
-            delete option.toolbox;
-            delete option.dataZoom;
+    getData() {
+      getAmountChartData("btcusdt")
+        .then(res => {
+          console.log(res.data.length);
+          if (this.chart) {
+            this.chart.changeData(transformData(res.data, this));
+            return;
           }
-          if (option.xAxis.data.length > 3000) {
-              option.xAxis.data.shift();
-              option.series[0].data.shift();
-              option.series[1].data.shift();
-              option.series[2].data.shift();
-              option.series[3].data.shift();
-              option.series[4].data.shift();
-          }
-          let btcPrice = 1;
-          if (this.symbol.substr(-3) === "btc") {
-                btcPrice = window.btcPrice;
-            }
-          if (preSymbol !== this.symbol) {
-            let lastClose = this.lastKline.close * btcPrice;
-            option.yAxis.max = (lastClose + (lastClose * 0.34)).toFixed(8);
-            option.yAxis.min = (lastClose - (lastClose * 0.06)).toFixed(8);
-            option.xAxis.data = [];
-            option.series[0].data = [];
-            option.series[1].data = [];
-            option.series[2].data = [];
-            option.series[3].data = [];
-            option.series[4].data = [];
-            preSymbol = this.symbol;
-          }
-          
-          option.xAxis.data.push(moment().format("YYYY/MM/DD h:mm:ss"));
-
-          const avg = function  (list) {
-              let res = (Number(list[0].price) + Number(list[1].price)) / 2;
-              if (res.toString().length > 8) {
-                  return Number(res).toFixed(8)
-              }
-              return res;
-          }
-          option.series[0].data.push({
-              value: avg(this.bidsList) * btcPrice,
-              name: 'price',
-              ...this.bidsList[0]
-          });
-          option.series[1].data.push({
-              value: avg(this.asksList) * btcPrice,
-              name: 'price',
-              ...this.asksList[0]
-          });
-          option.series[2].data.push({
-              count: this.bidsFirst[1],
-              name: 'price',
-              value: this.bidsFirst[0] * btcPrice
-          });
-          option.series[3].data.push({
-              count: this.aksFirst[1],
-              name: 'price',
-              value: this.aksFirst[0] * btcPrice
-          });
-          option.series[4].data.push({
-              value: this.lastKline.close * btcPrice,
-              name: 'price',
-          });
-          this.chart.setOption(option);
-      }
+          // this.chart.changeData(res.data);
+          transformData(res.data, this);
+          this.chart = initChart(this.$refs.container, this);
+          // chart.render();
+        })
+        .finally(() => {
+          // setTimeout(() => {
+          //   this.getData();
+          // }, 10 * 1000);
+        });
+    }
   }
 };
+/**
+ * @param {Array<Object>}
+ * @param {Vue.Component}
+ * @return {DateView}
+ */
+function transformData(data, vm) {
+  if (!vm.dataSet) {
+    vm.dataSet = new DataSet({
+      state: {
+        start: new Date(data[parseInt(data.length / 2)].time).getTime(),
+        end: new Date(data[data.length - 1].time).getTime(),
+      }
+    });
+  }
+  if (!vm.dataView) {
+    vm.dataView = vm.dataSet.createView();
+  }
+
+  vm.dataView.source(data).transform({
+    type: 'fold',
+    fields: ['buy', 'sell'],
+    key: 'type',
+    value: 'value',
+    retains: ['buy', 'sell', 'time']
+  });
+  vm.dataView.transform({
+    type: 'filter',
+    callback: function callback(obj) {
+      var time = new Date(obj.time).getTime(); // !注意：时间格式，建议转换为时间戳进行比较
+      return time >= vm.dataSet.state.start && time <= vm.dataSet.state.end;
+    }
+  });
+  return vm.dataView;
+}
+
+/**
+ * @param {Element}
+ * @param {Vue.Component}
+ */
+function initChart(container, vm) {
+  var chart = new G2.Chart({
+    container: container,
+    height: 500,
+    forceFit: true,
+    padding: [50, 50, 80, 120],
+  });
+
+  chart.source(vm.dataView, {
+    'time': {
+      type: 'time',
+      nice: false,
+      mask: "M/DD H:mm:ss",
+      // tickCount: 10,
+      // tickInterval: 30 * 60 * 1000 // 对于 linear 类型的数据，可以设置 tickInterval 参数来设定每个刻度之间的间距，time 类型的单位为微秒
+    },
+    // price: {
+    //   min: 0,
+    //   max: 20000
+    // }
+  });
+  chart.axis('value', {
+    label: {
+      formatter: function formatter(val) {
+        return  `${(val / 10000)}万usdt (${parseInt(val / btcPrice)}฿) `;
+      }
+    }
+  });
+  chart.tooltip({
+    crosshairs: {
+      type: "line"
+    }
+  });
+
+  chart
+    .line()
+    .position("time*value")
+    .color("type", color);
+  // chart
+  //   .line()
+  //   .position("time*price")
+  //   .color("type", '#000');
+  chart.render();
+
+  // 创建 Slider
+  var slider = new Slider({
+    container: vm.$refs.slider,
+    width: 'auto',
+    height: 26,
+    padding: [0, 120, 0, 120],
+    start: vm.dataSet.state.start, // 和状态量对应
+    end: vm.dataSet.state.end,
+    xAxis: 'time',
+    yAxis: 'value',
+    scales: {
+      time: {
+        type: 'time',
+        tickCount: 100,
+        mask: 'M/DD H:mm:ss'
+      }
+    },
+    data: vm.dataView,
+    backgroundChart: {
+      type: 'line'
+    },
+    onChange: function onChange(_ref) {
+      var startValue = _ref.startValue,
+        endValue = _ref.endValue;
+
+      vm.dataSet.setState('start', startValue);
+      vm.dataSet.setState('end', endValue);
+    }
+  });
+  slider.render();
+  return chart;
+}
+
 </script>
 
 <style>
+@import './chart.css';
+
 </style>

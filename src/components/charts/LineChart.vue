@@ -3,7 +3,7 @@
 <template>
   <div>
     <div class="text-center">
-      <h3>挂单最大额度</h3>
+      <h3>挂单资金</h3>
     </div>
     <div  ref="container" class="charts-container">
     </div>
@@ -36,7 +36,6 @@ export default {
   methods: {
     getData() {
       getAmountChartData('btcusdt').then((res) => {
-        console.log(res.data.length)
         if (this.chart) {
           this.chart.changeData(transformData(res.data, this));
           return;
@@ -174,10 +173,5 @@ function initChart(container, vm) {
 </script>
 
 <style>
-.charts-container{
-  position: relative;
-}
-.chart-slider{
-  width: 98%;
-}
+@import './chart.css';
 </style>
