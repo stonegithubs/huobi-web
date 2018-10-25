@@ -23,7 +23,7 @@ const openWs = function (params) {
     ws.onclose = onclose;
     ws.onerror = onerror;
 }
-openWs();
+// openWs();
 /**
  * @return {Promise}
  */

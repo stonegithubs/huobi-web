@@ -10,7 +10,7 @@
             ></LineChart>
       </div>
       <div class="chart-wrap">
-          <LineChart2
+        <!--   <LineChart2
             :lastKline="lastKline"
             :asksList="asksList"
             :bidsList="bidsList"
@@ -18,16 +18,16 @@
             :bidsFirst="bidsFirst"
             :symbol="responseSymbol"
           >
-          </LineChart2>
+          </LineChart2> -->
       </div>
 
       <div class="chart-wrap">
-          <BarChart
+          <!-- <BarChart
             :trade="trade"
             :symbol="responseSymbol"
           >
 
-          </BarChart>
+          </BarChart> -->
       </div>
   </div>
 </template>
