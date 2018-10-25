@@ -20,5 +20,10 @@ export default new Router({
       name: 'Charts',
       component: Charts
     },
+    {
+      path: '/charts',
+      name: 'Charts',
+      component: Charts
+    },
   ]
 })

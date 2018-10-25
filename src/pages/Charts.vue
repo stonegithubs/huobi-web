@@ -1,5 +1,5 @@
 <template>
-  <div class="page-content">
+  <div class="chart-page">
       <div class="chart-wrap">
            <LineChart
                 :asksList="asksList"
@@ -22,12 +22,12 @@
       </div>
 
       <div class="chart-wrap">
-          <!-- <BarChart
+          <BarChart
             :trade="trade"
             :symbol="responseSymbol"
           >
 
-          </BarChart> -->
+          </BarChart>
       </div>
   </div>
 </template>
@@ -62,7 +62,7 @@ export default {
     created() {
     },
     mounted() {
-        this.$el.style.maxHeight = window.innerHeight - 50 + 'px';
+        this.$el.style.maxHeight = window.innerHeight - 61 + 'px';
     },
     beforeDestroy() {
 
@@ -73,10 +73,10 @@ export default {
 };
 </script>
 
-<style>
-.echarts-container{
-    min-width: 500px;
-    width: 90vw;
-    height: 600px;
+<style lang="scss">
+.chart-page{
+    .chart-wrap{
+        margin-top: 40px;
+    }
 }
 </style>

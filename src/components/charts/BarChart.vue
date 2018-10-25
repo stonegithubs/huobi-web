@@ -2,188 +2,177 @@
 
 <template>
   <div>
-    <div ref="container" class="echarts-container">
+    <div class="text-center">
+      <h3>资金流入流出</h3>
     </div>
+    <div  ref="container" class="charts-container">
+    </div>
+    <div ref="slider" class="chart-slider"> </div>
   </div>
 </template>
 
 <script>
 import moment from "moment";
-import throttle from 'lodash.throttle';
-import getPriceIndex from '@/utils/getPriceIndex';
-import { color } from './config';
-import AbnormalMonitoring from '../../pages/abnormal';
-const echarts = require("echarts");
+import throttle from "lodash.throttle";
+import G2 from "@antv/g2";
+import DataSet from "@antv/data-set";
+import Slider from "@antv/g2-plugin-slider";
+import { color } from "./config";
+import { getTradeData } from "@/api/chart";
 
-let preSymbol = '';
+let preSymbol = "";
 
-let option = {
-  color,
-  title: {
-    text: "金额流动(usdt)",
-    subtext: "",
-    x: "left",
-    align: "right"
-  },
-  grid: {
-    bottom: 80
-  },
-
-  tooltip: {
-    trigger: "axis",
-    axisPointer: {
-        type: 'cross',
-        animation: false,
-        label: {
-            backgroundColor: '#505765'
-        }
-    }
-  },
-  legend: {
-    data: ["买入金额($)", "卖出金额($)"],
-    x: "center"
-  },
-  dataZoom: [
-    {
-      show: true,
-      realtime: true,
-      start: 10,
-      end: 100
-    },
-    {
-      type: "inside",
-      realtime: true,
-      start: 10,
-      end: 100
-    }
-  ],
-  xAxis: [
-    {
-      type: "category",
-      boundaryGap: true,
-      axisLine: { onZero: false },
-      data: []
-    }
-  ],
-  yAxis: {
-      splitArea: {show: false}
-  },
-  series: [
-    {
-        name: '买入金额($)',
-        type: 'bar',
-        stack: 'one',
-        showSymbol: false,
-        hoverAnimation: false,
-        data: []
-    },
-    {
-        name: '卖出金额($)',
-        type: 'bar',
-        stack: 'one',
-        showSymbol: false,
-        hoverAnimation: false,
-        data: []
-    }
-  ]
-};
 export default {
-    name: "BineCharts",
-    components: {},
-    data() {
-        return {
-        };
-    },
-    props: {
-        symbol: String,
-        trade: Object,
-    },
-    watch: {
-        trade() {
-            this.trade.data.forEach((item) => {
-                this.push(item);
-                this.am.speed(item);
-            });
-        }
-    },
-    mounted() {
-        // 基于准备好的dom，初始化echarts实例
-        this.chart = echarts.init(this.$refs.container);
-        // 绘制图表
-        this.chart.setOption(option);
+  name: "LineCharts",
 
-        delete option.dataZoom;
-        delete option.title;
-        delete option.grid;
-        delete option.toolbox;
-        delete option.tooltip;
-        delete option.legend;
-
-        this._price = 1;
-        this.am = new AbnormalMonitoring();
-    },
-    methods: {
-        /**
-         * @interface {
-         *  amount: number
-         *  direction: "sell" | "buy"
-         *  id: number
-         *  price: number
-         *  ts: Date
-         * }
-         */
-        push(data) {
-            if (option.xAxis[0].data.length > 3000) {
-                option.xAxis[0].data.shift();
-                option.series[0].data.shift();
-                option.series[1].data.shift();
-            }
-            if (preSymbol !== this.symbol) {
-                option.xAxis[0].data = [];
-                option.series[0].data = [];
-                option.series[1].data = [];
-                preSymbol = this.symbol;
-                this._price = getPriceIndex(this.symbol);
-            }
-
-            // 时间取15320829   8位作为参考, 大概是1分40s之间的交易会汇总
-            let _time = data.ts.toString().substring(0, 8);
-            let preIndex = option.xAxis[0].data.length === 0 ? 0 : option.xAxis[0].data.length - 1;
-            let preXData = option.xAxis[0].data[preIndex];
-            // 时间填充0补齐 -> 15320829 0000000
-            let _timeToStringDate = _time.padEnd(13, '0');
-            let usdt = (data.price * data.amount * this._price) | 0 ;
-
-            if (preXData === undefined || new Date(preXData.ts).getTime() < new Date(Number(_timeToStringDate)).getTime()) {
-                option.xAxis[0].data.push({
-                    value: moment(Number(_timeToStringDate)).format("YYYY/MM/DD h:mm:ss"),
-                    ts: Number(_timeToStringDate)
-                });
-                option.series[1].data[option.xAxis[0].data.length - 1] = 0;
-                option.series[0].data[option.xAxis[0].data.length - 1] = 0;
-                // buyt or sell
-                if (data.direction === 'buy') {
-                    option.series[0].data.push(usdt);
-                } else {
-                    option.series[1].data.push(usdt);
-                }
-                
-                this.chart.setOption(option);
-            } else if (preXData = _time) {
-                let lastIndex = option.xAxis[0].data.length - 1;
-                // 合并交易额
-                if (data.direction === 'buy') {
-                    option.series[0].data[lastIndex] += usdt;
-                } else {
-                    option.series[1].data[lastIndex] += usdt;
-                }
-                this.chart.setOption(option);
-            }
-            
-        }
+  data() {
+    return {};
+  },
+  props: {},
+  mounted() {
+    this.getData();
+  },
+  methods: {
+    getData() {
+      getTradeData("btcusdt")
+        .then(res => {
+          console.log(res.data.length);
+          if (this.chart) {
+            this.chart.changeData(transformData(res.data, this));
+            return;
+          }
+          // this.chart.changeData(res.data);
+          transformData(res.data, this);
+          this.chart = initChart(this.$refs.container, this);
+          // chart.render();
+        })
+        .finally(() => {
+          // setTimeout(() => {
+          //   this.getData();
+          // }, 10 * 1000);
+        });
     }
+  }
 };
+/**
+ * @param {Array<Object>}
+ * @param {Vue.Component}
+ * @return {DateView}
+ */
+function transformData(data, vm) {
+  if (!vm.dataSet) {
+    vm.dataSet = new DataSet({
+      state: {
+        start: new Date(data[parseInt(data.length / 2)].time).getTime(),
+        end: new Date(data[data.length - 1].time).getTime(),
+      }
+    });
+  }
+  if (!vm.dataView) {
+    vm.dataView = vm.dataSet.createView();
+  }
+
+  vm.dataView.source(data).transform({
+    type: 'fold',
+    fields: ['buy', 'sell'],
+    key: 'type',
+    value: 'value',
+    retains: ['buy', 'sell', 'time']
+  });
+  vm.dataView.transform({
+    type: 'filter',
+    callback: function callback(obj) {
+      var time = new Date(obj.time).getTime(); // !注意：时间格式，建议转换为时间戳进行比较
+      return time >= vm.dataSet.state.start && time <= vm.dataSet.state.end;
+    }
+  });
+  return vm.dataView;
+}
+
+/**
+ * @param {Element}
+ * @param {Vue.Component}
+ */
+function initChart(container, vm) {
+  var chart = new G2.Chart({
+    container: container,
+    height: 500,
+    forceFit: true,
+    padding: [50, 50, 80, 120],
+  });
+
+  chart.source(vm.dataView, {
+    'time': {
+      type: 'time',
+      nice: false,
+      mask: "M/DD H:mm:ss",
+      // tickCount: 10,
+      tickInterval: 4 * 60 * 1000 // 对于 linear 类型的数据，可以设置 tickInterval 参数来设定每个刻度之间的间距，time 类型的单位为微秒
+    },
+    // price: {
+    //   min: 0,
+    //   max: 20000
+    // }
+  });
+  chart.axis('value', {
+    label: {
+      formatter: function formatter(val) {
+        return  `${(val / 10000)}万usdt (${parseInt(val / btcPrice)}฿) `;
+      }
+    }
+  });
+  chart.tooltip({
+    crosshairs: {
+      type: "line"
+    }
+  });
+
+  chart
+    .intervalStack()
+    .position("time*value")
+    .color("type", color);
+  // chart
+  //   .line()
+  //   .position("time*price")
+  //   .color("type", '#000');
+  chart.render();
+
+  // 创建 Slider
+  var slider = new Slider({
+    container: vm.$refs.slider,
+    width: 'auto',
+    height: 26,
+    padding: [0, 100, 0, 120],
+    start: vm.dataSet.state.start, // 和状态量对应
+    end: vm.dataSet.state.end,
+    xAxis: 'time',
+    yAxis: 'value',
+    scales: {
+      time: {
+        type: 'time',
+        tickCount: 100,
+        mask: 'M/DD H:mm:ss'
+      }
+    },
+    data: vm.dataView,
+    backgroundChart: {
+      type: 'line'
+    },
+    onChange: function onChange(_ref) {
+      var startValue = _ref.startValue,
+        endValue = _ref.endValue;
+
+      vm.dataSet.setState('start', startValue);
+      vm.dataSet.setState('end', endValue);
+    }
+  });
+  slider.render();
+  return chart;
+}
+
 </script>
 
 <style>
+@import './chart.css';
+
 </style>

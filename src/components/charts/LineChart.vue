@@ -142,7 +142,7 @@ function initChart(container, vm) {
     container: vm.$refs.slider,
     width: 'auto',
     height: 26,
-    padding: [0, 120, 0, 120],
+    padding: [0, 100, 0, 120],
     start: vm.dataSet.state.start, // 和状态量对应
     end: vm.dataSet.state.end,
     xAxis: 'time',

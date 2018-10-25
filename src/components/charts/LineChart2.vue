@@ -18,7 +18,7 @@ import G2 from "@antv/g2";
 import DataSet from "@antv/data-set";
 import Slider from "@antv/g2-plugin-slider";
 import { color } from "./config";
-import { getAmountChartData } from "@/api/chart";
+import { getTradeData } from "@/api/chart";
 
 let preSymbol = "";
 
@@ -34,7 +34,7 @@ export default {
   },
   methods: {
     getData() {
-      getAmountChartData("btcusdt")
+      getTradeData("btcusdt")
         .then(res => {
           console.log(res.data.length);
           if (this.chart) {
@@ -128,7 +128,7 @@ function initChart(container, vm) {
   });
 
   chart
-    .line()
+    .intervalStack()
     .position("time*value")
     .color("type", color);
   // chart

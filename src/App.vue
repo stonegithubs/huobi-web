@@ -14,7 +14,7 @@
       <el-menu-item index="trade">Trade</el-menu-item>
       <el-menu-item index="density">Density</el-menu-item>
     </el-menu>
-    <router-view></router-view>
+    <router-view class="page-content"></router-view>
   </div>
 </template>
 
@@ -63,5 +63,6 @@ export default {
 <style>
 .page-content{
   padding: 30px;
+  overflow: auto;
 }
 </style>
