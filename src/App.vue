@@ -14,7 +14,9 @@
       <el-menu-item index="trade">Trade</el-menu-item>
       <el-menu-item index="density">Density</el-menu-item>
     </el-menu>
-    <router-view class="page-content"></router-view>
+    <keep-alive>
+      <router-view class="page-content"></router-view>
+    </keep-alive>
   </div>
 </template>
 

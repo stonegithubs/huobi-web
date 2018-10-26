@@ -9,6 +9,7 @@ import Density from "@/pages/Density"
 Vue.use(Router)
 
 export default new Router({
+  mode: 'history',
   routes: [
     {
       path: '/depth',
@@ -17,13 +18,15 @@ export default new Router({
     },
     {
       path: '/',
-      name: 'Charts',
-      component: Charts
+      name: 'Home',
+      component: Charts,
+      meta: { keepAlive: true }
     },
     {
       path: '/charts',
       name: 'Charts',
-      component: Charts
+      component: Charts,
+      meta: { keepAlive: true }
     },
   ]
 })
