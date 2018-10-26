@@ -63,7 +63,7 @@ function transformData(data, vm) {
   if (!vm.dataSet) {
     vm.dataSet = new DataSet({
       state: {
-        start: new Date(data[parseInt(data.length / 2)].time).getTime(),
+        start: new Date(data[0].time).getTime(),
         end: new Date(data[data.length - 1].time).getTime(),
       }
     });
