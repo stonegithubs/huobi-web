@@ -1,5 +1,6 @@
 .charts-container{
     position: relative;
+    height: 520px;
 }
 .chart-slider{
     width: 98%;

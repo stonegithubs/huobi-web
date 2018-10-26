@@ -106,7 +106,7 @@ function initChart(container, vm) {
       type: 'time',
       nice: false,
       mask: "M/DD H:mm:ss",
-      // tickCount: 10,
+      tickCount: 12,
       // tickInterval: 30 * 60 * 1000 // 对于 linear 类型的数据，可以设置 tickInterval 参数来设定每个刻度之间的间距，time 类型的单位为微秒
     },
     // price: {

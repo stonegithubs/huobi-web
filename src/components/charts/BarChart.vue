@@ -49,7 +49,7 @@ export default {
         .finally(() => {
           // setTimeout(() => {
           //   this.getData();
-          // }, 10 * 1000);
+          // }, 60 * 1000);
         });
     }
   }
@@ -64,7 +64,7 @@ function transformData(data, vm) {
     vm.dataSet = new DataSet({
       state: {
         start: new Date(data[0].time).getTime(),
-        end: new Date(data[data.length - 1].time).getTime(),
+        end: new Date().getTime(),
       }
     });
   }
@@ -106,7 +106,7 @@ function initChart(container, vm) {
       type: 'time',
       nice: false,
       mask: "M/DD H:mm:ss",
-      tickCount: 20,
+      tickCount: 12,
       // tickInterval: 2 * 60 * 1000 // 对于 linear 类型的数据，可以设置 tickInterval 参数来设定每个刻度之间的间距，time 类型的单位为微秒
     },
     // price: {

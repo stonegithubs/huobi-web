@@ -19,7 +19,7 @@ export async function getKLine(symbol, period, size) {
     const result = await http.get(
       url,
     );
-    if (result.status === 200) {
+    if (result.status === 200 || result.data.status === 'ok') {
       return result.data;
     }
     const err = {
