@@ -21,7 +21,7 @@ import Slider from "@antv/g2-plugin-slider";
 import { tradeColor } from "./config";
 import { getTradeData } from "@/api/chart";
 import TradePieChart from "./TradePieChart";
-
+import config from '@/config';
 let preSymbol = "";
 
 export default {

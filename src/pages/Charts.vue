@@ -62,7 +62,7 @@ export default {
     created() {
     },
     mounted() {
-
+        this.$el.style.maxHeight = window.innerHeight - 150 + "px";
     },
     beforeDestroy() {
 

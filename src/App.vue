@@ -16,7 +16,7 @@
      
     </el-menu>
     <keep-alive>
-      <router-view class="page-content"></router-view>
+      <router-view class="page-content" ref="routerPage"></router-view>
     </keep-alive>
   </div>
 </template>
@@ -41,6 +41,7 @@ export default {
     window.btcPrice = 8000;
   },
   mounted() {
+    
     getKLine("ethusdt", "1min", 2).then(res => {
       window.ethPrice = res.data[1].close;
     });
