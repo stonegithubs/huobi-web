@@ -1,4 +1,4 @@
-import throttle from 'lodash.throttle';
+
 import config from '@/config';
 import store from '@/store';
 
@@ -12,18 +12,18 @@ let pre_ping = 0;
 let ping = 0;
 
 export const wsconfig = {
-    symbol: '',
+    symbol: 'btcusdt',
 }
 wsconfig.set = function (data) {
     Object.assign(config, data);
 }
-const openWs = function (params) {
+export const openWs = function (params) {
     ws = new WebSocket(`ws://${config.wsHost}/huobi`);
     ws.onmessage = onmessage;
     ws.onclose = onclose;
     ws.onerror = onerror;
 }
-// openWs();
+openWs();
 /**
  * @return {Promise}
  */
@@ -42,58 +42,45 @@ const closeWs = function () {
 };
 
 function onmessage(ev) {
-    let data = JSON.parse(ev.data);
+    let msg = JSON.parse(ev.data);
     let ping = Date.now();
-    if (data.type === "WS_HUOBI") {
-        if (data.tick && data.symbol === config.symbol) {
-            let bidsFirst = data.tick.bids[0];
-            let bidsList = getSameAmount(data.tick.bids, {
-                type: 'bids'
-            });
-            let aksFirst = data.tick.asks[0];
-            let asksList = getSameAmount(data.tick.asks, {
-                type: 'asks'
-            });
+    if (msg.form === "WS_HUOBI") {
+        if (msg.type === 'depth' && msg.symbol === wsconfig.symbol) {
+            let data = msg.data;
+            let bidsFirst = data.bids1;
+            let bidsList = data.bidsList;
+            let aksFirst = data.aks1;
+            let asksList = data.asksList;
             store.commit('UPTATE_DEPTH', {
-                tick: data.tick,
                 asksList: asksList,
                 bidsList: bidsList,
                 bidsFirst: bidsFirst,
                 aksFirst: aksFirst,
-                responseSymbol: data.symbol
+                responseSymbol: msg.symbol,
+                tick: data.tick,
             });
-            // 只记录大饼的某些特征
-            // if (data.symbol === 'btcusdt' || data.symbol === 'paibtc') {
-            //     writeSomething({
-            //         asksList,
-            //         bidsList,
-            //         tick_bids: JSON.parse(JSON.stringify(data.tick.bids)),
-            //         tick_asks: JSON.parse(JSON.stringify(data.tick.asks)),
-            //         symbol: data.symbol
-            //     });
-            // }
-        } else if (data.kline && data.symbol === config.symbol) {
+        } else if (msg.kline && msg.symbol === wsconfig.symbol) {
             store.commit('updateHuobiState', {
                 stateKey: 'lastKline',
-                data: data.kline,
+                data: msg.kline,
             });
-        } else if (data.trade && data.symbol === config.symbol) {
+        } else if (msg.trade && msg.symbol === wsconfig.symbol) {
             // console.log(data.trade)
             store.commit('updateHuobiState', {
                 stateKey: 'trade',
-                data: data.trade,
+                data: msg.trade,
             });
         }
     }
 
-    if (data.status) {
+    if (msg.status) {
 
         store.commit('updateHuobiState', {
             stateKey: 'WS_HUOBI_STATUS',
             data: {
-                type: data.type,
-                status: data.status,
-                msg: data.msg,
+                type: msg.type,
+                status: msg.status,
+                msg: msg.msg,
             },
         });
     }
@@ -138,39 +125,4 @@ export const wsSend = function (data) {
 }
 
 
-let postDepth = throttle(function (body) {
-    fetch(config.API_HOST + '/api/huobi/v1/depth', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      mode: 'cors',
-      body: body,
-    })
-}, 10000, {trailing: false, leading: true});
-/**
- * 
- * 记录depth到indexedDB和数据库
- */
-async function writeSomething({
-    asksList,
-    bidsList,
-    tick_bids,
-    tick_asks,
-    symbol
-}) {
-    let bids =  tick_bids.splice(0, 2);
-    let asks = tick_asks.splice(0, 2);
-
-    postDepth(JSON.stringify({
-        symbol: symbol,
-        time: Date.now(),
-        tick: {
-            bids,
-            asks,
-        },
-        asksList: asksList.slice(0, 10),
-        bidsList: bidsList.slice(0, 10),
-    }));
-}
 export default ws;

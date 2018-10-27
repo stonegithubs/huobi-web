@@ -11,8 +11,9 @@
       <el-menu-item index="depth">Depth</el-menu-item>
       
       <el-menu-item index="difference">Difference</el-menu-item>
-      <el-menu-item index="trade">Trade</el-menu-item>
       <el-menu-item index="density">Density</el-menu-item>
+      <el-menu-item index="trade">Trade</el-menu-item>
+     
     </el-menu>
     <keep-alive>
       <router-view class="page-content"></router-view>
@@ -23,9 +24,8 @@
 <script>
 import { getKLine } from "@/api/huobiREST";
 // utils
-import getSameAmount from "@/utils/getSameAmount";
 import config from "@/config";
-import ws, { wsSend } from "./pages/ws";
+import ws, { wsSend, openWs } from "./pages/ws";
 export default {
   name: "App",
   components: {},
@@ -35,6 +35,7 @@ export default {
     };
   },
   created() {
+    this.activeIndex = this.$router.history.current.name.toLowerCase();
     // 单位为美元
     window.ethPrice = 466;
     window.btcPrice = 8000;
@@ -46,6 +47,7 @@ export default {
     getKLine("btcusdt", "1min", 2).then(res => {
       window.btcPrice = res.data[1].close;
     });
+    openWs();
   },
   beforeDestroy() {
     this.$notify({

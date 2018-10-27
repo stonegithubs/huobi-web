@@ -70,7 +70,7 @@ export async function getDepth (symbol, type) {
  * @return {Promise}
  */
 export async function getDetailMerged (symbol) {
-  const url = '/market/detail/merged?' + Qs.stringify({
+  const url = config.API_HUOBI_HOST + '/market/detail/merged?' + Qs.stringify({
     symbol,
   });
   try {
@@ -97,7 +97,7 @@ export async function getDetailMerged (symbol) {
  * @return {Promise}
  */
 export async function getSymbols () {
-  const url = '/v1/common/symbols';
+  const url =  config.API_HUOBI_HOST + '/v1/common/symbols';
   if (localStorage.symbols !== undefined) {
     return JSON.parse(localStorage.symbols);
   }

@@ -6,8 +6,10 @@ import router from './router'
 import store from './store'
 import {
   Button,
+  Card,
   Dialog,
   Input,
+  Loading,
   Select,
   Option,
   Popover,
@@ -22,6 +24,7 @@ import './assets/css/common.css'
 Vue.config.productionTip = false
 
 Vue.use(Button)
+Vue.use(Card)
 Vue.use(Dialog)
 Vue.use(Input)
 Vue.use(Select)
@@ -31,6 +34,10 @@ Vue.use(Tabs)
 Vue.use(TabPane)
 Vue.use(Menu)
 Vue.use(MenuItem)
+
+Vue.use(Loading.directive);
+
+Vue.prototype.$loading = Loading.service;
 Vue.prototype.$notify = Notification;
 /* eslint-disable no-new */
 new Vue({

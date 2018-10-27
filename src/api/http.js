@@ -10,7 +10,7 @@ import Qs from 'qs';
 import config from '../config';
 
 const http = axios.create({
-  baseURL: config.URL_HUOBI,
+  baseURL: config.API_HOST, // config.API_HUOBI_HOST,
   timeout: 30000,
   headers: {  
     'Content-Type': 'application/json',
