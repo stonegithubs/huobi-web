@@ -2,19 +2,8 @@
 
 > huobi api
 
-## Build Setup
+在线预览
 
-``` bash
-# install dependencies
-npm install
-
-# serve with hot reload at localhost:8080
-npm run dev
-
-# build for production with minification
-npm run build
-
-# build for production and view the bundle analyzer report
-npm run build --report
-```
+根据挂单分析压力位
+资金流入流出
 
