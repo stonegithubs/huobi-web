@@ -65,6 +65,10 @@ export default {
 </script>
 
 <style>
+
+body{
+  min-width: 600px;
+}
 #app .el-menu--horizontal{
   box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
 }
@@ -73,3 +77,8 @@ export default {
   overflow: auto;
 }
 </style>
+<style lang="scss">
+@import './assets/css/media.scss';
+</style>
+
+

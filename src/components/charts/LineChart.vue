@@ -19,6 +19,7 @@ import DataSet from '@antv/data-set';
 import Slider from '@antv/g2-plugin-slider';
 import { color } from "./config";
 import { getAmountChartData } from '@/api/chart';
+import config from '@/config';
 
 export default {
   name: "AmoutChart",
@@ -112,7 +113,7 @@ function initChart(container, vm) {
     container: container,
     height: 500,
     forceFit: true,
-    padding: [50, 50, 80, 120],
+    padding: config.isMobile ? [10, 10, 20, 40] : [50, 50, 80, 120],
   });
 
   chart.source(vm.dataView, {
@@ -154,7 +155,7 @@ function initChart(container, vm) {
     container: vm.$refs.slider,
     width: 'auto',
     height: 26,
-    padding: [0, 100, 0, 120],
+    padding: config.isMobile ? [0, 10, 0, 50] : [0, 100, 0, 120],
     start: vm.dataSet.state.start, // 和状态量对应
     end: vm.dataSet.state.end,
     xAxis: 'time',

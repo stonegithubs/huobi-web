@@ -21,6 +21,7 @@ import {
 } from 'element-ui';
 import './assets/css/reset.css'
 import './assets/css/common.css'
+import './assets/css/media.scss'
 Vue.config.productionTip = false
 
 Vue.use(Button)

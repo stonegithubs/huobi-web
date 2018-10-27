@@ -1,0 +1,8 @@
+/* 少部分样式需要额外调整 */
+@media screen and (min-width: 350px) and (max-width: 800px) {
+  #app {
+    .page-content {
+      padding: 10px;
+    }
+  }
+}
