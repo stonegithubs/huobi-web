@@ -1,6 +1,6 @@
 <template>
   <div class="chart-page">
-      <div class="chart-wrap">
+      <el-card class="chart-wrap">
            <LineChart
                 :asksList="asksList"
                 :bidsList="bidsList"
@@ -8,9 +8,9 @@
                 :bidsFirst="bidsFirst"
                 :symbol="responseSymbol"
             ></LineChart>
-      </div>
-      <div class="chart-wrap">
-        <!--   <LineChart2
+      </el-card>
+       <!-- <el-card class="chart-wrap">
+         <LineChart2
             :lastKline="lastKline"
             :asksList="asksList"
             :bidsList="bidsList"
@@ -18,30 +18,30 @@
             :bidsFirst="bidsFirst"
             :symbol="responseSymbol"
           >
-          </LineChart2> -->
-      </div>
+          </LineChart2>
+      </el-card> -->
 
-      <div class="chart-wrap">
-          <BarChart
+      <el-card class="chart-wrap">
+          <TradeBarChart
             :trade="trade"
             :symbol="responseSymbol"
           >
 
-          </BarChart>
-      </div>
+          </TradeBarChart>
+      </el-card>
   </div>
 </template>
 
 <script>
 import { mapState, mapGetters } from 'vuex';
 import config from '@/config';
-import {LineChart, LineChart2, BarChart} from '@/components/charts';
+import {LineChart, LineChart2, TradeBarChart} from '@/components/charts';
 export default {
     name: "Charts",
     components: {
         LineChart,
         LineChart2,
-        BarChart
+        TradeBarChart
     },
     data() {
         return {
@@ -76,7 +76,7 @@ export default {
 <style lang="scss">
 .chart-page{
     .chart-wrap{
-        margin-top: 40px;
+        margin-top: 10px;
     }
 }
 </style>

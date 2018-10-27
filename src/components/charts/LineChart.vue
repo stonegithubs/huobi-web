@@ -5,7 +5,7 @@
     <div class="text-center">
       <h3>挂单资金</h3>
     </div>
-    <div  ref="container" class="charts-container">
+    <div v-loading="loading" ref="container" class="charts-container">
     </div>
     <div ref="slider" class="chart-slider"> </div>
   </div>
@@ -24,31 +24,42 @@ export default {
   name: "AmoutChart",
   components: {},
   data() {
-    return {};
+    return {
+      loading: true,
+    };
   },
   props: {
     data: Array
   },
   mounted() {
     // this.chart = initChart(this.$refs.container);
+    transformData([], this);
+    this.chart = initChart(this.$refs.container, this);
+
     this.getData();
   },
   methods: {
     getData() {
       getAmountChartData('btcusdt').then((res) => {
         if (this.chart) {
-          this.chart.changeData(transformData(res.data, this));
+          let data= res.data;
+          this.dataSet.setState('start', new Date(data[0].time).getTime());
+          this.dataSet.setState('end', new Date(data[data.length - 1].time).getTime());
+          this.dataSet.setState('sourceData', data)
+          
+          this.slider.start = new Date(data[parseInt(data.length / 2)].time).getTime();
+          this.slider.end = this.dataSet.state.end;
+          this.dataView.source(this.dataSet.state.sourceData);
+          this.slider.changeData(this.dataView);
           return;
         }
-        // this.chart.changeData(res.data);
-        transformData(res.data, this);
-        this.chart = initChart(this.$refs.container, this);
-        // chart.render();
+        
       
       }).finally(() => {
+        this.loading = false;
         // setTimeout(() => {
         //   this.getData();
-        // }, 10 * 1000);
+        // }, 30 * 1000);
       })
     },
   }
@@ -63,21 +74,24 @@ function transformData(data, vm) {
   if (!vm.dataSet) {
     vm.dataSet = new DataSet({
       state: {
-        start: new Date(data[0].time).getTime(),
-        end: new Date(data[data.length - 1].time).getTime(),
+        sourceData: data,
+        start: Date.now() - 1000,
+        end: Date.now(),
       }
     });
   }
   if (!vm.dataView) {
-    vm.dataView = vm.dataSet.createView();
+    vm.dataView = vm.dataSet.createView({
+      // watchingStates: ['sourceData']
+    });
   }
 
-  vm.dataView.source(data).transform({
+  vm.dataView.source(vm.dataSet.state.sourceData).transform({
     type: 'fold',
     fields: ['bids_max_1', 'asks_max_1', 'buy_1', 'sell_1'],
     key: 'type',
     value: 'value',
-    retains: ['bids_max_1', 'asks_max_1', 'buy_1', 'sell_1', 'time', 'price']
+    retains: ['time', 'price'],
   });
   vm.dataView.transform({
     type: 'filter',
@@ -131,14 +145,12 @@ function initChart(container, vm) {
     .line()
     .position("time*value")
     .color("type", color);
-  // chart
-  //   .line()
-  //   .position("time*price")
-  //   .color("type", '#000');
+  chart.legend({
+    position: 'top-right'
+  });
   chart.render();
-
   // 创建 Slider
-  var slider = new Slider({
+  vm.slider = new Slider({
     container: vm.$refs.slider,
     width: 'auto',
     height: 26,
@@ -161,12 +173,11 @@ function initChart(container, vm) {
     onChange: function onChange(_ref) {
       var startValue = _ref.startValue,
         endValue = _ref.endValue;
-
       vm.dataSet.setState('start', startValue);
       vm.dataSet.setState('end', endValue);
     }
   });
-  slider.render();
+  vm.slider.render();
   return chart;
 }
 
