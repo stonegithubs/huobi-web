@@ -113,7 +113,7 @@ function initChart(container, vm) {
     container: container,
     height: 500,
     forceFit: true,
-    padding: config.isMobile ? [10, 10, 20, 40] : [50, 50, 80, 120],
+    padding: config.isMobile ? [50, 10, 50, 40] : [50, 50, 80, 120],
   });
 
   chart.source(vm.dataView, {
