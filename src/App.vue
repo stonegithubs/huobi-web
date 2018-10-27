@@ -65,6 +65,9 @@ export default {
 </script>
 
 <style>
+#app .el-menu--horizontal{
+  box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
+}
 .page-content{
   padding: 30px;
   overflow: auto;

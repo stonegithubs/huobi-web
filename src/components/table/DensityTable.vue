@@ -60,6 +60,7 @@ export default {
 table {
   padding: 10px 20px;
   width:auto;
+  margin-top: 20px;
 }
 table th{
   text-align: left;
