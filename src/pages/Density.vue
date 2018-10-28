@@ -72,7 +72,6 @@ export default {
         
     },
     mounted() {
-        this.$refs.tickList.style.maxHeight = window.innerHeight - 50 + 'px';
         // this.subscribeDisable = !this.useWSAble;
     },
     beforeDestroy() {
@@ -87,7 +86,7 @@ export default {
 <style>
 .tickList {
   padding: 0px 0;
-  overflow: auto;
+  overflow: hidden;
   align-content:flex-start;
   align-items: flex-start;
 }

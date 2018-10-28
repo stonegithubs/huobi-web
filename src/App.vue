@@ -15,9 +15,11 @@
       <el-menu-item index="trade">Trade</el-menu-item>
      
     </el-menu>
-    <keep-alive>
-      <router-view class="page-content" ref="routerPage"></router-view>
-    </keep-alive>
+    <div ref="routerPage" class="page-content">
+      <keep-alive>
+        <router-view></router-view>
+      </keep-alive>
+    </div>
   </div>
 </template>
 
@@ -41,7 +43,7 @@ export default {
     window.btcPrice = 8000;
   },
   mounted() {
-    
+    this.$refs.routerPage.style.maxHeight = window.innerHeight - 60 + "px";
     getKLine("ethusdt", "1min", 2).then(res => {
       window.ethPrice = res.data[1].close;
     });
@@ -70,11 +72,14 @@ export default {
 body{
   min-width: 600px;
 }
+#app {
+  height: 100%;
+}
 #app .el-menu--horizontal{
   box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
 }
 .page-content{
-  padding: 30px;
+  padding: 20px;
   overflow: auto;
 }
 </style>

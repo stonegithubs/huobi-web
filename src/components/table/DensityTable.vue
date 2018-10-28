@@ -70,7 +70,7 @@ table td{
   padding: 1px 6px;
 }
 .all-price-list{
-    max-height: 400px;
-    overflow: auto;
+  max-height: 400px;
+  overflow: hidden;
 }
 </style>

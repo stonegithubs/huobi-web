@@ -1,5 +1,54 @@
 <template>
   <div>
+      <!--
+          
+    <el-table
+        size="mini"
+        :data="data"
+        style="width: 100%">
+        <el-table-column
+            prop="count"
+            label="count"
+            width="70">
+        </el-table-column>
+        <el-table-column
+            prop="amount"
+            label="amount"
+            width="100">
+        </el-table-column>
+        <el-table-column
+            prop="sumCount"
+            label="sumCount"
+            width="100"
+        >
+        </el-table-column>
+        <el-table-column
+            prop="sumMoneny"
+            label="sumMoneny"
+            width="120"
+        >
+        </el-table-column>
+        <el-table-column
+            prop="price"
+            label="price"
+            width="90"
+        >
+        </el-table-column>
+        <el-table-column
+            label="操作"
+            width="100">
+            <template slot-scope="scope">
+                <el-button
+                    size="small"
+                    @click="showAllPrices(item.prices)"
+                    
+                >
+                    查看全部
+                </el-button>
+            </template>
+        </el-table-column>
+    </el-table>
+      -->
     <table>
         <thead>
             <tr>
@@ -63,48 +112,46 @@
 
 <script>
 export default {
-  name: "Table",
+  name: "DepthTable",
   data() {
     return {
-        itemPrices: [],
-        dialogVisible: false,
+      itemPrices: [],
+      dialogVisible: false
     };
   },
   props: {
     data: {
-        type: Array,
-        default () {
-            return [];
-        }
+      type: Array,
+      default() {
+        return [];
+      }
     },
-    quoteCurrency: String,
+    quoteCurrency: String
   },
-  mounted() {
-  },
+  mounted() {},
   methods: {
-    showAllPrices (prices) {
-        this.dialogVisible = true;
-        this.itemPrices = prices;
+    showAllPrices(prices) {
+      this.dialogVisible = true;
+      this.itemPrices = prices;
     }
   }
 };
 </script>
 
 <style>
-
 table {
   padding: 10px 20px;
-  width:auto;
+  width: auto;
 }
-table th{
+table th {
   text-align: left;
   padding: 1px 6px;
 }
-table td{
+table td {
   padding: 1px 6px;
 }
-.all-price-list{
-    max-height: 400px;
-    overflow: auto;
+.all-price-list {
+  max-height: 400px;
+  overflow: auto;
 }
 </style>

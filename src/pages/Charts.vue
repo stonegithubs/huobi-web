@@ -62,7 +62,6 @@ export default {
     created() {
     },
     mounted() {
-        this.$el.style.maxHeight = window.innerHeight - 150 + "px";
     },
     beforeDestroy() {
 
@@ -76,7 +75,7 @@ export default {
 <style lang="scss">
 .chart-page{
     .chart-wrap{
-        margin-top: 10px;
+        margin-bottom: 10px;
     }
 }
 </style>

@@ -7,17 +7,21 @@ import store from './store'
 import {
   Button,
   Card,
+  Col,
   Dialog,
   Input,
   Loading,
-  Select,
-  Option,
-  Popover,
   Tabs,
   TabPane,
+  Table,
+  TableColumn,
   Menu,
   MenuItem,
   Notification,
+  Option,
+  Popover,
+  Select,
+  Row,
 } from 'element-ui';
 import './assets/css/reset.css'
 import './assets/css/common.css'
@@ -25,17 +29,20 @@ import './assets/css/media.scss'
 Vue.config.productionTip = false
 
 Vue.use(Button)
+Vue.use(Col)
 Vue.use(Card)
 Vue.use(Dialog)
 Vue.use(Input)
-Vue.use(Select)
-Vue.use(Option)
-Vue.use(Popover)
 Vue.use(Tabs)
 Vue.use(TabPane)
+Vue.use(Table)
+Vue.use(TableColumn)
 Vue.use(Menu)
 Vue.use(MenuItem)
-
+Vue.use(Option)
+Vue.use(Popover)
+Vue.use(Row)
+Vue.use(Select)
 Vue.use(Loading.directive);
 
 Vue.prototype.$loading = Loading.service;

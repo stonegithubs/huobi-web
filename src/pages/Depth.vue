@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="depth-page">
     <div>
       <el-input
         style="width: 100px;"
@@ -36,24 +36,25 @@
         :disabled="true"
       >重启ws
       </el-button>
-      <div>
+     
+      
+    </div>
+    <div>
         <span>当前价{{lastKline.close}}</span>
-      </div>
-      <div class="tickList" ref="tickList">
-        <div class="flex-row " >
-          <div class="flex-1">
+    </div>
+    <div class="depth-table-wap">
+      <el-row>
+        <el-col :span="12">
             <span>买单({{bidsList.length}})</span>
             <span>买1:{{bidsFirst}}</span>
-            <Table :data="bidsList" :quoteCurrency="quoteCurrency"></Table>
-          </div>
-          <div class="flex-1">
-            <span>卖单({{asksList.length}})</span>
-            <span>卖1:{{aksFirst}}</span>
-            <Table :data="asksList" :quoteCurrency="quoteCurrency"></Table>
-          </div>
-        </div>
-      </div>
-      
+            <DepthTable :data="bidsList" :quoteCurrency="quoteCurrency"></DepthTable>
+        </el-col>
+        <el-col :span="12">
+          <span>卖单({{asksList.length}})</span>
+          <span>卖1:{{aksFirst}}</span>
+          <DepthTable :data="asksList" :quoteCurrency="quoteCurrency"></DepthTable>
+        </el-col>
+      </el-row>
     </div>
   </div>
 </template>
@@ -63,7 +64,7 @@ import { mapState, mapGetters } from "vuex";
 // utils
 import getSameAmount from "@/utils/getSameAmount";
 // components
-import Table from "@/components/Table";
+import DepthTable from "@/components/DepthTable";
 // api
 import { getSymbols, getKLine } from "@/api/huobiREST";
 import ws, { wsconfig, wsSend } from "./ws";
@@ -71,7 +72,7 @@ import ws, { wsconfig, wsSend } from "./ws";
 export default {
   name: "Depth",
   components: {
-    Table
+    DepthTable
   },
   data() {
     return {
@@ -129,7 +130,6 @@ export default {
     };
   },
   mounted() {
-    this.$refs.tickList.style.maxHeight = window.innerHeight - 150 + "px";
     // this.subscribeDisable = !this.useWSAble;
     console.log(1);
   },
@@ -199,7 +199,14 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
+.depth-page{
+  width: 100%;
+  .depth-table{
+    position: relative;
+    width: 50%;
+  }
+}
 .tickList {
   padding: 0px 0;
   overflow: auto;
