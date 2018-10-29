@@ -35,12 +35,11 @@
 <script>
 import { mapState, mapGetters } from 'vuex';
 import config from '@/config';
-import {LineChart, LineChart2, TradeBarChart} from '@/components/charts';
+import {LineChart, TradeBarChart} from '@/components/charts';
 export default {
     name: "Charts",
     components: {
         LineChart,
-        LineChart2,
         TradeBarChart
     },
     data() {

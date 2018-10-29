@@ -15,13 +15,18 @@
 <script>
 import moment from "moment";
 import throttle from "lodash.throttle";
-import G2 from "@antv/g2";
-import DataSet from "@antv/data-set";
-import Slider from "@antv/g2-plugin-slider";
+// import G2 from "@antv/g2";
+// import DataSet from "@antv/data-set";
+// import Slider from "@antv/g2-plugin-slider";
+import fetchAntv from './antv';
 import { tradeColor } from "./config";
 import { getTradeData } from "@/api/chart";
 import TradePieChart from "./TradePieChart";
-import config from '@/config';
+import CONFIG from '@/config';
+
+let G = null;
+let Slider = null;
+let DataSet = null;
 let preSymbol = "";
 
 export default {
@@ -37,9 +42,16 @@ export default {
   },
   props: {},
   mounted() {
-    transformData([], this);
-    this.chart = initChart(this.$refs.container, this);
-    this.getData();
+    fetchAntv().then((res) => {
+      G = res.G;
+      Slider = res.Slider;
+      DataSet = res.DataSet;
+    }).then(() => {
+      transformData([], this);
+      this.chart = initChart(this.$refs.container, this);
+      this.getData();
+    });
+   
   },
   methods: {
     getData() {
@@ -110,11 +122,11 @@ function transformData(data, vm) {
  * @param {Vue.Component}
  */
 function initChart(container, vm) {
-  var chart = new G2.Chart({
+  var chart = new G.Chart({
     container: container,
     height: 500,
     forceFit: true,
-    padding: config.isMobile ? [10, 10, 20, 40] : [50, 50, 80, 120],
+    padding: CONFIG.isMobile ? [10, 10, 20, 40] : [50, 50, 80, 120],
   });
 
   chart.source(vm.dataView, {
@@ -149,7 +161,7 @@ function initChart(container, vm) {
     .color("type", tradeColor);
   chart.legend({
     position: "top-right",
-    offsetY: config.isMobile ? 0 : -20
+    offsetY: CONFIG.isMobile ? 0 : -20
   });
   // chart
   //   .line()
@@ -162,7 +174,7 @@ function initChart(container, vm) {
     container: vm.$refs.slider,
     width: "auto",
     height: 26,
-    padding: config.isMobile ? [0, 10, 0, 40] :  [0, 100, 0, 120],
+    padding: CONFIG.isMobile ? [0, 10, 0, 40] :  [0, 100, 0, 120],
     start: vm.dataSet.state.start, // 和状态量对应
     end: vm.dataSet.state.end,
     xAxis: "time",
