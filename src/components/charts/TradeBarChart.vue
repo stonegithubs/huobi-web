@@ -47,16 +47,16 @@ export default {
         .then(res => {
           this.data = res.data;
           if (this.chart) {
+            let startTime = new Date(res.data[parseInt(res.data.length / 1.5)].time).getTime();
+            let endTime = new Date(res.data[res.data.length - 1].time).getTime();
             this.dataSet.setState("sourceData", res.data);
-            this.dataSet.setState("start", new Date(res.data[0].time).getTime());
-            this.dataSet.setState(
-              "end",
-              new Date(res.data[res.data.length - 1].time).getTime()
-            );
-           this.slider.start = new Date(res.data[parseInt(res.data.length - 10)].time).getTime();
-            this.slider.end = this.dataSet.state.end;
-            this.dataView.source(this.dataSet.state.sourceData);
-            this.slider.changeData(this.dataView);
+            this.dataView.source(this.data);
+
+            this.slider.start = startTime;
+            this.slider.end = endTime;
+            this.slider.changeData(this.dataView.rows);
+            this.dataSet.setState("start", startTime);
+            this.dataSet.setState("end", endTime );
           }
         })
         .finally(() => {
@@ -78,7 +78,7 @@ function transformData(data, vm) {
     vm.dataSet = new DataSet({
       state: {
         sourceData: data,
-        start: Date.now() - 1000,
+        start: Date.now() - (1000 * 60 * 60 * 24),
         end: Date.now(),
       }
     });
@@ -97,6 +97,7 @@ function transformData(data, vm) {
   vm.dataView.transform({
     type: "filter",
     callback: function callback(obj) {
+      
       var time = new Date(obj.time).getTime(); // !注意：时间格式，建议转换为时间戳进行比较
       return time >= vm.dataSet.state.start && time <= vm.dataSet.state.end;
     }
@@ -148,13 +149,14 @@ function initChart(container, vm) {
     .color("type", tradeColor);
   chart.legend({
     position: "top-right",
-    offsetY: -20
+    offsetY: config.isMobile ? 0 : -20
   });
   // chart
   //   .line()
   //   .position("time*price")
   //   .color("type", '#000');
   chart.render();
+
   // 创建 Slider
   vm.slider = new Slider({
     container: vm.$refs.slider,
@@ -172,7 +174,7 @@ function initChart(container, vm) {
         mask: "M/DD H:mm:ss"
       }
     },
-    data: vm.dataView,
+    data: vm.dataView.origin,
     backgroundChart: {
       type: "interval"
     },

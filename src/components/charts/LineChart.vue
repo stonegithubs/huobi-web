@@ -43,15 +43,18 @@ export default {
     getData() {
       getAmountChartData('btcusdt').then((res) => {
         if (this.chart) {
-          let data= res.data;
-          this.dataSet.setState('start', new Date(data[0].time).getTime());
-          this.dataSet.setState('end', new Date(data[data.length - 1].time).getTime());
-          this.dataSet.setState('sourceData', data)
-          
-          this.slider.start = new Date(data[parseInt(data.length / 2)].time).getTime();
-          this.slider.end = this.dataSet.state.end;
+          let data = res.data;
+          let startTime = new Date(data[parseInt(data.length / 3)].time).getTime();
+          let endTime = new Date(data[data.length - 1].time).getTime();
+          console.log(startTime)
+          this.dataSet.setState('sourceData', data);
           this.dataView.source(this.dataSet.state.sourceData);
-          this.slider.changeData(this.dataView);
+
+          this.slider.start = startTime;
+          this.slider.end = endTime;
+          this.slider.changeData(this.dataView.rows);
+          this.dataSet.setState("start", startTime);
+          this.dataSet.setState("end", endTime );
           return;
         }
         
@@ -76,15 +79,13 @@ function transformData(data, vm) {
     vm.dataSet = new DataSet({
       state: {
         sourceData: data,
-        start: Date.now() - 1000,
+        start: Date.now() - (1000 * 60 * 60 * 24),
         end: Date.now(),
       }
     });
   }
   if (!vm.dataView) {
-    vm.dataView = vm.dataSet.createView({
-      // watchingStates: ['sourceData']
-    });
+    vm.dataView = vm.dataSet.createView();
   }
 
   vm.dataView.source(vm.dataSet.state.sourceData).transform({
