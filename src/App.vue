@@ -37,7 +37,12 @@ export default {
     };
   },
   created() {
-    this.activeIndex = this.$router.history.current.name.toLowerCase();
+    let name = this.$router.history.current.name;
+    if (name)  {
+      this.activeIndex = name;
+    } else {
+      this.activeIndex = this.activeIndex;
+    }
     // 单位为美元
     window.ethPrice = 466;
     window.btcPrice = 8000;

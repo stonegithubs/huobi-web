@@ -46,7 +46,6 @@ export default {
           let data = res.data;
           let startTime = new Date(data[parseInt(data.length / 3)].time).getTime();
           let endTime = new Date(data[data.length - 1].time).getTime();
-          console.log(startTime)
           this.dataSet.setState('sourceData', data);
           this.dataView.source(this.dataSet.state.sourceData);
 

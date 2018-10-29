@@ -8,6 +8,7 @@ import Density from "@/pages/Density"
 
 Vue.use(Router)
 
+// const Charts = () => import(/* webpackChunkName: "Charts" */ '../pages/Charts.vue')
 export default new Router({
   // mode: 'history',
   routes: [
