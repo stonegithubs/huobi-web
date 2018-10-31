@@ -6,8 +6,8 @@
       <h3>挂单资金</h3>
     </div>
     <div v-loading="loading" ref="container" class="charts-container">
+      <canvas></canvas>
     </div>
-    <div ref="slider" class="chart-slider"> </div>
   </div>
 </template>
 
@@ -23,8 +23,7 @@ import { getAmountChartData } from '@/api/chart';
 import CONFIG from '@/config';
 
 
-let G = null;
-let Slider = null;
+let F2 = null;
 let DataSet = null;
 
 export default {
@@ -40,8 +39,7 @@ export default {
   },
   mounted() {
     fetchAntv().then((res) => {
-      G = res.G;
-      Slider = res.Slider;
+      F2 = res.F2;
       DataSet = res.DataSet;
     }).then(() => {
       transformData([], this);
@@ -66,8 +64,6 @@ export default {
           this.dataSet.setState("end", endTime );
           return;
         }
-        
-      
       }).finally(() => {
         this.loading = false;
         // setTimeout(() => {
@@ -119,6 +115,7 @@ function transformData(data, vm) {
  * @param {Vue.Component}
  */
 function initChart(container, vm) {
+  
   var chart = new G.Chart({
     container: container,
     height: 500,

@@ -1,13 +1,13 @@
 <template>
   <div class="chart-page">
       <el-card class="chart-wrap">
-           <LineChart
+           <DepthLineChart
                 :asksList="asksList"
                 :bidsList="bidsList"
                 :aksFirst="aksFirst"
                 :bidsFirst="bidsFirst"
                 :symbol="responseSymbol"
-            ></LineChart>
+            ></DepthLineChart>
       </el-card>
        <!-- <el-card class="chart-wrap">
          <LineChart2
@@ -35,11 +35,11 @@
 <script>
 import { mapState, mapGetters } from 'vuex';
 import config from '@/config';
-import {LineChart, TradeBarChart} from '@/components/charts';
+import {DepthLineChart, TradeBarChart} from '@/components/charts';
 export default {
     name: "Charts",
     components: {
-        LineChart,
+        DepthLineChart,
         TradeBarChart
     },
     data() {

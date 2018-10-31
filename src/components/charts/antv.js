@@ -1,5 +1,6 @@
 import CONFIG from '@/config';
-export let G = null;
+export let G2 = null;
+export let F2 = null;
 export let Slider = null;
 export let DataSet = null;
 
@@ -11,32 +12,25 @@ export let DataSet = null;
 export default async function fetchAntv() {
     
     let pList = [];
-    import(/* webpackChunkName: "g2" */ '@antv/g2').then(res => {
-        G = res;
-        import(/* webpackChunkName: "Slider" */ '@antv/g2-plugin-slider').then(res => {
-            Slider = res;
-        })
-    })
+    
     pList.push(
         import(/* webpackChunkName: "DataSet" */ '@antv/data-set').then(res => {
             DataSet = res;
         })
     );
-    pList.push(
-        import(/* webpackChunkName: "f2" */ '@antv/f2').then(res => {
-            G = res;
-        })
-    );
+
     if (CONFIG.isMobile) {
         pList.push(
             import(/* webpackChunkName: "f2" */ '@antv/f2').then(res => {
-                G = res;
+                F2 = res;
+                F2.track(false);
             })
         );
     } else {
         pList.push(
             import(/* webpackChunkName: "g2" */ '@antv/g2').then(res => {
-                G = res;
+                G2 = res;
+                G2.track(false);
                 import(/* webpackChunkName: "Slider" */ '@antv/g2-plugin-slider').then(res => {
                     Slider = res;
                 })
@@ -45,9 +39,10 @@ export default async function fetchAntv() {
     }
     
     await Promise.all(pList);
-    G.track(false);
+
     return {
-        G,
+        G2,
+        F2,
         Slider,
         DataSet,
     }

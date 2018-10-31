@@ -1,8 +1,6 @@
-import LineChart from './LineChart.vue';
-import LineChart2 from './LineChart2.vue';
+import DepthLineChart from './DepthLineChart.vue';
 import TradeBarChart from './TradeBarChart.vue';
 export {
-  LineChart,
-  LineChart2,
+  DepthLineChart,
   TradeBarChart
 }

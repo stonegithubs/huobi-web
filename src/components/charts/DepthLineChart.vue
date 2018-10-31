@@ -3,9 +3,9 @@
 <template>
   <div>
     <div class="text-center">
-      <h3>资金流入流出</h3>
+      <h3>挂单资金</h3>
     </div>
-    <div  ref="container" class="charts-container">
+    <div v-loading="loading" ref="container" class="charts-container">
     </div>
     <div ref="slider" class="chart-slider"> </div>
   </div>
@@ -14,46 +14,68 @@
 <script>
 import moment from "moment";
 import throttle from "lodash.throttle";
-import G2 from "@antv/g2";
-import DataSet from "@antv/data-set";
-import Slider from "@antv/g2-plugin-slider";
+// import G2 from "@antv/g2";
+// import DataSet from '@antv/data-set';
+// import Slider from '@antv/g2-plugin-slider';
+import fetchAntv from './antv';
 import { color } from "./config";
-import { getTradeData } from "@/api/chart";
+import { getAmountChartData } from '@/api/chart';
+import CONFIG from '@/config';
 
-let preSymbol = "";
+
+let G = null;
+let Slider = null;
+let DataSet = null;
 
 export default {
-  name: "LineCharts",
-
+  name: "AmoutChart",
+  components: {},
   data() {
-    return {};
+    return {
+      loading: true,
+    };
   },
-  props: {},
+  props: {
+    data: Array
+  },
   mounted() {
-    this.getData();
+    fetchAntv().then((res) => {
+      G = res.G;
+      Slider = res.Slider;
+      DataSet = res.DataSet;
+    }).then(() => {
+      transformData([], this);
+      this.chart = initChart(this.$refs.container, this);
+      this.getData();
+    });
   },
   methods: {
     getData() {
-      getTradeData("btcusdt")
-        .then(res => {
-          console.log(res.data.length);
-          if (this.chart) {
-            this.chart.changeData(transformData(res.data, this));
-            return;
-          }
-          // this.chart.changeData(res.data);
-          transformData(res.data, this);
-          this.chart = initChart(this.$refs.container, this);
-          // chart.render();
-        })
-        .finally(() => {
-          // setTimeout(() => {
-          //   this.getData();
-          // }, 10 * 1000);
-        });
-    }
+      getAmountChartData('btcusdt').then((res) => {
+        if (this.chart) {
+          let data = res.data;
+          let startTime = new Date(data[parseInt(data.length / 3)].time).getTime();
+          let endTime = new Date(data[data.length - 1].time).getTime();
+          this.dataSet.setState('sourceData', data);
+          this.dataView.source(this.dataSet.state.sourceData);
+
+          this.slider.start = startTime;
+          this.slider.end = endTime;
+          this.slider.changeData(this.dataView.rows);
+          this.dataSet.setState("start", startTime);
+          this.dataSet.setState("end", endTime );
+          return;
+        }
+      }).finally(() => {
+        this.loading = false;
+        // setTimeout(() => {
+        //   this.getData();
+        // }, 30 * 1000);
+      })
+    },
   }
 };
+
 /**
  * @param {Array<Object>}
  * @param {Vue.Component}
@@ -63,8 +85,9 @@ function transformData(data, vm) {
   if (!vm.dataSet) {
     vm.dataSet = new DataSet({
       state: {
-        start: new Date(data[parseInt(data.length / 2)].time).getTime(),
-        end: new Date(data[data.length - 1].time).getTime(),
+        sourceData: data,
+        start: Date.now() - (1000 * 60 * 60 * 24),
+        end: Date.now(),
       }
     });
   }
@@ -72,12 +95,12 @@ function transformData(data, vm) {
     vm.dataView = vm.dataSet.createView();
   }
 
-  vm.dataView.source(data).transform({
+  vm.dataView.source(vm.dataSet.state.sourceData).transform({
     type: 'fold',
-    fields: ['buy', 'sell'],
+    fields: ['bids_max_1', 'asks_max_1', 'buy_1', 'sell_1'],
     key: 'type',
     value: 'value',
-    retains: ['buy', 'sell', 'time']
+    retains: ['time', 'price'],
   });
   vm.dataView.transform({
     type: 'filter',
@@ -94,11 +117,12 @@ function transformData(data, vm) {
  * @param {Vue.Component}
  */
 function initChart(container, vm) {
-  var chart = new G2.Chart({
+  
+  var chart = new G.Chart({
     container: container,
     height: 500,
     forceFit: true,
-    padding: [50, 50, 80, 120],
+    padding: CONFIG.isMobile ? [50, 10, 50, 40] : [50, 50, 80, 120],
   });
 
   chart.source(vm.dataView, {
@@ -106,7 +130,7 @@ function initChart(container, vm) {
       type: 'time',
       nice: false,
       mask: "M/DD H:mm:ss",
-      // tickCount: 10,
+      tickCount: 12,
       // tickInterval: 30 * 60 * 1000 // 对于 linear 类型的数据，可以设置 tickInterval 参数来设定每个刻度之间的间距，time 类型的单位为微秒
     },
     // price: {
@@ -128,21 +152,19 @@ function initChart(container, vm) {
   });
 
   chart
-    .intervalStack()
+    .line()
     .position("time*value")
     .color("type", color);
-  // chart
-  //   .line()
-  //   .position("time*price")
-  //   .color("type", '#000');
+  chart.legend({
+    position: 'top-right'
+  });
   chart.render();
-
   // 创建 Slider
-  var slider = new Slider({
+  vm.slider = new Slider({
     container: vm.$refs.slider,
     width: 'auto',
     height: 26,
-    padding: [0, 120, 0, 120],
+    padding: CONFIG.isMobile ? [0, 10, 0, 50] : [0, 100, 0, 120],
     start: vm.dataSet.state.start, // 和状态量对应
     end: vm.dataSet.state.end,
     xAxis: 'time',
@@ -161,12 +183,11 @@ function initChart(container, vm) {
     onChange: function onChange(_ref) {
       var startValue = _ref.startValue,
         endValue = _ref.endValue;
-
       vm.dataSet.setState('start', startValue);
       vm.dataSet.setState('end', endValue);
     }
   });
-  slider.render();
+  vm.slider.render();
   return chart;
 }
 
@@ -174,5 +195,4 @@ function initChart(container, vm) {
 
 <style>
 @import './chart.css';
-
 </style>
