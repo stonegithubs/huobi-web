@@ -44,20 +44,21 @@ export default {
       this.activeIndex = this.activeIndex;
     }
     // 单位为美元
-    window.ethPrice = 466;
-    window.btcPrice = 8000;
+    appConfig.price.eth = 466;
+    appConfig.price.btc = 8000;
   },
   mounted() {
-    this.$refs.routerPage.style.maxHeight = window.innerHeight - 60 + "px";
+    window.addEventListener('resize', this.resize);
     getKLine("ethusdt", "1min", 2).then(res => {
-      window.ethPrice = res.data[1].close;
+      appConfig.price.eth = res.data[1].close;
     });
     getKLine("btcusdt", "1min", 2).then(res => {
-      window.btcPrice = res.data[1].close;
+      appConfig.price.btc = res.data[1].close;
     });
     openWs();
   },
   beforeDestroy() {
+    window.removeEventListener('resize', this.resize);
     this.$notify({
       title: "WS状态",
       message: `msg: ws_server closed`,
@@ -67,7 +68,10 @@ export default {
   },
   methods: {
     handleClick(tab, event) {},
-    handleSelect() {}
+    handleSelect() {},
+    resize() {
+      this.$refs.routerPage.style.maxHeight = window.innerHeight - 60 + "px";
+    }
   }
 };
 </script>

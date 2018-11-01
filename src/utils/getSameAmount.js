@@ -65,9 +65,9 @@ const getSameAmount = function (data, {
 
 		// 转换成美元价格
 		if (quoteCurrency === 'btc') {
-			sumDollar = sumPrice * window.btcPrice;
+			sumDollar = sumPrice * appConfig.btcPrice;
 		} else if (quoteCurrency === 'eth') {
-			sumDollar = sumPrice * window.ethPrice;
+			sumDollar = sumPrice * appConfig.ethPrice;
 		}
 		if ((count > 1 && sumDollar > config.minSumPrice) || (sumDollar > config.minPrice)) {
 			let data = {

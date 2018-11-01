@@ -1,5 +1,5 @@
-import DepthLineChart from './DepthLineChart.vue';
-import TradeBarChart from './TradeBarChart.vue';
+import DepthLineChart from './DepthLineChart';
+import TradeBarChart from './TradeBarChart';
 export {
   DepthLineChart,
   TradeBarChart

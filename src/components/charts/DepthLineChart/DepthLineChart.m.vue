@@ -2,12 +2,7 @@
 
 <template>
   <div>
-    <div class="text-center">
-      <h3>挂单资金</h3>
-    </div>
-    <div v-loading="loading" ref="container" class="charts-container">
-      <canvas></canvas>
-    </div>
+    <canvas ref="canvas"></canvas>
   </div>
 </template>
 
@@ -27,7 +22,7 @@ let F2 = null;
 let DataSet = null;
 
 export default {
-  name: "AmoutChart",
+  name: "AmoutChartM",
   components: {},
   data() {
     return {
@@ -139,7 +134,7 @@ function initChart(container, vm) {
   chart.axis('value', {
     label: {
       formatter: function formatter(val) {
-        return  `${(val / 10000)}万usdt (${parseInt(val / btcPrice)}฿) `;
+        return  `${(val / 10000)}万usdt (${parseInt(val / appConfig.btcPrice)}฿) `;
       }
     }
   });
