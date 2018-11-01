@@ -8,9 +8,6 @@
 </template>
 
 <script>
-import moment from "moment";
-import throttle from "lodash.throttle";
-
 import { getTradeData } from "@/api/chart";
 
 import { fetchAntv, createDataSet } from "../antv";

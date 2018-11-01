@@ -1,10 +1,48 @@
 import CONFIG from '@/config';
 export let G2 = null;
 export let F2 = null;
+export let Chart = null;
 export let Slider = null;
 export let DataSet = null;
 
 
+/**
+ * F2相关依赖
+ */
+const fetchF2 = async function() {
+    await import(/* webpackChunkName: "f2" */ '@antv/f2/lib/index').then(res => {
+        F2 = res;
+        Chart = F2.Chart;
+
+        F2.track(false);
+    });
+    // await import(/* webpackChunkName: "interaction-base" */ '@antv/f2/lib/interaction/base').then(res => {
+    //     console.log(res.prototype)
+    // }),
+    await Promise.all([
+        import(/* webpackChunkName: "interaction-pan" */ '@antv/f2/lib/interaction/pan'),
+        import(/* webpackChunkName: "interaction-pinch" */ '@antv/f2/lib/interaction/pinch'),
+        import(/* webpackChunkName: "interaction-pinch" */ '@antv/f2/lib/plugin/scroll-bar').then(ScrollBar => {
+            F2.Chart.plugins.register(ScrollBar);
+        }),
+    ]);
+}
+
+/**
+ * G2相关依赖
+ */
+const fetchG2 = async function() {
+    await import(/* webpackChunkName: "g2" */ '@antv/g2').then(res => {
+        G2 = res;
+        Chart = G2.Chart;
+        G2.track(false);
+    });
+    await Promise.all([
+        import(/* webpackChunkName: "Slider" */ '@antv/g2-plugin-slider').then(res => {
+            Slider = res;
+        })
+    ]);
+}
 /**
  * 异步获取antv组件
  * @return {Object}
@@ -20,29 +58,17 @@ export async function fetchAntv() {
     );
 
     if (CONFIG.isMobile) {
-        pList.push(
-            import(/* webpackChunkName: "f2" */ '@antv/f2').then(res => {
-                F2 = res;
-                F2.track(false);
-            })
-        );
+        pList.push(fetchF2());
     } else {
-        pList.push(
-            import(/* webpackChunkName: "g2" */ '@antv/g2').then(res => {
-                G2 = res;
-                G2.track(false);
-                return import(/* webpackChunkName: "Slider" */ '@antv/g2-plugin-slider').then(res => {
-                    Slider = res;
-                });
-            })
-        );
+        pList.push(fetchG2());
     }
 
     await Promise.all(pList);
 
     return {
-        G2,
+        Chart: Chart,
         F2,
+        G2,
         Slider,
         DataSet,
     }

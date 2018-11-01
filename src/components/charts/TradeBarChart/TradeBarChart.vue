@@ -13,9 +13,6 @@
 </template>
 
 <script>
-import moment from "moment";
-import throttle from "lodash.throttle";
-
 import CONFIG from "@/config";
 import { getTradeData } from "@/api/chart";
 import {

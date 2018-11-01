@@ -48,12 +48,23 @@ export default {
     appConfig.price.btc = 8000;
   },
   mounted() {
+    this.resize();
     window.addEventListener('resize', this.resize);
+
+    // 设置最新的价格
     getKLine("ethusdt", "1min", 2).then(res => {
       appConfig.price.eth = res.data[1].close;
+    }).catch(() => {
+      getKLine("ethusdt", "1min", 2).then(res => {
+        appConfig.price.eth = res.data[1].close;
+      });
     });
     getKLine("btcusdt", "1min", 2).then(res => {
       appConfig.price.btc = res.data[1].close;
+    }).catch(() => {
+      getKLine("btcusdt", "1min", 2).then(res => {
+          appConfig.price.btc = res.data[1].close;
+      });
     });
     openWs();
   },
@@ -78,9 +89,9 @@ export default {
 
 <style>
 
-body{
+/* body{
   min-width: 600px;
-}
+} */
 #app {
   height: 100%;
 }

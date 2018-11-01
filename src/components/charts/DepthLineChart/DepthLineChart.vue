@@ -2,19 +2,13 @@
 
 <template>
   <div>
-    <div class="text-center">
-      <h3>挂单资金</h3>
-    </div>
-    <div v-loading="loading" ref="container" class="charts-container">
+    <div ref="container">
     </div>
     <div ref="slider" class="chart-slider"> </div>
   </div>
 </template>
 
 <script>
-import moment from "moment";
-import throttle from "lodash.throttle";
-
 import { getAmountChartData } from "@/api/chart";
 import CONFIG from "@/config";
 import {
@@ -22,14 +16,13 @@ import {
   createDataSet,
   createSilder,
 } from "../antv";
-import { color, usdtFormatter } from "../config";
+import { colorMap, usdtFormatter } from "../config";
 
 export default {
   name: "DepthLineChart",
   components: {},
   data() {
     return {
-      loading: true
     };
   },
   props: {
@@ -38,7 +31,7 @@ export default {
   mounted() {
     fetchAntv()
       .then(res => {
-        const { dataSet, dataView, chart } = initChart(res.G2.Chart, [], this.$refs.container);
+        const { dataSet, dataView, chart } = initChart(res.Chart, [], this.$refs.container);
 
         this.dataSet = dataSet;
         this.dataView = dataView;
@@ -75,10 +68,7 @@ export default {
           this.dataSet.setState("end", endTime);
         })
         .finally(() => {
-          this.loading = false;
-          // setTimeout(() => {
-          //   this.getData();
-          // }, 30 * 1000);
+          this.$emit('onloaded');
         });
     }
   }
@@ -88,7 +78,6 @@ export default {
  * @param {Chart}
  * @param {Object[]}
  * @param {HTMLElement}
- * @param {Chart}
  */
 function initChart(Chart, data, container) {
   const { dataSet, dataView } = createDataSet({
@@ -136,11 +125,15 @@ function initChart(Chart, data, container) {
       type: "line"
     }
   });
-
   chart
-    .line()
-    .position("time*value")
-    .color("type", color);
+    .line({
+      sortable: false
+    })
+    .position('time*value')
+    .color('type', function(val) {
+      return colorMap[val];
+    });
+
   chart.legend({
     position: "top-right"
   });
