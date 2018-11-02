@@ -66,6 +66,7 @@ export default {
           // 拖动slider
           this.dataSet.setState("start", startTime);
           this.dataSet.setState("end", endTime);
+          console.log(this.slider)
         })
         .finally(() => {
           this.$emit('onloaded');

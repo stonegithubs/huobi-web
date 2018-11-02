@@ -72,10 +72,7 @@ export default {
           this.dataSet.setState("end", endTime);
         })
         .finally(() => {
-          this.loading = false;
-          // setTimeout(() => {
-          //   this.getData();
-          // }, 60 * 1000);
+          this.$emit("onloaded");
         });
     }
   }

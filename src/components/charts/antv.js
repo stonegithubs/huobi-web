@@ -16,13 +16,10 @@ const fetchF2 = async function() {
 
         F2.track(false);
     });
-    // await import(/* webpackChunkName: "interaction-base" */ '@antv/f2/lib/interaction/base').then(res => {
-    //     console.log(res.prototype)
-    // }),
     await Promise.all([
         import(/* webpackChunkName: "interaction-pan" */ '@antv/f2/lib/interaction/pan'),
         import(/* webpackChunkName: "interaction-pinch" */ '@antv/f2/lib/interaction/pinch'),
-        import(/* webpackChunkName: "interaction-pinch" */ '@antv/f2/lib/plugin/scroll-bar').then(ScrollBar => {
+        import(/* webpackChunkName: "scroll-bar" */ '@antv/f2/lib/plugin/scroll-bar').then(ScrollBar => {
             F2.Chart.plugins.register(ScrollBar);
         }),
     ]);
