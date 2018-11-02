@@ -2,10 +2,7 @@
 
 <template>
   <div class="trade-chart">
-    <div class="text-center">
-      <h3>资金流入流出</h3>
-    </div>
-    <div v-loading="loading" ref="container" class="charts-container">
+    <div ref="container">
     </div>
     <div ref="slider" class="chart-slider"> </div>
     <TradePieChart :data="data"></TradePieChart> 

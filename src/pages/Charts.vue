@@ -22,12 +22,12 @@
       </el-card> -->
 
       <el-card class="chart-wrap">
-     <!--      <TradeBarChart
+          <TradeBarChart
             :trade="trade"
             :symbol="responseSymbol"
           >
 
-          </TradeBarChart> -->
+          </TradeBarChart>
       </el-card>
   </div>
 </template>
@@ -40,7 +40,7 @@ export default {
     name: "Charts",
     components: {
         DepthLineChart,
-/*         TradeBarChart */
+        TradeBarChart
     },
     data() {
         return {

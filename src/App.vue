@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     <el-menu
+      ref="menu"
       :default-active="activeIndex"
       class="el-menu-demo"
       mode="horizontal"
@@ -81,7 +82,9 @@ export default {
     handleClick(tab, event) {},
     handleSelect() {},
     resize() {
-      this.$refs.routerPage.style.maxHeight = window.innerHeight - 60 + "px";
+      let menuHeight = this.$refs.menu.$el.clientHeight;
+      console.log(menuHeight)
+      this.$refs.routerPage.style.maxHeight = window.innerHeight - menuHeight + "px";
     }
   }
 };
