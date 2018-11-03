@@ -1,48 +1,46 @@
 <template>
   <div class="depth-page">
-    <div>
-      <el-input
-        style="width: 100px;"
-        placeholder="请输入内容"
-        v-model="symbol"
-        size="small"
-        clearable
-        :disabled="true"
-      >
-      </el-input>
-      对
-      <el-select v-model="symbol2" placeholder="请选择" size="small" :disabled="true">
-        <el-option value="usdt">usdt</el-option>
-        <el-option value="btc">btc</el-option>
-        <el-option value="eth">eth</el-option>
-      </el-select>
-      <el-button
-        type="primary"
-        :loading="subscribeLoading"
-        @click="subscribeDepth"
-        :disabled="subscribeDisable"
-        size="small"
-      >查挂单
-      </el-button>
-      <el-select v-model="sortByValue" @change="sortBy" placeholder="请选择" size="small">
-        <el-option value="sumMoneny">按sumMoneny排序</el-option>
-        <el-option value="price">按price排序</el-option>
-      </el-select>
 
-      <el-button
-        type="danger"
-        @click="reset"
-        size="small"
-        :disabled="true"
-      >重启ws
-      </el-button>
-     
-      
-    </div>
+    <el-row :gutter="10">
+      <el-col :xs="12" :sm="3" :md="3" :lg="3" :xl="1">
+        <el-input
+          style="width: 100%;"
+          placeholder="请输入内容"
+          v-model="symbol"
+          size="small"
+          clearable
+          :disabled="true"
+        >
+        </el-input>
+      </el-col>
+      <el-col :xs="12" :sm="3" :md="3" :lg="3" :xl="1">
+        <el-select v-model="symbol2" placeholder="请选择" size="small" :disabled="true">
+          <el-option value="usdt">usdt</el-option>
+          <el-option value="btc">btc</el-option>
+          <el-option value="eth">eth</el-option>
+        </el-select>
+      </el-col>
+      <el-col :xs="12" :sm="3" :md="8" :lg="9" :xl="1">
+        <el-button
+          type="primary"
+          :loading="subscribeLoading"
+          @click="subscribeDepth"
+          :disabled="subscribeDisable"
+          size="small"
+        >查挂单
+        </el-button>
+      </el-col>
+      <el-col :xs="12" :sm="24" :md="3" :lg="9" :xl="1">
+        <el-select v-model="sortByValue" @change="sortBy" placeholder="请选择" size="small">
+          <el-option value="sumMoneny">按sumMoneny排序</el-option>
+          <el-option value="price">按price排序</el-option>
+        </el-select>
+      </el-col>
+    </el-row>
     <div>
         <span>当前价{{lastKline.close}}</span>
     </div>
-    <div class="depth-table-wap">
+    <div class="depth-table-wap" v-if="!isMobile"> 
       <el-row>
         <el-col :span="12">
             <span>买单({{bidsList.length}})</span>
@@ -56,6 +54,19 @@
         </el-col>
       </el-row>
     </div>
+
+    <el-tabs v-model="tabVal" type="card" @tab-click="handleClick" v-if="isMobile">
+      <el-tab-pane label="买挂单" name="bids">
+          <span>买单({{bidsList.length}})</span>
+          <span>买1:{{bidsFirst}}</span>
+          <DepthTable :data="bidsList" :quoteCurrency="quoteCurrency"></DepthTable>
+      </el-tab-pane>
+      <el-tab-pane label="卖挂单" name="asks">
+        <span>卖单({{asksList.length}})</span>
+            <span>卖1:{{aksFirst}}</span>
+          <DepthTable :data="asksList" :quoteCurrency="quoteCurrency"></DepthTable>
+      </el-tab-pane>
+    </el-tabs>
   </div>
 </template>
 
@@ -83,7 +94,9 @@ export default {
       symbols: "", // symbol + symbol2
       sortByValue: "sumMoneny",
       subscribeLoading: false,
-      subscribeDisable: true
+      subscribeDisable: true,
+      tabVal: 'bids',
+      isMobile: appConfig.isMobile,
     };
   },
   computed: {
@@ -141,6 +154,7 @@ export default {
         value: "reset"
       });
     },
+    handleClick() {},
     subscribeDepth: async function() {
       this.subscribeLoading = true;
       // 没打开就先打开
@@ -200,6 +214,9 @@ export default {
 </script>
 
 <style lang="scss">
+.depth-table-wap{
+  min-width: 1100px;
+}
 .depth-page{
   width: 100%;
   .depth-table{

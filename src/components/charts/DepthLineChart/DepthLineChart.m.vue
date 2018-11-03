@@ -90,8 +90,8 @@ function initChart(Chart, data, canvas) {
       nice: false,
       range: [0, 1],
       mask: "M/DD H:mm:ss",
-      tickCount: 5,
-      // tickInterval: 30 * 60 * 1000 // 对于 linear 类型的数据，可以设置 tickInterval 参数来设定每个刻度之间的间距，time 类型的单位为微秒
+      // tickCount: 20,
+      tickInterval: 1 * 60 * 1000 // 对于 linear 类型的数据，可以设置 tickInterval 参数来设定每个刻度之间的间距，time 类型的单位为微秒
     },
     type: {
       values: ["bids_max_1", "asks_max_1", "buy_1", "sell_1"]
@@ -132,8 +132,8 @@ function initChart(Chart, data, canvas) {
       offsetY: -5
     }
   });
-    chart.interaction("pinch", {
-    minScale: 3,
+  chart.interaction("pinch", {
+    minScale: 1,
     maxScale: 6,
   }).interaction("pan");
   chart.render();

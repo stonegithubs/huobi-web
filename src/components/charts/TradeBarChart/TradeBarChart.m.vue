@@ -114,8 +114,14 @@ function initChart(Chart, data, canvas) {
     }
   });
   chart.render();
-  chart.interaction("pinch").interaction("pan");
-
+  chart.interaction("pinch", {
+    minScale: 0,
+    maxScale: 6,
+    onProcess: (ev) => {
+      console.log(ev) 
+    }
+  }).interaction("pan");
+  // console.log(chart._interactions.pinch._doZoom)
 
   return {
     chart,

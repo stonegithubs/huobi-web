@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="depth-table-wrap">
       <!--
           
     <el-table
@@ -139,9 +139,13 @@ export default {
 </script>
 
 <style>
+.depth-table-wrap{
+    overflow: auto;
+}
 table {
   padding: 10px 20px;
   width: auto;
+  min-width: 560px;
 }
 table th {
   text-align: left;
