@@ -133,14 +133,13 @@ export function createSilder(dataSet, dataView, container) {
         backgroundChart: {
             type: 'line'
         },
-        onChange: sliderOnChange
+        onChange: function onChange(_ref) {
+            var startValue = _ref.startValue,
+                endValue = _ref.endValue;
+            dataSet.setState('start', startValue);
+            dataSet.setState('end', endValue);
+        }
     });
     slider.render();
     return slider;
 }
-const sliderOnChange = function onChange(_ref) {
-    var startValue = _ref.startValue,
-        endValue = _ref.endValue;
-    dataSet.setState('start', startValue);
-    dataSet.setState('end', endValue);
-};

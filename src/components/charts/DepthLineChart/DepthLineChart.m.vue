@@ -90,7 +90,7 @@ function initChart(Chart, data, canvas) {
       nice: false,
       range: [0, 1],
       mask: "M/DD H:mm:ss",
-      tickCount: 5
+      tickCount: 5,
       // tickInterval: 30 * 60 * 1000 // 对于 linear 类型的数据，可以设置 tickInterval 参数来设定每个刻度之间的间距，time 类型的单位为微秒
     },
     type: {
@@ -125,9 +125,6 @@ function initChart(Chart, data, canvas) {
         duration: 500
       }
     });
-
-  chart.render();
-  chart.interaction("pinch").interaction("pan");
   // 定义进度条
   chart.scrollBar({
     mode: "x",
@@ -135,6 +132,13 @@ function initChart(Chart, data, canvas) {
       offsetY: -5
     }
   });
+    chart.interaction("pinch", {
+    minScale: 3,
+    maxScale: 6,
+  }).interaction("pan");
+  chart.render();
+
+  
   return {
     chart,
     dataSet,

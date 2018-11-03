@@ -104,7 +104,18 @@ function initChart(Chart, data, canvas) {
     .position("time*value")
     .color("type", tradeColor)
     .adjust('stack');
+
+
+      // 定义进度条
+  chart.scrollBar({
+    mode: "x",
+    xStyle: {
+      offsetY: -5
+    }
+  });
   chart.render();
+  chart.interaction("pinch").interaction("pan");
+
 
   return {
     chart,
