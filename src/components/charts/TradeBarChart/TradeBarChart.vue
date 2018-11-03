@@ -57,8 +57,8 @@ export default {
           if (!this.chart) {
             return;
           }
-          let startTime = data[parseInt(data.length / 1.5)].time;
-          let endTime = data[data.length - 1].time;
+          let startTime = new Date(data[parseInt(data.length / 1.5)].time).getTime();
+          let endTime = new Date(data[data.length - 1].time).getTime();
 
           // 更新chart数据
           this.dataSet.setState("sourceData", data);

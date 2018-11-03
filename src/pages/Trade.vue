@@ -273,7 +273,7 @@ export default {
             let maxPrice = this.testPrice;
             let amount = this.quoteCurrency === 'usdt' 
                             ?  maxPrice / lastPrice
-                            : maxPrice / appConfig.price.btc / lastPrice;
+                            : maxPrice / appConfig.prices.btc / lastPrice;
             amount = amount.toFixed(this.amountPrecision);
             // 拿推荐的价格
             let prices = getTracePrice({

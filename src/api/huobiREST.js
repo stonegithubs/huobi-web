@@ -1,6 +1,6 @@
 import Qs from 'qs';
 import http from './http';
-import config from '../config';
+import appConfig from '../config';
 
 /**
  * 
@@ -10,7 +10,7 @@ import config from '../config';
  * @return {Promise}
  */
 export async function getKLine(symbol, period, size) {
-  const url = config.API_HOST + '/api/huobi/v1/get_kline?' + Qs.stringify({
+  const url = appConfig.hosts.api + '/api/huobi/v1/get_kline?' + Qs.stringify({
     symbol,
     period,
     size,
@@ -40,7 +40,7 @@ export async function getKLine(symbol, period, size) {
  * @return {Promise}
  */
 export async function getDepth (symbol, type) {
-  const url = config.API_HOST + '/api/huobi/v1/market/depth?' + Qs.stringify({
+  const url = appConfig.hosts.api + '/api/huobi/v1/market/depth?' + Qs.stringify({
     symbol,
     type,
     AccessKeyId: '2f0f54a2-8e5d9137-982b01e1-5789d'
@@ -70,7 +70,7 @@ export async function getDepth (symbol, type) {
  * @return {Promise}
  */
 export async function getDetailMerged (symbol) {
-  const url = config.API_HUOBI_HOST + '/market/detail/merged?' + Qs.stringify({
+  const url = appConfig.hosts.api_huobi + '/market/detail/merged?' + Qs.stringify({
     symbol,
   });
   try {
@@ -97,7 +97,7 @@ export async function getDetailMerged (symbol) {
  * @return {Promise}
  */
 export async function getSymbols () {
-  const url =  config.API_HUOBI_HOST + '/v1/common/symbols';
+  const url =  appConfig.hosts.api_huobi + '/v1/common/symbols';
   if (localStorage.symbols !== undefined) {
     return JSON.parse(localStorage.symbols);
   }
@@ -159,7 +159,7 @@ export const getSymbolInfo = async function (symbol, quoteCurrency) {
  * @return {Promise}
  */
 export async function limit (params) {
-  const url = config.API_HOST + '/api/huobi/v1/limit';
+  const url = appConfig.hosts.api + '/api/huobi/v1/limit';
   try {
     const result = await http.post(
       url,
@@ -187,7 +187,7 @@ export async function limit (params) {
  * @return {Promise}
  */
 export async function cancelOrder (orderId) {
-  const url = config.API_HOST + '/api/huobi/v1/cancelOrder';
+  const url = appConfig.hosts.api + '/api/huobi/v1/cancelOrder';
   try {
     const result = await http.post(
       url,
@@ -217,7 +217,7 @@ export async function cancelOrder (orderId) {
  * @return {Promise}
  */
 export async function getOpenOrders (params) {
-  const url = config.API_HOST + '/api/huobi/v1/openOrders?' + Qs.stringify(params);;
+  const url = appConfig.hosts.api + '/api/huobi/v1/openOrders?' + Qs.stringify(params);;
   try {
     const result = await http.get(
       url,
@@ -243,7 +243,7 @@ export async function getOpenOrders (params) {
  * @return {Promise}
  */
 export async function getBalance () {
-  const url = config.API_HOST + '/api/huobi/v1/get_balance';
+  const url = appConfig.hosts.api + '/api/huobi/v1/get_balance';
   try {
     const result = await http.get(
       url,
@@ -271,7 +271,7 @@ export async function getBalance () {
  * @return {Promise}
  */
 export async function getOrder (orderId) {
-  const url = config.API_HOST + '/api/huobi/v1/get_order?orderId=' + orderId;
+  const url = appConfig.hosts.api + '/api/huobi/v1/get_order?orderId=' + orderId;
   try {
     const result = await http.get(
       url,

@@ -94,7 +94,7 @@ export function createDataSet({ dataSetConfig, transformConfig } = {}) {
             dataView.transform({
                 type: "filter",
                 callback: function (obj) {
-                    var time = obj.time; // !注意：时间格式，建议转换为时间戳进行比较
+                    var time = new Date(obj.time).getTime(); // !注意：时间格式，建议转换为时间戳进行比较
                     return time >= dataSet.state.start && time <= dataSet.state.end;
                 },
             });

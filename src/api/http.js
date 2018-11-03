@@ -7,10 +7,10 @@
 
 import axios from 'axios';
 import Qs from 'qs';
-import config from '../config';
+import appConfig from '../config';
 
 const http = axios.create({
-  baseURL: config.API_HOST, // config.API_HUOBI_HOST,
+  baseURL: appConfig.hosts.api, // appConfig.hosts.api_huobi,
   timeout: 30000,
   headers: {  
     'Content-Type': 'application/json',

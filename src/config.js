@@ -1,15 +1,21 @@
 
-let localhost = 'http://127.0.0.1:3000';
-let originhost = 'http://182.61.43.233:3000';
+const localhost = 'http://127.0.0.1:3000';
+const originhost = 'http://182.61.43.233:3000';
 /* 是否移动端 */
-var isMobile = !!/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent);
+const isMobile = !!/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent);
+
+const isDev = process.env.NODE_ENV === 'development';
+
 const appConfig = {
-  API_HOST: originhost,
-  wsHost: '182.61.43.233:3000',
-  API_HUOBI_HOST: 'https://api.huobi.br.com',
+  hosts: {
+    api: isDev ? localhost : originhost,
+    api_huobi: 'https://api.huobi.br.com',
+    huobi_ws: '182.61.43.233:3000',
+  },
   isMobile,
+  isDev,
   // 默认对udst
-  price: {
+  prices: {
     btc: 6500,
     etch: 200,
   }

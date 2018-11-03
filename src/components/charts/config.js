@@ -9,7 +9,7 @@ let colorMap = {
 let tradeColor = [colorMap.buy_1, colorMap.sell_1];
 
 const usdtFormatter = function formatter(val) {
-    return  `${(val / 10000)}万usdt (${parseInt(val / appConfig.price.btc)}฿)`;
+    return  `${(val / 10000)}万usdt (${parseInt(val / appConfig.prices.btc)}฿)`;
 }
 export {
     color,

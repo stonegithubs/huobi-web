@@ -45,8 +45,8 @@ export default {
       this.activeIndex = this.activeIndex;
     }
     // 单位为美元
-    appConfig.price.eth = 466;
-    appConfig.price.btc = 8000;
+    appConfig.prices.eth = 466;
+    appConfig.prices.btc = 8000;
   },
   mounted() {
     this.resize();
@@ -54,17 +54,17 @@ export default {
 
     // 设置最新的价格
     getKLine("ethusdt", "1min", 2).then(res => {
-      appConfig.price.eth = res.data[1].close;
+      appConfig.prices.eth = res.data[1].close;
     }).catch(() => {
       getKLine("ethusdt", "1min", 2).then(res => {
-        appConfig.price.eth = res.data[1].close;
+        appConfig.prices.eth = res.data[1].close;
       });
     });
     getKLine("btcusdt", "1min", 2).then(res => {
-      appConfig.price.btc = res.data[1].close;
+      appConfig.prices.btc = res.data[1].close;
     }).catch(() => {
       getKLine("btcusdt", "1min", 2).then(res => {
-          appConfig.price.btc = res.data[1].close;
+          appConfig.prices.btc = res.data[1].close;
       });
     });
     openWs();
@@ -83,7 +83,6 @@ export default {
     handleSelect() {},
     resize() {
       let menuHeight = this.$refs.menu.$el.clientHeight;
-      console.log(menuHeight)
       this.$refs.routerPage.style.maxHeight = window.innerHeight - menuHeight + "px";
     }
   }

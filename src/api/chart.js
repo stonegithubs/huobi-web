@@ -1,6 +1,6 @@
 import Qs from 'qs';
 import http from './http';
-import config from '../config';
+import appConfig from '../config';
 
 
 /**
@@ -9,7 +9,7 @@ import config from '../config';
  * @return {Promise}
  */
 export async function getAmountChartData(symbol) {
-    const url = config.API_HOST + '/api/chart/amount?' + Qs.stringify({
+    const url = appConfig.hosts.api + '/api/chart/amount?' + Qs.stringify({
         symbol,
     });
     try {
@@ -37,7 +37,7 @@ export async function getAmountChartData(symbol) {
  * @return {Promise}
  */
 export async function getTradeData(symbol) {
-    const url = config.API_HOST + '/api/chart/trade?' + Qs.stringify({
+    const url = appConfig.hosts.api + '/api/chart/trade?' + Qs.stringify({
         symbol,
     });
     try {

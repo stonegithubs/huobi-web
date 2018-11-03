@@ -18,7 +18,7 @@ wsconfig.set = function (data) {
     Object.assign(config, data);
 }
 export const openWs = function (params) {
-    ws = new WebSocket(`ws://${config.wsHost}/huobi`);
+    ws = new WebSocket(`ws://${appConfig.hosts.huobi_ws}/huobi`);
     ws.onmessage = onmessage;
     ws.onclose = onclose;
     ws.onerror = onerror;
