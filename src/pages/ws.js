@@ -4,7 +4,6 @@ import store from '@/store';
 
 // utils
 import getSameAmount from '@/utils/getSameAmount';
-import trade from '@/utils/trade';
 import getPriceIndex from '@/utils/getPriceIndex';
 
 let ws = null;

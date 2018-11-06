@@ -6,7 +6,7 @@
  * @param {number} disTime 
  */
 
-export default class IntervalTask {
+ class LazyTask {
     constructor({disTime}) {
         this.disTime = disTime;
         this.init();
@@ -51,4 +51,11 @@ export default class IntervalTask {
             this.taskStatus = 0;
         }, disTime);
     }
+    /**
+     * 手动停止任务
+     */
+    stop() {
+        this.taskStatus = 0;
+    }
 }
+export default LazyTask

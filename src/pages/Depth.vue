@@ -20,7 +20,7 @@
           <el-option value="eth">eth</el-option>
         </el-select>
       </el-col>
-      <el-col :xs="12" :sm="3" :md="8" :lg="9" :xl="1">
+      <el-col :xs="12" :sm="3" :md="8" :lg="3" :xl="1">
         <el-button
           type="primary"
           :loading="subscribeLoading"
@@ -30,8 +30,8 @@
         >查挂单
         </el-button>
       </el-col>
-      <el-col :xs="12" :sm="24" :md="3" :lg="9" :xl="1">
-        <el-select v-model="sortByValue" @change="sortBy" placeholder="请选择" size="small">
+      <el-col :xs="12" :sm="3" :md="3" :lg="3" :xl="1">
+        <el-select v-model="sortByValue" @change="sortBy" placeholder="请选择" size="small" :disabled="true">
           <el-option value="sumMoneny">按sumMoneny排序</el-option>
           <el-option value="price">按price排序</el-option>
         </el-select>
@@ -94,7 +94,7 @@ export default {
       symbols: "", // symbol + symbol2
       sortByValue: "sumMoneny",
       subscribeLoading: false,
-      subscribeDisable: true,
+      subscribeDisable: false,
       tabVal: 'bids',
       isMobile: appConfig.isMobile,
     };
@@ -180,21 +180,21 @@ export default {
         symbol: this.symbols
       });
       // 开始订阅
-      // wsSend({
-      //     type: `ws-huobi`,
-      //     value: 'subscribeDepth',
-      //     symbol: `${this.symbols}`
-      // });
-      // wsSend({
-      //     type: `ws-huobi`,
-      //     value: 'subscribeKline',
-      //     symbol: `${this.symbols}`
-      // });
-      // wsSend({
-      //     type: `ws-huobi`,
-      //     value: 'subscribeTrade',
-      //     symbol: `${this.symbols}`
-      // });
+      wsSend({
+          type: `ws-huobi`,
+          value: 'subscribeDepth',
+          symbol: `${this.symbols}`
+      });
+      wsSend({
+          type: `ws-huobi`,
+          value: 'subscribeKline',
+          symbol: `${this.symbols}`
+      });
+      wsSend({
+          type: `ws-huobi`,
+          value: 'subscribeTrade',
+          symbol: `${this.symbols}`
+      });
       this.$store.commit("UPTATE_DEPTH", {
         tick: {
           asks: [],

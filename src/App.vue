@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import { getKLine } from "@/api/huobiREST";
+import { getKLine, getSymbols } from "@/api/huobiREST";
 // utils
 import config from "@/config";
 import ws, { wsSend, openWs } from "./pages/ws";
@@ -55,19 +55,15 @@ export default {
     // 设置最新的价格
     getKLine("ethusdt", "1min", 2).then(res => {
       appConfig.prices.eth = res.data[1].close;
-    }).catch(() => {
-      getKLine("ethusdt", "1min", 2).then(res => {
-        appConfig.prices.eth = res.data[1].close;
-      });
     });
     getKLine("btcusdt", "1min", 2).then(res => {
       appConfig.prices.btc = res.data[1].close;
-    }).catch(() => {
-      getKLine("btcusdt", "1min", 2).then(res => {
-          appConfig.prices.btc = res.data[1].close;
-      });
     });
-    openWs();
+    // 获取全部交易对的精度
+    getSymbols().then(() => {
+      openWs();
+    });
+    
   },
   beforeDestroy() {
     window.removeEventListener('resize', this.resize);

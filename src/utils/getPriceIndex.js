@@ -1,7 +1,7 @@
 
 
 /**
- * 
+ * 获取btc eth对usdt的系数
  * @param {string} symbol
  * @return {number}
  */
