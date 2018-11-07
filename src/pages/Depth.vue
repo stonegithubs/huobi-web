@@ -127,7 +127,17 @@ export default {
     }
   },
   created() {
-    ws.onopen = () => {
+    
+  },
+  mounted() {
+    ws.onopen = (ev) => {
+      ev.target.send(JSON.stringify({
+        type: `sub`,
+        value: `market.btcusdt.depth.step0`,
+        symbol: `btcusdt`,
+        from: 'client'
+      }))
+      // wsSend();
       this.$notify({
         title: "WS状态",
         message: `msg: ws_server open`,
@@ -141,10 +151,6 @@ export default {
         }
       });
     };
-  },
-  mounted() {
-    // this.subscribeDisable = !this.useWSAble;
-    console.log(1);
   },
   beforeDestroy() {},
   methods: {
