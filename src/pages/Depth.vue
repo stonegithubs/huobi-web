@@ -180,21 +180,21 @@ export default {
         symbol: this.symbols
       });
       // 开始订阅
-      wsSend({
-          type: `ws-huobi`,
-          value: 'subscribeDepth',
-          symbol: `${this.symbols}`
-      });
-      wsSend({
-          type: `ws-huobi`,
-          value: 'subscribeKline',
-          symbol: `${this.symbols}`
-      });
-      wsSend({
-          type: `ws-huobi`,
-          value: 'subscribeTrade',
-          symbol: `${this.symbols}`
-      });
+      // wsSend({
+      //     type: `ws-huobi`,
+      //     value: 'subscribeDepth',
+      //     symbol: `${this.symbols}`
+      // });
+      // wsSend({
+      //     type: `ws-huobi`,
+      //     value: 'subscribeKline',
+      //     symbol: `${this.symbols}`
+      // });
+      // wsSend({
+      //     type: `ws-huobi`,
+      //     value: 'subscribeTrade',
+      //     symbol: `${this.symbols}`
+      // });
       this.$store.commit("UPTATE_DEPTH", {
         tick: {
           asks: [],

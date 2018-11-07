@@ -44,6 +44,7 @@ function onmessage(ev) {
     let msg = JSON.parse(ev.data);
     let ping = Date.now();
     if (msg.form === "WS_HUOBI") {
+        console.log(msg)
         if (msg.type === 'depth' && msg.symbol === wsconfig.symbol) {
             let data = msg.data;
             let bidsFirst = data.bids1;
