@@ -135,7 +135,6 @@ export default {
         type: `sub`,
         value: `market.btcusdt.depth.step0`,
         symbol: `btcusdt`,
-        from: 'client'
       }))
       // wsSend();
       this.$notify({

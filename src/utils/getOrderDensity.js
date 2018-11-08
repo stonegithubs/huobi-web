@@ -23,6 +23,10 @@ let config = {
         step: 0.0001,
     }
 }
+
+function setConfig(config) {
+    Object.assign(config, config);
+}
 const getOrderDensity = function ({asksList, bidsList, currentPrice, symbol}) {
     const buyDensity = {};
     const sellDensity = {};
@@ -77,4 +81,5 @@ const getOrderDensity = function ({asksList, bidsList, currentPrice, symbol}) {
         sell: sellDensity,
     }
 }
+getOrderDensity.setConfig = setConfig;
 export default getOrderDensity;
