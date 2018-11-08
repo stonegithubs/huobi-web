@@ -46,7 +46,7 @@ export default {
       getAmountChartData(symbol)
         .then(res => {
           let data = res.data;
-          if (!this.chart) {
+          if (!this.chart || data.length === 0) {
             return;
           }
           // 更新chart数据

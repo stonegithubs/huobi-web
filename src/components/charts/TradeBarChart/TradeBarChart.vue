@@ -62,7 +62,7 @@ export default {
       getTradeData(symbol)
         .then(res => {
           let data = this.data = res.data;
-          if (!this.chart) {
+          if (!this.chart || data.length === 0) {
             return;
           }
           let startTime = new Date(data[parseInt(data.length / 1.5)].time).getTime();

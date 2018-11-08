@@ -58,7 +58,7 @@ export default {
       getAmountChartData(symbol)
         .then(res => {
           let data = res.data;
-          if (!this.chart) {
+          if (!this.chart || data.length === 0) {
             return;
           }
           let startTime = new Date(data[parseInt(data.length / 3)].time).getTime();
