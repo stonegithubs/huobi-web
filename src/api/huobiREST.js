@@ -1,5 +1,5 @@
 import Qs from 'qs';
-import http from './http';
+import http, { post, get } from './http';
 import appConfig from '../config';
 
 /**
@@ -9,29 +9,13 @@ import appConfig from '../config';
  * @param {?integer} size 获取数量
  * @return {Promise}
  */
-export async function getKLine(symbol, period, size) {
+export function getKLine(symbol, period, size) {
   const url = appConfig.hosts.api + '/api/huobi/v1/get_kline?' + Qs.stringify({
     symbol,
     period,
     size,
   });
-  try {
-    const result = await http.get(
-      url,
-    );
-    if (result.status === 200 || result.data.status === 'ok') {
-      return result.data;
-    }
-    const err = {
-      tip: 'error',
-      response: result,
-      data: {},
-      url,
-    };
-    throw err;
-  } catch (err) {
-    throw err;
-  }
+  return get(url);
 }
 /**
  * 获取深度
@@ -39,57 +23,24 @@ export async function getKLine(symbol, period, size) {
  * @param {type} step0, step1, step2, step3, step4, step5（合并深度0-5）；step0时，不合并深度
  * @return {Promise}
  */
-export async function getDepth (symbol, type) {
+export function getDepth (symbol, type) {
   const url = appConfig.hosts.api + '/api/huobi/v1/market/depth?' + Qs.stringify({
     symbol,
     type,
     AccessKeyId: '2f0f54a2-8e5d9137-982b01e1-5789d'
-  });;
-  try {
-    const result = await http.get(
-      url,
-    );
- 
-    if (result.status === 200 && result.data.status === 'ok') {
-      return result.data.data;
-    }
-    const err = {
-      tip: 'error',
-      response: result,
-      data: {},
-      url,
-    };
-    throw err;
-  } catch (err) {
-    throw err;
-  }
+  });
+  return get(url).then((data) => data.data);;
 }
 /**
  * 获取聚合行情(Ticker)
  * @param {string} symbol 交易对
  * @return {Promise}
  */
-export async function getDetailMerged (symbol) {
+export function getDetailMerged (symbol) {
   const url = appConfig.hosts.api_huobi + '/market/detail/merged?' + Qs.stringify({
     symbol,
   });
-  try {
-    const result = await http.get(
-      url,
-    );
-    if (result.status === 200) {
-      return result.data;
-    }
-    const err = {
-      tip: 'error',
-      response: result,
-      data: {},
-      url,
-    };
-    throw err;
-  } catch (err) {
-    throw err;
-  }
+  return get(url);
 }
 
 /**
@@ -101,25 +52,11 @@ export async function getSymbols () {
   if (localStorage.symbols !== undefined) {
     return JSON.parse(localStorage.symbols);
   }
-  try {
-    const result = await http.get(
-      url,
-    );
-    if (result.status === 200 && result.data.status === 'ok') {
-      // 做缓存
-      localStorage.symbols = JSON.stringify(result.data.data);
-      return result.data.data;
-    }
-    const err = {
-      tip: 'error',
-      response: result,
-      data: {},
-      url,
-    };
-    throw err;
-  } catch (err) {
-    throw err;
-  }
+  return get(url).then(data => {
+    // 做缓存
+    localStorage.symbols = JSON.stringify(data.data);
+    return data.data;
+  });
 }
 
 /**
@@ -158,26 +95,9 @@ export const getSymbolInfo = async function (symbol, quoteCurrency) {
  * }
  * @return {Promise}
  */
-export async function limit (params) {
+export function limit (params) {
   const url = appConfig.hosts.api + '/api/huobi/v1/limit';
-  try {
-    const result = await http.post(
-      url,
-      params
-    );
-    if (result.status === 200 && result.data.status === 'ok') {
-      return result.data;
-    }
-    const err = {
-      tip: 'error',
-      response: result,
-      data: {},
-      url,
-    };
-    throw err;
-  } catch (err) {
-    throw err;
-  }
+  return post(url, params);
 }
 /**
  * 取消订单
@@ -186,26 +106,9 @@ export async function limit (params) {
  * }
  * @return {Promise}
  */
-export async function cancelOrder (orderId) {
+export function cancelOrder (orderId) {
   const url = appConfig.hosts.api + '/api/huobi/v1/cancelOrder';
-  try {
-    const result = await http.post(
-      url,
-      {orderId}
-    );
-    if (result.status === 200 && result.data.status === 'ok') {
-      return result.data;
-    }
-    const err = {
-      tip: 'error',
-      response: result,
-      data: {},
-      url,
-    };
-    throw err;
-  } catch (err) {
-    throw err;
-  }
+  return post(url, {orderId});
 }
 /**
  * 未成交的订单
@@ -216,25 +119,9 @@ export async function cancelOrder (orderId) {
  * }
  * @return {Promise}
  */
-export async function getOpenOrders (params) {
+export function getOpenOrders (params) {
   const url = appConfig.hosts.api + '/api/huobi/v1/openOrders?' + Qs.stringify(params);;
-  try {
-    const result = await http.get(
-      url,
-    );
-    if (result.status === 200 && result.data.status === 'ok') {
-      return result.data;
-    }
-    const err = {
-      tip: 'error',
-      response: result,
-      data: {},
-      url,
-    };
-    throw err;
-  } catch (err) {
-    throw err;
-  }
+  return get(url);
 }
 
 
@@ -242,25 +129,9 @@ export async function getOpenOrders (params) {
  * 查余额
  * @return {Promise}
  */
-export async function getBalance () {
+export function getBalance () {
   const url = appConfig.hosts.api + '/api/huobi/v1/get_balance';
-  try {
-    const result = await http.get(
-      url,
-    );
-    if (result.status === 200 && result.data.status === 'ok') {
-      return result.data.data;
-    }
-    const err = {
-      tip: 'error',
-      response: result,
-      data: {},
-      url,
-    };
-    throw err;
-  } catch (err) {
-    throw err;
-  }
+  return get(url).then((data) => data.data);
 }
 
 /**
@@ -270,23 +141,7 @@ export async function getBalance () {
  * }
  * @return {Promise}
  */
-export async function getOrder (orderId) {
+export function getOrder (orderId) {
   const url = appConfig.hosts.api + '/api/huobi/v1/get_order?orderId=' + orderId;
-  try {
-    const result = await http.get(
-      url,
-    );
-    if (result.status === 200 && result.data.status === 'ok') {
-      return result.data;
-    }
-    const err = {
-      tip: 'error',
-      response: result,
-      data: {},
-      url,
-    };
-    throw err;
-  } catch (err) {
-    throw err;
-  }
+  return get(url);
 }

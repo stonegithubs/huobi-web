@@ -25,3 +25,54 @@ const http = axios.create({
 
 export default http;
 
+
+/**
+ * 
+ * @param {string} path 
+ * @param {Object} params 
+ */
+export const post = async function (url, params) {
+  try {
+    const result = await http.post(
+      url,
+      params
+    );
+    if (result.status === 200 && result.data.status === 'ok') {
+      return result.data;
+    }
+    const err = {
+      tip: 'error',
+      response: result,
+      data: {},
+      url,
+    };
+    throw err;
+  } catch (err) {
+    throw err;
+  }
+}
+
+/**
+ * 
+ * @param {string} path 
+ * @param {Object} params 
+ */
+export const get = async function (url, params) {
+  try {
+    const result = await http.get(
+      url,
+    );
+    if (result.status === 200 && result.data.status === 'ok') {
+      return result.data;
+    }
+    const err = {
+      tip: 'error',
+      response: result,
+      data: {},
+      url,
+    };
+    throw err;
+  } catch (err) {
+    throw err;
+  }
+}
