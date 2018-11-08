@@ -1,12 +1,23 @@
 <template>
   <div class="chart-page">
+      <div class="ctrl">
+        <el-select
+            v-model="selectedSymbol"
+            placeholder="请选择"
+            size="small"
+        >
+            <el-option
+                v-for="symbol in symbols"
+                :value="symbol"
+                :key="symbol"
+            >
+                {{symbol}}
+            </el-option>
+        </el-select>
+      </div>
       <el-card class="chart-wrap">
            <DepthLineChart
-                :asksList="asksList"
-                :bidsList="bidsList"
-                :aksFirst="aksFirst"
-                :bidsFirst="bidsFirst"
-                :symbol="responseSymbol"
+                :symbol="selectedSymbol"
             ></DepthLineChart>
       </el-card>
        <!-- <el-card class="chart-wrap">
@@ -24,7 +35,7 @@
       <el-card class="chart-wrap">
           <TradeBarChart
             :trade="trade"
-            :symbol="responseSymbol"
+            :symbol="selectedSymbol"
           >
 
           </TradeBarChart>
@@ -35,6 +46,7 @@
 <script>
 import { mapState, mapGetters } from 'vuex';
 import config from '@/config';
+import { getWatchSymbols } from "@/api/chart";
 import {DepthLineChart, TradeBarChart} from '@/components/charts';
 export default {
     name: "Charts",
@@ -44,6 +56,8 @@ export default {
     },
     data() {
         return {
+            symbols: [],
+            selectedSymbol: '',
         };
     },
     computed:{
@@ -57,16 +71,19 @@ export default {
             trade: state => state.huobi.trade,
         }),
     },
-
-    created() {
-    },
     mounted() {
+        this.getWatchSymbols();
     },
     beforeDestroy() {
 
     },
     methods: {
-
+        getWatchSymbols() {
+            getWatchSymbols().then(res => {
+                this.symbols = res.data;
+                this.selectedSymbol = this.symbols[0];
+            });
+        }
     }
 };
 </script>
@@ -74,6 +91,9 @@ export default {
 <style lang="scss">
 .chart-page{
     .chart-wrap{
+        margin-bottom: 10px;
+    }
+    .ctrl{
         margin-bottom: 10px;
     }
 }

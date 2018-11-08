@@ -7,6 +7,8 @@
       <component
           v-bind:is="currentComponent"
           @onloaded="onloaded"
+          @onloadstart="onloadstart"
+          :symbol="symbol"
       ></component>
     </div>
   </div>
@@ -27,6 +29,12 @@ export default {
       loading: true
     };
   },
+  props: {
+    symbol: {
+      type: String,
+      default: 'btcusdt'
+    },
+  },
   computed: {
     currentComponent() {
       return appConfig.isMobile ? 'TradeBarChart_M' : "TradeBarChart";
@@ -35,6 +43,9 @@ export default {
   methods: {
     onloaded() {
       this.loading = false;
+    },
+    onloadstart() {
+      this.loading = true;
     }
   }
 };

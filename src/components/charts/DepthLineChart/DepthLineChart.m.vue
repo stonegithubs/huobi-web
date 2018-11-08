@@ -16,7 +16,13 @@ export default {
     return {};
   },
   props: {
-    data: Array
+    data: Array,
+    symbol: String,
+  },
+  watch: {
+    symbol(symbol) {
+      this.getData(symbol);
+    }
   },
   mounted() {
     fetchAntv()
@@ -35,8 +41,9 @@ export default {
       });
   },
   methods: {
-    getData() {
-      getAmountChartData("btcusdt")
+    getData(symbol) {
+      this.$emit("onloadstart");
+      getAmountChartData(symbol)
         .then(res => {
           let data = res.data;
           if (!this.chart) {

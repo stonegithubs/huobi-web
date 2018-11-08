@@ -26,7 +26,13 @@ export default {
     };
   },
   props: {
-    data: Array
+    data: Array,
+    symbol: String,
+  },
+  watch: {
+    symbol(symbol) {
+      this.getData(symbol);
+    }
   },
   mounted() {
     fetchAntv()
@@ -43,12 +49,13 @@ export default {
         );
       })
       .then(() => {
-        this.getData();
+        this.getData(this.symbol);
       });
   },
   methods: {
-    getData() {
-      getAmountChartData("btcusdt")
+    getData(symbol) {
+      this.$emit("onloadstart");
+      getAmountChartData(symbol)
         .then(res => {
           let data = res.data;
           if (!this.chart) {
@@ -66,7 +73,6 @@ export default {
           // 拖动slider
           this.dataSet.setState("start", startTime);
           this.dataSet.setState("end", endTime);
-          console.log(this.slider)
         })
         .finally(() => {
           this.$emit('onloaded');

@@ -31,7 +31,14 @@ export default {
       data: []
     };
   },
-  props: {},
+  props: {
+    symbol: String,
+  },
+  watch: {
+    symbol(symbol) {
+      this.getData(symbol);
+    }
+  },
   mounted() {
     fetchAntv()
       .then(res => {
@@ -46,12 +53,13 @@ export default {
         this.slider = createSilder(dataSet, dataView, this.$refs.slider);
       })
       .then(() => {
-        this.getData();
+        this.getData(this.symbol);
       });
   },
   methods: {
-    getData() {
-      getTradeData("btcusdt")
+    getData(symbol) {
+      this.$emit("onloadstart");
+      getTradeData(symbol)
         .then(res => {
           let data = this.data = res.data;
           if (!this.chart) {

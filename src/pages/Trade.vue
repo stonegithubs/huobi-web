@@ -224,7 +224,7 @@ export default {
             
             let balanceList = null;
             try {
-                balanceList = await getBalance()
+                balanceList = await getBalance();
             } catch (error) {
                 this.autoTrade();
             }
