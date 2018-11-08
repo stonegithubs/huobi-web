@@ -10,7 +10,7 @@ const appConfig = {
   hosts: {
     api: isDev ? localhost : originhost,
     api_huobi: 'https://api.huobi.br.com',
-    huobi_ws: 'localhost:3000',
+    huobi_ws: '182.61.43.233:3000',
   },
   isMobile,
   isDev,
