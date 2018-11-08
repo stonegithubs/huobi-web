@@ -68,7 +68,7 @@ export const get = async function (url, params) {
     const err = {
       tip: 'error',
       response: result,
-      data: {},
+      data: result.data || {},
       url,
     };
     throw err;
