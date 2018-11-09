@@ -20,7 +20,7 @@ import getPriceIndex from './getPriceIndex';
 let config = {
     btcusdt: {
         len: 0.05,
-        step: 0.0001,
+        step: 0.001,
     }
 }
 
@@ -34,8 +34,13 @@ const getOrderDensity = function ({asksList, bidsList, currentPrice, symbol}) {
     const _bidsList = JSON.parse(JSON.stringify(bidsList));
 
     let _price = getPriceIndex(symbol);
-    let len = config[symbol].len;
-    let step = config[symbol].step;
+    let len = 0.05;
+    let step = 0.001;
+
+    if (config[symbol]) {
+        len = config[symbol].len;
+        step = config[symbol].step;
+    }
     for (let i = 0.001; i < len; i+=step) {
         i = Number(i.toFixed(6));
         let buyPrice = (currentPrice * (1 - i));

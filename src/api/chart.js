@@ -14,7 +14,17 @@ export function getAmountChartData(symbol) {
     });
     return get(url);
 }
-
+/**
+ * 获取symbols特征
+ * @param {string} symbol 交易对
+ * @return {Promise}
+ */
+export function getCharacteristic(symbol) {
+    const url = appConfig.hosts.api + '/api/chart/characteristic?' + Qs.stringify({
+        symbol,
+    });
+    return get(url);
+}
 /**
  * 获取压力位(单位以量体现)
  * @param {string} symbol 交易对

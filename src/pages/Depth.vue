@@ -6,15 +6,15 @@
         <el-input
           style="width: 100%;"
           placeholder="请输入内容"
-          v-model="symbol"
+          v-model="baseCurrency"
           size="small"
           clearable
-          :disabled="true"
+          :disabled="false"
         >
         </el-input>
       </el-col>
       <el-col :xs="12" :sm="3" :md="3" :lg="3" :xl="1">
-        <el-select v-model="symbol2" placeholder="请选择" size="small" :disabled="true">
+        <el-select v-model="quoteCurrency" placeholder="请选择" size="small" :disabled="false">
           <el-option value="usdt">usdt</el-option>
           <el-option value="btc">btc</el-option>
           <el-option value="eth">eth</el-option>
@@ -80,6 +80,7 @@ import DepthTable from "@/components/DepthTable";
 import { getSymbols, getKLine } from "@/api/huobiREST";
 import ws, { wsconfig, wsSend } from "./ws";
 
+let preSymbol = 'btcusdt';
 export default {
   name: "Depth",
   components: {
@@ -89,11 +90,9 @@ export default {
     return {
       /* 交易对 */
       quoteCurrency: "usdt",
-      symbol: "btc",
-      symbol2: "usdt",
-      symbols: "", // symbol + symbol2
+      baseCurrency: "btc",
       sortByValue: "sumMoneny",
-      subscribeLoading: false,
+      subscribeLoading: true,
       subscribeDisable: false,
       tabVal: 'bids',
       isMobile: appConfig.isMobile,
@@ -113,7 +112,7 @@ export default {
   },
   watch: {
     bidsList(bidsList) {
-      // this.subscribeLoading = !(bidsList.length > 0);
+      this.subscribeLoading = !(bidsList.length > 0);
     },
     status(status) {
       this.$notify({
@@ -131,11 +130,17 @@ export default {
   },
   mounted() {
     ws.onopen = (ev) => {
-      ev.target.send(JSON.stringify({
+      console.log('open')
+      ws.send(JSON.stringify({
         type: `sub`,
-        value: `market.btcusdt.depth.step0`,
-        symbol: `btcusdt`,
-      }))
+        value: `market.${preSymbol}.depth.step0`,
+        symbol: preSymbol,
+      }));
+      ws.send(JSON.stringify({
+        type: `sub`,
+        value: `market.${preSymbol}.kline.1min`,
+        symbol: preSymbol,
+      }));
       // wsSend();
       this.$notify({
         title: "WS状态",
@@ -160,46 +165,9 @@ export default {
       });
     },
     handleClick() {},
-    subscribeDepth: async function() {
-      this.subscribeLoading = true;
-      // 没打开就先打开
-      // if (this.status.msg && this.status.msg.indexOf('open') === -1) {
-      //     wsSend({
-      //         type: `ws-huobi`,
-      //         value: 'open',
-      //     });
-      //     return;
-      // }
-      let value = this.symbol + this.symbol2;
-      this.symbols = value;
-
-      this.quoteCurrency = "$";
-
-      if (this.symbol2 === "eth") {
-        this.quoteCurrency = "ETH";
-      } else if (this.symbol2 === "btc") {
-        this.quoteCurrency = "BTC";
-      }
-
-      wsconfig.set({
-        symbol: this.symbols
-      });
-      // 开始订阅
-      // wsSend({
-      //     type: `ws-huobi`,
-      //     value: 'subscribeDepth',
-      //     symbol: `${this.symbols}`
-      // });
-      // wsSend({
-      //     type: `ws-huobi`,
-      //     value: 'subscribeKline',
-      //     symbol: `${this.symbols}`
-      // });
-      // wsSend({
-      //     type: `ws-huobi`,
-      //     value: 'subscribeTrade',
-      //     symbol: `${this.symbols}`
-      // });
+    subscribeDepth() {
+      let symbol = this.baseCurrency + this.quoteCurrency;
+      //清空数据
       this.$store.commit("UPTATE_DEPTH", {
         tick: {
           asks: [],
@@ -211,7 +179,31 @@ export default {
         aksFirst: [],
         responseSymbol: ""
       });
-      this.subscribeLoading = false;
+      // 取消上一个订阅
+      ws.send(JSON.stringify({
+        type: `unsub`,
+        value: `market.${preSymbol}.depth.step0`,
+        symbol: preSymbol,
+      }));
+      ws.send(JSON.stringify({
+        type: `unsub`,
+        value: `market.${preSymbol}.kline.1min`,
+        symbol: preSymbol,
+      }));
+      ws.send(JSON.stringify({
+        type: `sub`,
+        value: `market.${symbol}.depth.step0`,
+        symbol: symbol,
+      }));
+      ws.send(JSON.stringify({
+        type: `sub`,
+        value: `market.${symbol}.kline.1min`,
+        symbol: symbol,
+      }));
+      preSymbol = symbol;
+      wsconfig.set({
+        symbol: symbol,
+      });
     },
     sortBy() {}
   }

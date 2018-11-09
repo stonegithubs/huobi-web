@@ -60,10 +60,7 @@
 
 <script>
 import config from '@/config';
-import { getDepth, getDetailMerged, getSymbols } from '@/api/huobiREST';
-// utils
-import getSameAmount from '@/utils/getSameAmount';
-
+import { getDiffSymbols } from '@/api/diff';
 export default {
   name: "Difference",
   components: {
@@ -80,99 +77,24 @@ export default {
   },
   mounted() {
     this.seachAble = true;
+    this.getDiffSymbols();
   },
   beforeDestroy() {
 
   },
   methods: {
     start() {
-      this.getAllDetail();
     },
-    getAllDetail: async function () {
-      // this.list.length = 0;
-      const list = this.list.length === 0 ? this.list : [];
-      this.isLoading = true;
-      let symbols = await getSymbols();
-      let newSymbols = symbols.filter((item) => {
-        return (item['quote-currency'] === 'usdt' || item['quote-currency'] === 'btc');
+    getDiffSymbols () {
+      getDiffSymbols().then((res) => {
+        this.symbols = res.data;
       });
-      for(let i = 0; i < newSymbols.length; i++) {
-        let item = newSymbols[i];
-        let minSumPrice, minPrice;
-        let _symbols = item['base-currency'] + item['quote-currency'];
-        let res;
-        try {
-          res = await getDepth(_symbols, 'step0');
-        } catch (error) {
-          this.isLoading = false;
-          console.error(error);
-          continue;
-        }
-        
-        let bids = res.tick.bids;
-        let asks = res.tick.asks;
-        let bidsList = getSameAmount(bids, {
-          pricePrecision: item['price-precision'],
-          amountPrecision: item['amount-precision'],
-          quoteCurrency: item['quote-currency'],
-          type: 'bids'
-        });
-        let asksList = getSameAmount(asks, {
-          pricePrecision: item['price-precision'],
-          amountPrecision: item['amount-precision'],
-          quoteCurrency: item['quote-currency'],
-          type: 'asks'
-        });
-        let bidsAvg = 1;
-        let asksAvg = 1;
-        if (!bidsList.length || !asksList.length) {
-          continue;
-        }
-        if (bidsList.length > 1) {
-          bidsAvg = (Number(bidsList[0].sumMoneny) + Number(bidsList[1].sumMoneny)) / 2;
-        } else if (bidsList.length === 1) {
-          bidsAvg =  Number(bidsList[0].sumMoneny);
-        }
-        if (asksList.length > 1) {
-          asksAvg = (Number(asksList[0].sumMoneny) + Number(asksList[1].sumMoneny)) / 2;
-        } else if (asksList.length === 1) {
-          asksAvg =  Number(asksList[0].sumMoneny);
-        }
-        // 买一/卖一
-        let tickDis = bidsAvg / asksAvg;
-        // 买一卖一价格($)
-        let buy1Money = bidsList[0].sumDollar;
-        let sell1Money = asksList[0].sumDollar;
-        let bidsListOrderByCount = bidsList.sort(function (a, b) {
-          return b.count - a.count;
-        });
-        let asksListOrderByCount = asksList.sort(function (a, b) {
-          return b.count - a.count;
-        });
-        list.push({
-          symbol: _symbols,
-          tickDis: tickDis.toFixed(3),
-          maxCountDis: (bidsListOrderByCount[0].count / asksListOrderByCount[0].count).toFixed(3),
-          lengthDis: (bidsList.length / asksList.length).toFixed(3),
-          buy1Money,
-          sell1Money,
-        });
-      }
-
-      if (list !== this.list) {
-        this.list.length = 0;
-        this.list = list;
-      }
-      
-      this.isLoading = false;
-      this.orderBy();
-      if (!this.seachAble) {
-        return;
-      }
-      setTimeout(() => {
-        this.start();
-      }, 2000);
     },
+    getDiffData(symbol) {
+      getCharacteristic(symbol).then(res => {
+        this.list.push(res);
+      });
+    }, 
     orderBy() {
       
       this.list.sort((a, b) => {
