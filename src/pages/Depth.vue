@@ -92,7 +92,7 @@ export default {
       quoteCurrency: "usdt",
       baseCurrency: "btc",
       sortByValue: "sumMoneny",
-      subscribeLoading: true,
+      subscribeLoading: false,
       subscribeDisable: false,
       tabVal: 'bids',
       isMobile: appConfig.isMobile,
