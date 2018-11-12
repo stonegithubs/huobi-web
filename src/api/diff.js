@@ -8,7 +8,9 @@ import appConfig from '../config';
  * @return {Promise}
  */
 export function getDiffSymbols(symbol) {
-    const url = appConfig.hosts.api + '/api/diff/diffSymbols';
+    const url = appConfig.hosts.api + '/api/diff/diffSymbols?' + Qs.stringify({
+        symbol,
+    });;
     return get(url);
 }
 
@@ -19,6 +21,8 @@ export function getDiffSymbols(symbol) {
  * @return {Promise}
  */
 export function getCharacteristic(symbol) {
-    const url = appConfig.hosts.api + '/api/diff/characteristic';
+    const url = appConfig.hosts.api + '/api/diff/characteristic?' + Qs.stringify({
+        symbol,
+    }); ;
     return get(url);
 }

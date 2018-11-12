@@ -100,6 +100,9 @@ export default {
   padding: 20px;
   overflow: auto;
 }
+.table-sm td, .table-sm th {
+    padding: .3rem;
+}
 </style>
 <style lang="scss">
 @import './assets/css/media.scss';

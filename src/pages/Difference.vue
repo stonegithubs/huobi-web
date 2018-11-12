@@ -5,16 +5,15 @@
       <el-button type="primary" :loading="isLoading" @click="start" size="small">开始</el-button>
 
       <el-select v-model="orderByProperty" placeholder="请选择" size="small">
-        <el-option value="tickDis">买一/卖一(总价格)</el-option>
-        <el-option value="maxCountDis">买单数(max)/卖单数(max)</el-option>
-        <el-option value="lengthDis">buyCount / sellCount</el-option>
-        <el-option value="buy1Money">买一总价($)</el-option>
-        <el-option value="sell1Money">卖一总价($)</el-option>
+        <el-option value="bids_max_1">bids_max_1</el-option>
+        <el-option value="asks_max_1">asks_max_1</el-option>
+         <el-option value="oBidsLen/oAsksLen">oBidsLen/oAsksLen</el-option>
+        <el-option value="bidsRobotMaxCount">bidsRobotMaxCount</el-option>
+        <el-option value="asksRobotMaxCount">asksRobotMaxCount</el-option>
       </el-select>
       <el-button type="primary"  @click="orderBy" size="small">排序</el-button>
-      <el-button type="danger"  @click="stopSearch" size="small">中断自动查询</el-button>
     </div>
-    <div ref="tickList" style="overflow: auto;">
+    <div class="table-sm" ref="tickList" style="overflow: auto;">
       <div>
         <table>
             <thead>
@@ -22,20 +21,26 @@
                     <th>
                     Symbols
                     </th>
+                  <!--   <th>
+                    buy_1/sell_1
+                    </th> -->
                     <th>
-                    买一/卖一(价格)
+                    bids_max_1
                     </th>
                     <th>
-                    买单数(max)/卖单数(max)
+                    asks_max_1
+                    </th>
+                  <!--   <th>
+                    bids_max_2/asks_max_2
+                    </th> -->
+                    <th>
+                    oBidsLen / oAsksLen
                     </th>
                     <th>
-                    buyCount / sellCount
+                    bidsLen / asksLen
                     </th>
                     <th>
-                    买一总价($/k)
-                    </th>
-                    <th>
-                    卖一总价($/k)
+                    bidsRobot/asksRobot
                     </th>
                 </tr>
             </thead>
@@ -45,11 +50,14 @@
                 :key="index"
             >
                 <td>{{item.symbol}}</td>
-                <td>{{item.tickDis}}</td>
-                <td>{{item.maxCountDis}}</td>
-                <td>{{item.lengthDis}}</td>
-                <td>{{(item.buy1Money / 1000).toFixed(2)}}</td>
-                <td>{{(item.sell1Money / 1000).toFixed(2)}}</td>
+                <td>{{toBTCAmount(item.bids_max_1)}}฿</td>
+                <td>{{toBTCAmount(item.asks_max_1)}}฿</td>
+              <!--   <td>{{trans(item.buy_1, item.sell_1)}}</td> -->
+                <!-- <td>{{trans(item.bids_max_1, item.asks_max_1)}}</td> -->
+                <!-- <td>{{trans(item.bids_max_2, item.asks_max_2)}}</td> -->
+                <td>{{trans(item.originBidsLen, item.originAsksLen)}}</td>
+                <td>{{trans(item.bidsLen, item.asksLen)}}</td>
+                <td>{{trans(item.bidsRobotMaxCount, item.asksRobotMaxCount)}}</td>
             </tr>
             </tbody>
         </table>
@@ -60,7 +68,7 @@
 
 <script>
 import config from '@/config';
-import { getDiffSymbols } from '@/api/diff';
+import { getDiffSymbols, getCharacteristic } from '@/api/diff';
 export default {
   name: "Difference",
   components: {
@@ -70,14 +78,23 @@ export default {
     return {
       list: [],
       isLoading: false,
-      orderByProperty: 'tickDis'
+      orderByProperty: 'bids_max_1'
     };
   },
   created() {
   },
   mounted() {
     this.seachAble = true;
-    this.getDiffSymbols();
+    getCharacteristic('all').then(res => {
+      let data = res.data;
+      for (let symbol in data) {
+        let item = data[symbol];
+        this.list.push({
+          'oBidsLen/oAsksLen': item.originBidsLen / item.originAsksLen,
+          ...item
+        });
+      }
+    });
   },
   beforeDestroy() {
 
@@ -91,7 +108,7 @@ export default {
       });
     },
     getDiffData(symbol) {
-      getCharacteristic(symbol).then(res => {
+      return getCharacteristic(symbol).then(res => {
         this.list.push(res);
       });
     }, 
@@ -103,6 +120,12 @@ export default {
     },
     stopSearch() {
       this.seachAble = false;
+    },
+    trans(b, a) {
+      return `${b}/${a} = ${(b / a).toFixed(2)}`;
+    },
+    toBTCAmount(price) {
+      return (price / appConfig.prices.btc).toFixed(3);
     }
   }
 };
