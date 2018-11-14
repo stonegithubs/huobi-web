@@ -1,5 +1,5 @@
 import Qs from 'qs';
-import http, { post, get } from './http';
+import http, { POST, GET } from './http';
 import appConfig from '../config';
 
 /**
@@ -9,13 +9,13 @@ import appConfig from '../config';
  * @param {?integer} size 获取数量
  * @return {Promise}
  */
-export function getKLine(symbol, period, size) {
-  const url = appConfig.hosts.api + '/api/huobi/v1/get_kline?' + Qs.stringify({
+export function GETKLine(symbol, period, size) {
+  const url = appConfig.hosts.api + '/api/huobi/v1/GET_kline?' + Qs.stringify({
     symbol,
     period,
     size,
   });
-  return get(url);
+  return GET(url);
 }
 /**
  * 获取深度
@@ -23,36 +23,36 @@ export function getKLine(symbol, period, size) {
  * @param {type} step0, step1, step2, step3, step4, step5（合并深度0-5）；step0时，不合并深度
  * @return {Promise}
  */
-export function getDepth (symbol, type) {
+export function GETDepth (symbol, type) {
   const url = appConfig.hosts.api + '/api/huobi/v1/market/depth?' + Qs.stringify({
     symbol,
     type,
     AccessKeyId: '2f0f54a2-8e5d9137-982b01e1-5789d'
   });
-  return get(url).then((data) => data.data);;
+  return GET(url).then((data) => data.data);;
 }
 /**
  * 获取聚合行情(Ticker)
  * @param {string} symbol 交易对
  * @return {Promise}
  */
-export function getDetailMerged (symbol) {
+export function GETDetailMerged (symbol) {
   const url = appConfig.hosts.api_huobi + '/market/detail/merged?' + Qs.stringify({
     symbol,
   });
-  return get(url);
+  return GET(url);
 }
 
 /**
  * 获取symbols
  * @return {Promise}
  */
-export async function getSymbols () {
+export async function GETSymbols () {
   const url =  appConfig.hosts.api_huobi + '/v1/common/symbols';
   if (localStorage.symbols !== undefined) {
     return JSON.parse(localStorage.symbols);
   }
-  return get(url).then(data => {
+  return GET(url).then(data => {
     // 做缓存
     localStorage.symbols = JSON.stringify(data.data);
     return data.data;
@@ -64,8 +64,8 @@ export async function getSymbols () {
  * @param {string} symbol 
  * @param {string} quoteCurrency
  */
-export const getSymbolInfo = async function (symbol, quoteCurrency) {
-  let precisionData = await getSymbols();
+export const GETSymbolInfo = async function (symbol, quoteCurrency) {
+  let precisionData = await GETSymbols();
   let pricePrecision = 0;
   let amountPrecision = 0;
   precisionData.some((item) => {
@@ -97,7 +97,7 @@ export const getSymbolInfo = async function (symbol, quoteCurrency) {
  */
 export function limit (params) {
   const url = appConfig.hosts.api + '/api/huobi/v1/limit';
-  return post(url, params);
+  return POST(url, params);
 }
 /**
  * 取消订单
@@ -108,7 +108,7 @@ export function limit (params) {
  */
 export function cancelOrder (orderId) {
   const url = appConfig.hosts.api + '/api/huobi/v1/cancelOrder';
-  return post(url, {orderId});
+  return POST(url, {orderId});
 }
 /**
  * 未成交的订单
@@ -119,9 +119,9 @@ export function cancelOrder (orderId) {
  * }
  * @return {Promise}
  */
-export function getOpenOrders (params) {
+export function GETOpenOrders (params) {
   const url = appConfig.hosts.api + '/api/huobi/v1/openOrders?' + Qs.stringify(params);;
-  return get(url);
+  return GET(url);
 }
 
 
@@ -129,9 +129,9 @@ export function getOpenOrders (params) {
  * 查余额
  * @return {Promise}
  */
-export function getBalance () {
-  const url = appConfig.hosts.api + '/api/huobi/v1/get_balance';
-  return get(url).then((data) => data.data);
+export function GETBalance () {
+  const url = appConfig.hosts.api + '/api/huobi/v1/GET_balance';
+  return GET(url).then((data) => data.data);
 }
 
 /**
@@ -141,7 +141,7 @@ export function getBalance () {
  * }
  * @return {Promise}
  */
-export function getOrder (orderId) {
-  const url = appConfig.hosts.api + '/api/huobi/v1/get_order?orderId=' + orderId;
-  return get(url);
+export function GETOrder (orderId) {
+  const url = appConfig.hosts.api + '/api/huobi/v1/GET_order?orderId=' + orderId;
+  return GET(url);
 }

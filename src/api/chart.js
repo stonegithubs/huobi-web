@@ -1,5 +1,5 @@
 import Qs from 'qs';
-import http, { post, get } from './http';
+import http, { POST, GET } from './http';
 import appConfig from '../config';
 
 
@@ -12,7 +12,7 @@ export function getAmountChartData(symbol) {
     const url = appConfig.hosts.api + '/api/chart/amount?' + Qs.stringify({
         symbol,
     });
-    return get(url);
+    return GET(url);
 }
 /**
  * 获取symbols特征
@@ -23,7 +23,7 @@ export function getCharacteristic(symbol) {
     const url = appConfig.hosts.api + '/api/chart/characteristic?' + Qs.stringify({
         symbol,
     });
-    return get(url);
+    return GET(url);
 }
 /**
  * 获取压力位(单位以量体现)
@@ -34,7 +34,7 @@ export function getTradeData(symbol) {
     const url = appConfig.hosts.api + '/api/chart/trade?' + Qs.stringify({
         symbol,
     });
-    return get(url);
+    return GET(url);
 }
 /**
  * 获取压力位(单位以量体现)
@@ -43,5 +43,5 @@ export function getTradeData(symbol) {
  */
 export function getWatchSymbols(symbol) {
     const url = appConfig.hosts.api + '/api/chart/watchSymbols';
-    return get(url);
+    return GET(url);
 }

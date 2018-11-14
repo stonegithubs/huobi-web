@@ -31,7 +31,7 @@ export default http;
  * @param {string} path 
  * @param {Object} params 
  */
-export const post = async function (url, params) {
+export const POST = async function (url, params) {
   try {
     const result = await http.post(
       url,
@@ -57,7 +57,7 @@ export const post = async function (url, params) {
  * @param {string} path 
  * @param {Object} params 
  */
-export const get = async function (url, params) {
+export const GET = async function (url, params) {
   try {
     const result = await http.get(
       url,

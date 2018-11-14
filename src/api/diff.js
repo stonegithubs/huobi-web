@@ -1,5 +1,5 @@
 import Qs from 'qs';
-import { post, get } from './http';
+import { POST, GET } from './http';
 import appConfig from '../config';
 
 
@@ -11,7 +11,7 @@ export function getDiffSymbols(symbol) {
     const url = appConfig.hosts.api + '/api/diff/diffSymbols?' + Qs.stringify({
         symbol,
     });;
-    return get(url);
+    return GET(url);
 }
 
 
@@ -24,5 +24,5 @@ export function getCharacteristic(symbol) {
     const url = appConfig.hosts.api + '/api/diff/characteristic?' + Qs.stringify({
         symbol,
     }); ;
-    return get(url);
+    return GET(url);
 }
