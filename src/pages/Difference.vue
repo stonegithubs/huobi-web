@@ -85,22 +85,24 @@ export default {
   },
   mounted() {
     this.seachAble = true;
-    getCharacteristic('all').then(res => {
-      let data = res.data;
-      for (let symbol in data) {
-        let item = data[symbol];
-        this.list.push({
-          'oBidsLen/oAsksLen': item.originBidsLen / item.originAsksLen,
-          ...item
-        });
-      }
-    });
+    this.start();
   },
   beforeDestroy() {
 
   },
   methods: {
     start() {
+      this.list = []
+      getCharacteristic('all').then(res => {
+        let data = res.data;
+        for (let symbol in data) {
+          let item = data[symbol];
+          this.list.push({
+            'oBidsLen/oAsksLen': item.originBidsLen / item.originAsksLen,
+            ...item
+          });
+        }
+      });
     },
     getDiffSymbols () {
       getDiffSymbols().then((res) => {

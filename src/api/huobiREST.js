@@ -9,7 +9,7 @@ import appConfig from '../config';
  * @param {?integer} size 获取数量
  * @return {Promise}
  */
-export function GETKLine(symbol, period, size) {
+export function getKLine(symbol, period, size) {
   const url = appConfig.hosts.api + '/api/huobi/v1/GET_kline?' + Qs.stringify({
     symbol,
     period,
@@ -23,7 +23,7 @@ export function GETKLine(symbol, period, size) {
  * @param {type} step0, step1, step2, step3, step4, step5（合并深度0-5）；step0时，不合并深度
  * @return {Promise}
  */
-export function GETDepth (symbol, type) {
+export function getDepth (symbol, type) {
   const url = appConfig.hosts.api + '/api/huobi/v1/market/depth?' + Qs.stringify({
     symbol,
     type,
@@ -36,7 +36,7 @@ export function GETDepth (symbol, type) {
  * @param {string} symbol 交易对
  * @return {Promise}
  */
-export function GETDetailMerged (symbol) {
+export function getDetailMerged (symbol) {
   const url = appConfig.hosts.api_huobi + '/market/detail/merged?' + Qs.stringify({
     symbol,
   });
@@ -47,7 +47,7 @@ export function GETDetailMerged (symbol) {
  * 获取symbols
  * @return {Promise}
  */
-export async function GETSymbols () {
+export async function getSymbols () {
   const url =  appConfig.hosts.api_huobi + '/v1/common/symbols';
   if (localStorage.symbols !== undefined) {
     return JSON.parse(localStorage.symbols);
@@ -64,8 +64,8 @@ export async function GETSymbols () {
  * @param {string} symbol 
  * @param {string} quoteCurrency
  */
-export const GETSymbolInfo = async function (symbol, quoteCurrency) {
-  let precisionData = await GETSymbols();
+export const getSymbolInfo = async function (symbol, quoteCurrency) {
+  let precisionData = await getSymbols();
   let pricePrecision = 0;
   let amountPrecision = 0;
   precisionData.some((item) => {
@@ -119,7 +119,7 @@ export function cancelOrder (orderId) {
  * }
  * @return {Promise}
  */
-export function GETOpenOrders (params) {
+export function getOpenOrders (params) {
   const url = appConfig.hosts.api + '/api/huobi/v1/openOrders?' + Qs.stringify(params);;
   return GET(url);
 }
@@ -129,7 +129,7 @@ export function GETOpenOrders (params) {
  * 查余额
  * @return {Promise}
  */
-export function GETBalance () {
+export function getBalance () {
   const url = appConfig.hosts.api + '/api/huobi/v1/GET_balance';
   return GET(url).then((data) => data.data);
 }
@@ -141,7 +141,7 @@ export function GETBalance () {
  * }
  * @return {Promise}
  */
-export function GETOrder (orderId) {
+export function getOrder (orderId) {
   const url = appConfig.hosts.api + '/api/huobi/v1/GET_order?orderId=' + orderId;
   return GET(url);
 }
