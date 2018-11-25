@@ -18,6 +18,7 @@
           <el-option value="usdt">usdt</el-option>
           <el-option value="btc">btc</el-option>
           <el-option value="eth">eth</el-option>
+          <el-option value="husd">husd</el-option>
         </el-select>
       </el-col>
       <el-col :xs="12" :sm="3" :md="8" :lg="3" :xl="1">
