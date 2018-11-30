@@ -1,0 +1,21 @@
+{
+    "include": [
+        "src/**/*",
+    ],
+    "exclude": [
+        "dist",
+        "node_modules"
+    ],
+    "compilerOptions": {
+        "experimentalDecorators": true,
+        "target": "es6",
+        "baseUrl": ".",
+        // Relative to "baseUrl"
+        "paths": {
+            "@/*": ["./src/*"],
+        }
+    },
+    "files": [
+        "*.vue",
+    ]
+}
