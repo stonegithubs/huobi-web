@@ -8,9 +8,12 @@ import appConfig from '../config';
  * @param {string} symbol 交易对
  * @return {Promise}
  */
-export function getAmountChartData(symbol) {
+export function getAmountChartData(symbol, {
+    period = '',
+}) {
     const url = appConfig.hosts.api + '/api/chart/amount?' + Qs.stringify({
         symbol,
+        period,
     });
     return GET(url);
 }
@@ -28,11 +31,15 @@ export function getCharacteristic(symbol) {
 /**
  * 获取压力位(单位以量体现)
  * @param {string} symbol 交易对
+ * @param {string} period
  * @return {Promise}
  */
-export function getTradeData(symbol) {
+export function getTradeData(symbol, {
+    period = '2min',
+}) {
     const url = appConfig.hosts.api + '/api/chart/trade?' + Qs.stringify({
         symbol,
+        period,
     });
     return GET(url);
 }

@@ -26,3 +26,17 @@ export function getCharacteristic(symbol) {
     }); ;
     return GET(url);
 }
+
+/**
+ * 获取Symbols 的depth
+ * @param {string} symbol 交易对
+ * @param {Object} options.period
+ * @return {Promise}
+ */
+export function getCharDepth(symbol, { period = '2min'}) {
+    const url = appConfig.hosts.api + '/api/diff/characteristic/chart?' + Qs.stringify({
+        symbol,
+        period
+    }); 
+    return GET(url);
+}
