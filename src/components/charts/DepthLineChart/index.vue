@@ -4,15 +4,14 @@
       <h3>挂单资金</h3>
     </div>
     <div v-loading="loading" class="charts-container">
+      <el-button type="text" :loading="loading" @click="changePeriod('')" size="small">时</el-button>
+      <el-button type="text" :loading="loading" @click="changePeriod('1day')" size="small">1day</el-button>
       <component
-          v-bind:is="currentComponent"
-          @onloaded="onloaded"
-          @onloadstart="onloadstart"
-          :symbol="symbol"
+        v-bind:is="currentComponent"
+        :data="data"
       ></component>
     </div>
   </div>
- 
 </template>
 
 <script>
@@ -26,26 +25,25 @@ export default {
   },
   data() {
     return {
-      loading: true
     };
   },
   props: {
-    symbol: {
-      type: String,
-      default: 'btcusdt'
+    loading: Boolean,
+    data: {
+      type: Array,
+      default () {
+        return [];
+      }
     },
   },
   computed: {
     currentComponent() {
-      return appConfig.isMobile ? 'DepthLineChart_M' : "DepthLineChart";
+      return appConfig.isMobile ? "DepthLineChart_M" : "DepthLineChart";
     }
   },
   methods: {
-    onloaded() {
-      this.loading = false;
-    },
-    onloadstart() {
-      this.loading = true;
+    changePeriod(val) {
+      this.$emit("onPeriodChange", 'depth', val);
     }
   }
 };

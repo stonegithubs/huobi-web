@@ -9,7 +9,6 @@
 </template>
 
 <script>
-import { getAmountChartData } from "@/api/chart";
 import CONFIG from "@/config";
 import {
   fetchAntv,
@@ -27,11 +26,10 @@ export default {
   },
   props: {
     data: Array,
-    symbol: String,
   },
   watch: {
-    symbol(symbol) {
-      this.getData(symbol);
+    data(data) {
+      this.render();
     }
   },
   mounted() {
@@ -47,36 +45,28 @@ export default {
           dataView,
           this.$refs.slider
         );
-      })
-      .then(() => {
-        this.getData(this.symbol);
+      }).then(() => {
+        this.render();
       });
   },
   methods: {
-    getData(symbol) {
-      this.$emit("onloadstart");
-      getAmountChartData(symbol)
-        .then(res => {
-          let data = res.data;
-          if (!this.chart || data.length === 0) {
-            return;
-          }
-          let startTime = new Date(data[parseInt(data.length / 3)].time).getTime();
-          let endTime = new Date(data[data.length - 1].time).getTime();
-          // 更新chart数据
-          this.dataSet.setState("sourceData", data);
-          this.dataView.source(this.dataSet.state.sourceData);
-          // 更新slider数据
-          this.slider.start = startTime;
-          this.slider.end = endTime;
-          this.slider.changeData(this.dataView.rows);
-          // 拖动slider
-          this.dataSet.setState("start", startTime);
-          this.dataSet.setState("end", endTime);
-        })
-        .finally(() => {
-          this.$emit('onloaded');
-        });
+    render() {
+       let data = this.data;
+      if (!this.chart || data.length === 0) {
+        return;
+      }
+      let startTime = new Date(data[parseInt(data.length / 3)].time).getTime();
+      let endTime = new Date(data[data.length - 1].time).getTime();
+      // 更新chart数据
+      this.dataSet.setState("sourceData", data);
+      this.dataView.source(this.dataSet.state.sourceData);
+      // 更新slider数据
+      this.slider.start = startTime;
+      this.slider.end = endTime;
+      this.slider.changeData(this.dataView.rows);
+      // 拖动slider
+      this.dataSet.setState("start", startTime);
+      this.dataSet.setState("end", endTime);
     }
   }
 };

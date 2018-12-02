@@ -4,11 +4,26 @@
       <h3>资金流入流出</h3>
     </div>
     <div v-loading="loading" class="charts-container">
+      <div>
+        <el-button
+          type="text"
+          :loading="loading"
+          @click="changePeriod('2min')"
+          size="small"
+        >2min
+        </el-button>
+        <el-button
+          type="text"
+          :loading="loading"
+          @click="changePeriod('1day')"
+          size="small"
+          
+        >1day
+        </el-button>
+      </div>
       <component
           v-bind:is="currentComponent"
-          @onloaded="onloaded"
-          @onloadstart="onloadstart"
-          :symbol="symbol"
+          :data="data"
       ></component>
     </div>
   </div>
@@ -26,13 +41,15 @@ export default {
   },
   data() {
     return {
-      loading: true
     };
   },
   props: {
-    symbol: {
-      type: String,
-      default: 'btcusdt'
+    loading: true,
+    data: {
+      type: Array,
+      default () {
+        return [];
+      }
     },
   },
   computed: {
@@ -41,11 +58,8 @@ export default {
     }
   },
   methods: {
-    onloaded() {
-      this.loading = false;
-    },
-    onloadstart() {
-      this.loading = true;
+    changePeriod(val) {
+      this.$emit("onPeriodChange", 'trade', val);
     }
   }
 };

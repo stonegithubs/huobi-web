@@ -5,7 +5,6 @@
 </template>
 
 <script>
-import { getTradeData } from "@/api/chart";
 import CONFIG from "@/config";
 import { fetchAntv, createDataSet, createSilder } from "../antv";
 import { tradeColor, usdtFormatter } from "../config";
@@ -17,11 +16,11 @@ export default {
     };
   },
   props: {
-    symbol: String,
+    data: Array,
   },
   watch: {
-    symbol(symbol) {
-      this.getData(symbol);
+    data() {
+      this.render();
     }
   },
   mounted() {
@@ -35,28 +34,20 @@ export default {
         this.dataSet = dataSet;
         this.dataView = dataView;
         this.chart = chart;
-      })
-      .then(() => {
-        this.getData(this.symbol);
+      }).then(() => {
+        this.render();
       });
   },
   methods: {
-    getData(symbol) {
-      this.$emit("onloadstart");
-      getTradeData(symbol)
-        .then(res => {
-           let data = res.data;
-            if (!this.chart || data.length === 0) {
-              return;
-            }
-            // 更新chart数据
-            this.dataSet.setState("sourceData", data);
-            this.dataView.source(this.dataSet.state.sourceData);
-            this.chart.changeData(this.dataView.rows);
-        })
-        .finally(() => {
-          this.$emit("onloaded");
-        });
+    render() {
+      let data = this.data;
+      if (!this.chart || data.length === 0) {
+        return;
+      }
+      // 更新chart数据
+      this.dataSet.setState("sourceData", data);
+      this.dataView.source(this.dataSet.state.sourceData);
+      this.chart.changeData(this.dataView.rows);
     }
   }
 };

@@ -53,32 +53,54 @@
                 <td>{{toBTCAmount(item.bids_max_1)}}฿</td>
                 <td>{{toBTCAmount(item.asks_max_1)}}฿</td>
               <!--   <td>{{trans(item.buy_1, item.sell_1)}}</td> -->
-                <!-- <td>{{trans(item.bids_max_1, item.asks_max_1)}}</td> -->
                 <!-- <td>{{trans(item.bids_max_2, item.asks_max_2)}}</td> -->
                 <td>{{trans(item.originBidsLen, item.originAsksLen)}}</td>
                 <td>{{trans(item.bidsLen, item.asksLen)}}</td>
                 <td>{{trans(item.bidsRobotMaxCount, item.asksRobotMaxCount)}}</td>
+                <td><el-button type="text"  @click="getHistory(item.symbol)" size="small">查看历史</el-button></td>
             </tr>
             </tbody>
         </table>
       </div>
     </div>
+
+    <el-dialog
+        title="图表"
+        :visible.sync="dialogVisible"
+        width="90%"
+        >
+        <DepthLineChart
+          :data="depthData"
+          :loading="depthLoading"
+          @onPeriodChange="changePeriod"
+        ></DepthLineChart>
+        <span slot="footer" class="dialog-footer">
+            <el-button @click="dialogVisible = false" size="small">取 消</el-button>
+            <el-button type="primary" @click="dialogVisible = false" size="small">确 定</el-button>
+        </span>
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
 import config from '@/config';
-import { getDiffSymbols, getCharacteristic } from '@/api/diff';
+import { getDiffSymbols, getCharacteristic, getCharDepth } from '@/api/diff';
+import { DepthLineChart } from "@/components/charts";
 export default {
   name: "Difference",
   components: {
-
+    DepthLineChart,
   },
   data() {
     return {
       list: [],
       isLoading: false,
-      orderByProperty: 'bids_max_1'
+      depthLoading: true,
+      depthData: [],
+      dialogVisible: false,
+      orderByProperty: 'bids_max_1',
+      selectedSymbol: '',
     };
   },
   created() {
@@ -91,6 +113,29 @@ export default {
 
   },
   methods: {
+    changePeriod(type, val) {
+      switch (type) {
+        case "depth":
+          this.getDepthData(val);
+          break;
+      }
+    },
+   
+    getDiffSymbols () {
+      getDiffSymbols().then((res) => {
+        this.symbols = res.data;
+      });
+    },
+    getDiffData(symbol) {
+      return getCharacteristic(symbol).then(res => {
+        this.list.push(res);
+      });
+    }, 
+    orderBy() {
+      this.list.sort((a, b) => {
+        return b[this.orderByProperty] - a[this.orderByProperty];
+      });
+    },
     start() {
       this.list = []
       getCharacteristic('all').then(res => {
@@ -104,22 +149,6 @@ export default {
         }
       });
     },
-    getDiffSymbols () {
-      getDiffSymbols().then((res) => {
-        this.symbols = res.data;
-      });
-    },
-    getDiffData(symbol) {
-      return getCharacteristic(symbol).then(res => {
-        this.list.push(res);
-      });
-    }, 
-    orderBy() {
-      
-      this.list.sort((a, b) => {
-        return b[this.orderByProperty] - a[this.orderByProperty];
-      });
-    },
     stopSearch() {
       this.seachAble = false;
     },
@@ -128,6 +157,21 @@ export default {
     },
     toBTCAmount(price) {
       return (price / appConfig.prices.btc).toFixed(3);
+    },
+    getHistory(symbol) {
+      this.dialogVisible = true;
+      this.selectedSymbol = symbol;
+      this.getDepthData();
+    },
+    getDepthData(period = '') {
+      this.depthLoading = true;
+      getCharDepth(this.selectedSymbol, { period, })
+        .then(res => {
+          this.depthData = res.data;
+        })
+        .finally(() => {
+          this.depthLoading = false;
+        });
     }
   }
 };
