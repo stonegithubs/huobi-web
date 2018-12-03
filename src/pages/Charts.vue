@@ -46,6 +46,12 @@ export default {
     };
   },
   computed: {},
+  watch: {
+    selectedSymbol() {
+      this.getDepthData();
+      this.getTradeData();
+    }
+  },
   mounted() {
     this.getWatchSymbols().then(() => {
       this.getDepthData();
